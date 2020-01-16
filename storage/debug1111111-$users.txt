@@ -1,0 +1,95 @@
+
+Illuminate\Database\Eloquent\Collection Object
+(
+    [items:protected] => Array
+        (
+            [0] => App\User Object
+                (
+                    [fillable:protected] => Array
+                        (
+                            [0] => name
+                            [1] => email
+                        )
+
+                    [hidden:protected] => Array
+                        (
+                            [0] => password
+                        )
+
+                    [connection:protected] => mysql
+                    [table:protected] => users
+                    [primaryKey:protected] => id
+                    [keyType:protected] => int
+                    [incrementing] => 1
+                    [with:protected] => Array
+                        (
+                        )
+
+                    [withCount:protected] => Array
+                        (
+                        )
+
+                    [perPage:protected] => 15
+                    [exists] => 1
+                    [wasRecentlyCreated] => 
+                    [attributes:protected] => Array
+                        (
+                            [id] => 1
+                            [name] => test
+                        )
+
+                    [original:protected] => Array
+                        (
+                            [id] => 1
+                            [name] => test
+                        )
+
+                    [changes:protected] => Array
+                        (
+                        )
+
+                    [casts:protected] => Array
+                        (
+                        )
+
+                    [dates:protected] => Array
+                        (
+                        )
+
+                    [dateFormat:protected] => 
+                    [appends:protected] => Array
+                        (
+                        )
+
+                    [dispatchesEvents:protected] => Array
+                        (
+                        )
+
+                    [observables:protected] => Array
+                        (
+                        )
+
+                    [relations:protected] => Array
+                        (
+                        )
+
+                    [touches:protected] => Array
+                        (
+                        )
+
+                    [timestamps] => 1
+                    [visible:protected] => Array
+                        (
+                        )
+
+                    [guarded:protected] => Array
+                        (
+                            [0] => *
+                        )
+
+                    [rememberTokenName:protected] => remember_token
+                )
+
+        )
+
+)

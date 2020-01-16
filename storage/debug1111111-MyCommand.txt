@@ -1,0 +1,23 @@
+
+Array
+(
+    [0] => Array
+        (
+            [command] => mycommand:hello-world
+            [myArgument] => myArgument
+        )
+
+    [1] => Array
+        (
+            [myOption] => bla-bla-bla
+            [help] => 
+            [quiet] => 
+            [verbose] => 
+            [version] => 
+            [ansi] => 
+            [no-ansi] => 
+            [no-interaction] => 
+            [env] => 
+        )
+
+)
