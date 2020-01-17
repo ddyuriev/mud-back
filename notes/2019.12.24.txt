@@ -1,0 +1,237 @@
+так... развернул lumen в 
+C:\projects\mud-back-02
+
+Надо создать бд и накатать миграцию на персонаж
+
+создал базу mud-back
+
+пробная мигарция:
+
+
+C:\projects\mud-back-02
+
+
+php artisan make:migration create_characters_table
+
+
+
+
+
+C:\projects\mud-back-02>php artisan migrate
+**************************************
+*     Application In Production!     *
+**************************************
+
+ Do you really wish to run this command? (yes/no) [no]:
+ > y
+
+
+In Connection.php line 669:
+
+  SQLSTATE[HY000] [1045] Access denied for user 'forge'@'localhost' (using password: NO) (SQL: select * from information_schema.tables where table_schema = forge and table_name = migrations and tab
+  le_type = 'BASE TABLE')
+
+
+In Connector.php line 70:
+
+  SQLSTATE[HY000] [1045] Access denied for user 'forge'@'localhost' (using password: NO)
+
+
+
+
+надо конфиги править
+
+
+
+
+хм.. в Lumen нет конфигов...
+а если 2 соединения?
+https://stackoverflow.com/questions/45729492/how-to-use-multiple-database-in-lumen
+
+
+
+-------------------------------
+
+php artisan migrate:rollback
+
+
+
+
+Так... сделать команду "время" или счет
+
+желательно, чтобы не просто return а сокетами
+
+
+
+
+
+--------
+
+
+Call to a member function connection() on null
+
+
+
+https://stackoverflow.com/questions/37350404/php-lumen-call-to-a-member-function-connection-on-null/37350544
+
+
+
+You should uncomment the Eloquent $app->withEloquent() call in bootstrap/app.php.
+
+https://lumen.laravel.com/docs/5.2/database#basic-usage
+
+
+
+
+--------
+
+такс... думаю самое время прикрутить workerman
+
+
+бэкап:
+C:\Dimas\my\mud-back\backups\2019.12.24\14-25 mud-back-02
+
+composer.json
+
+
+    "require": {
+...
+        "workerman/workerman": "^3.5"
+    },
+
+
+
+composer update
+
+
+
+
+C:\projects\mud-back-02>composer update
+Loading composer repositories with package information
+Updating dependencies (including require-dev)
+Package operations: 1 install, 0 updates, 0 removals
+  - Installing workerman/workerman (v3.5.22): Loading from cache
+workerman/workerman suggests installing ext-event (For better performance. )
+Writing lock file
+Generating optimized autoload files
+
+
+
+
+Так... организовать тестовое сообщение.
+
+
+------------
+
+cd C:\projects\mud-back-02\socket_server
+
+php server.php start
+
+------------
+
+
+
+C:\projects\mud-back-02\socket_server>
+C:\projects\mud-back-02\socket_server>php server.php start
+
+Warning: require_once(C:\projects\mud-back-02\socket_server/vendor/autoload.php): failed to open stream: No such file or directory in C:\projects\mud-back-02\socket_server\server.php on line 3
+
+Fatal error: require_once(): Failed opening required 'C:\projects\mud-back-02\socket_server/vendor/autoload.php' (include_path='.;c:/openserver/ospanel/modules/php/PHP_7.2-x64;c:/openserver/ospanel/mo
+dules/php/PHP_7.2-x64/PEAR/pear') in C:\projects\mud-back-02\socket_server\server.php on line 3
+
+
+
+
+
+
+print_r(__DIR__);
+
+
+C:\projects\mud-back-02\socket_server
+
+
+так ок:
+require_once __DIR__ . '/../vendor/autoload.php';
+
+
+
+------------
+cd C:\projects\mud-client
+
+php send.php
+------------
+
+
+
+так. тест прошел.
+
+
+следующая задача на фронте реализовать input
+
+
+думаю взять jquery и bootstrap
+
+
+ok, подрубил.
+
+
+
+------------------------------------------
+
+
+
+
+
+Access to XMLHttpRequest at 'file:///C:/projects/mud-client/mud-back/userinput' from origin 'null' has been blocked by CORS policy: Cross origin requests are only supported for protocol schemes: http, data, chrome, chrome-extension, https.
+
+
+
+        url    : "mud-back/userinput",
+=>
+        url    : "http://mud-back/userinput",
+
+
+
+client.html:1 
+Access to XMLHttpRequest at 'http://mud-back/userinput' from origin 'null' has been blocked by CORS policy: No 'Access-Control-Allow-Origin' header is present on the requested resource.
+
+
+------------
+!!!!!!!!!!!!
+
+https://www.slant.co/topics/1552/~best-terminal-emulators-for-windows
+
+https://github.com/cmderdev/cmder
+
+качнул cmder - альтернатива cmd
+!!!!!!!!!!!!
+------------
+
+
+
+cd C:\projects\mud-back-02
+
+
+php artisan make:middleware Cors
+
+
+
+  Command "make:middleware" is not defined.
+
+  Did you mean one of these?
+      make:migration
+      make:seeder
+
+
+Бля.
+
+руками тоды
+
+скопировал с customer_service
+
+
+
+УРА!!!!!!!!!
+
+
+

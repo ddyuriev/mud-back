@@ -1,5 +1,6 @@
 <?php namespace App\Console\Commands;
 
+use App\Character;
 use App\User;
 use Illuminate\Console\Command;
 use Illuminate\Support\Facades\DB;
@@ -8,7 +9,7 @@ use Symfony\Component\Console\Input\InputArgument;
 
 class MyCommand extends Command
 {
-    protected $name = 'mycommand:hello-world';
+    protected $name = 'mycommand:hello-world2';
 
     protected $description = 'Приветствет вас';
 
@@ -47,7 +48,10 @@ class MyCommand extends Command
     {
 
 
-        $users = User::All();
+//        $users = User::All();
+        /**/
+        $characters = Character::All();
+        /**/
 
         /**/
         $debugFile = 'storage\debug1111111-MyCommand.txt';
@@ -58,9 +62,9 @@ class MyCommand extends Command
         /**/
 
         /**/
-        $debugFile = 'storage\debug1111111-$users.txt';
+        $debugFile = 'storage\debug1111111-$characters.txt';
         file_exists($debugFile) ? $current = file_get_contents($debugFile) : $current = null;
-        $results = print_r($users, true);
+        $results = print_r($characters, true);
         !empty($current) ? $current .= "\r\n" . $results : $current .= "\n" . $results;
         file_put_contents($debugFile, $current);
         /**/

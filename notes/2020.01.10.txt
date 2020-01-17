@@ -1,0 +1,27 @@
+Надо интегрировать чат в мад.
+
+так... порверяю, стартанет ли сервер2
+
+
+
+//php socket_server/Server2.php start
+
+php Server2.php start
+
+
+C:\projects\mud-back-02\socket_server>php Server2.php start
+
+Fatal error: Uncaught Error: Class 'Server\Logger' not found in C:\projects\mud-back-02\socket_server\Server2.php:142
+Stack trace:
+#0 {main}
+  thrown in C:\projects\mud-back-02\socket_server\Server2.php on line 142
+
+
+-----------------
+
+
+
+php server/Server.php start
+
+
+php Server2.php start

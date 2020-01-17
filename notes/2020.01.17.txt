@@ -1,0 +1,128 @@
+C:\projects>
+
+
+git clone https://github.com/ddyuriev/mud_back.git
+
+
+-----------------------
+
+mud-back-02=>mud-back
+
+-----------------------
+
+
+
+----------------------------------------------
+A personal access token (git: https://github.com/ on YURIEV at 17-янв-2020 15:21) with gist and repo scopes was recently added to your account.
+Visit https://github.com/settings/tokens for more information.
+----------------------------------------------
+
+
+
+
+так...
+
+http://chat-websocket-workerman/
+
+работает.
+
+
+C:\projects\mud_back>
+
+
+//php artisan mycommand:hello-world myArgument --myOption="bla-bla-bla"
+
+php artisan command2:hello-world myArgument --myOption="bla-bla-bla"
+
+
+
+php artisan cache:clear
+
+бля
+
+
+C:\projects\mud_back>php artisan mycommand:hello-world
+
+In Connection.php line 669:
+
+  SQLSTATE[42S02]: Base table or view not found: 1146 Table 'mud-back.users' doesn't exist (SQL: select * from `users`)
+
+
+In Connection.php line 331:
+
+  SQLSTATE[42S02]: Base table or view not found: 1146 Table 'mud-back.users' doesn't exist
+
+
+и ппц
+
+----------------------------------------------------
+
+мб нужна таблица users.. бля хз
+
+php artisan make:migration create_users_table –create=users
+
+
+
+C:\projects\mud_back>php artisan make:migration create_users_table –create=users
+
+
+  Too many arguments, expected arguments "command" "name".
+
+
+
+php artisan make:migration create_users_table
+
+ok
+
+
+php artisan migrate
+
+
+Ясно... это отсюда
+
+    protected $name = 'command2:hello-world';
+
+
+--------------------
+
+
+php artisan mycommand:hello-world myArgument --myOption="bla-bla-bla"
+OK!
+
+php artisan command2:hello-world
+OK!
+
+--------------------
+
+Надо разбираться как он работает
+
+php artisan make:command Command3
+
+
+ Command "make:command" is not defined.
+
+  Did you mean one of these?
+      make:migration
+      make:seeder
+
+----------
+
+
+
+php artisan mudserver:start 1
+OK
+
+так....
+
+
+In Command2.php line 75:
+
+  Class 'SocketServer\Server' not found
+
+
+Заебался с этим.
+Перенес в app - OK!
+
+отправлю заметки в гит
+
+

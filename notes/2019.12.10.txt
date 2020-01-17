@@ -1,0 +1,13 @@
+cd C:\projects\mud-back
+
+php server.php start
+
+
+
+---------
+
+
+cd C:\projects\mud-client
+
+
+php send.php

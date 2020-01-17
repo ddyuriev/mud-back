@@ -1,0 +1,51 @@
+https://github.com/Vladbara705/Chat-WebSocket-WorkerMan
+
+
+https://github.com/Vladbara705/Chat-WebSocket-WorkerMan.git
+
+
+
+git clone https://github.com/Vladbara705/Chat-WebSocket-WorkerMan.git
+
+
+
+C:\projects>git clone https://github.com/Vladbara705/Chat-WebSocket-WorkerMan.git
+Cloning into 'Chat-WebSocket-WorkerMan'...
+remote: Enumerating objects: 949, done.
+remote: Counting objects: 100% (949/949), done.
+remote: Compressing objects: 100% (590/590), done.
+remote: Total 949 (delta 339), reused 934 (delta 326), pack-reused 0
+Receiving objects: 100% (949/949), 620.89 KiB | 1.23 MiB/s, done.
+Resolving deltas: 100% (339/339), done.
+
+C:\projects>
+
+
+
+
+C:\projects\Chat-WebSocket-WorkerMan
+
+
+C:\projects\Chat-WebSocket-WorkerMan>composer install
+Loading composer repositories with package information
+Installing dependencies (including require-dev) from lock file
+Package operations: 1 install, 0 updates, 0 removals
+  - Installing workerman/workerman (v3.5.20): Downloading (100%)
+workerman/workerman suggests installing ext-event (For better performance. )
+Generating autoload files
+
+
+-------
+
+
+создаю базу chat
+
+
+php server/server.php start
+
+
+http://Chat-WebSocket-WorkerMan
+
+
+развернул...
+

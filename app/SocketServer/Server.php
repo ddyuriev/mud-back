@@ -1,13 +1,14 @@
 <?php
 
-//namespace SocketServer;
+namespace App\SocketServer;
 
 //require_once __DIR__ . '../../vendor/autoload.php';
 //require_once __DIR__ . '/config.php';
 
 //require_once __DIR__ . '/config.php';
 //require_once __DIR__ . '/../vendor/autoload.php';
-//use Workerman\Worker;
+
+use Workerman\Worker;
 
 //use Logger;
 
@@ -20,7 +21,11 @@
 
 //use SocketServer\Logger;
 
-class Server2
+
+use Server\DataInterface;
+use Server\LoggerInterface;
+
+class Server
 {
 //    private $users;
 //    private $db;
@@ -34,7 +39,7 @@ class Server2
 //        $this->config           = $config;
 //    }
 
-    public function __construct($config, /*DataInterface $db,*/ LoggerInterface $logger)
+    public function __construct($config/*, DataInterface $db*/, LoggerInterface $logger)
     {
 //        $this->ws_worker        = new Worker("websocket://$config[host]:$config[port]");
         /**/
@@ -42,8 +47,8 @@ class Server2
         /**/
 //        $this->db               = $db;
         $this->logger           = $logger;
-        $this->ws_worker->count = $config['countWorkers'];
-        $this->config           = $config;
+//        $this->ws_worker->count = $config['countWorkers'];
+//        $this->config           = $config;
 
 //        \Server\Logger::class;
     }
@@ -155,8 +160,14 @@ class Server2
 
 
 //$log    = new Logger($config['log']);
-$log    = new Logger();
+//$log    = new Logger();
 
 
+//$server = new Server2($config['webSocket'], /*$db,*/ $log);
+//$server->serverStart();
+
+
+//$db     = new Mysql($config['db']);
+//$log    = new Logger($config['log']);
 //$server = new Server2($config['webSocket'], /*$db,*/ $log);
 //$server->serverStart();

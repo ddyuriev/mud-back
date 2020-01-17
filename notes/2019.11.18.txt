@@ -1,0 +1,45 @@
+
+
+C:\Users\yuriev>cd C:\projects\mud-back
+
+composer require workerman/workerman
+
+
+
+C:\Users\yuriev>cd C:\projects\mud-back
+
+C:\projects\mud-back>composer require workerman/workerman
+Using version ^3.5 for workerman/workerman
+./composer.json has been created
+Loading composer repositories with package information
+Updating dependencies (including require-dev)
+Package operations: 1 install, 0 updates, 0 removals
+  - Installing workerman/workerman (v3.5.22): Downloading (100%)
+workerman/workerman suggests installing ext-event (For better performance. )
+Writing lock file
+Generating autoload files
+
+C:\projects\mud-back>
+
+
+
+--------------------------------------
+
+
+типа установился.
+
+
+php test.php start
+
+php server.php start
+
+
+
+php send.php
+
+
+
+такс... ну пример из
+https://habr.com/ru/post/331462/
+
+работает..

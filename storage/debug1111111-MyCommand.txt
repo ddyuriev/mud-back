@@ -3,13 +3,11 @@ Array
 (
     [0] => Array
         (
-            [command] => mycommand:hello-world
-            [myArgument] => myArgument
+            [command] => mudserver:start
         )
 
     [1] => Array
         (
-            [myOption] => bla-bla-bla
             [help] => 
             [quiet] => 
             [verbose] => 

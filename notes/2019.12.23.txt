@@ -1,0 +1,302 @@
+хочу реализовать бой персонажа и моба.
+
+Тут соответственно нужно будет все статы, систему боя продумать
+
+----------
+
+
+начать мб с самого интересного..
+
+Персонаж
+
+как тут js и php совместить...
+
+
+бля... даже пример тяжело как то развернуть...
+
+Ладно. Персонаж должен храниться на сервере в бд
+
+
+
+---------------------------------------
+
+
+cd C:\projects\mud-back
+
+php server.php start
+
+
+---------
+
+
+cd C:\projects\mud-client
+
+
+php send.php
+
+
+---------------------------------------
+
+
+походу надо тащить люмен
+
+
+
+mud-back
+
+=>
+
+mud-back-01
+
+
+
+---------
+cd C:\projects\mud-back-01
+php server.php start
+
+cd C:\projects\mud-client
+php send.php
+---------
+
+
+
+ставлю люмен в
+mud-back-02
+
+
+
+
+
+
+
+
+composer global require "laravel/lumen-installer"
+
+
+
+
+C:\projects>
+C:\projects>composer global require "laravel/lumen-installer"
+Changed current directory to C:/Users/yuriev/AppData/Roaming/Composer
+Using version ^1.1 for laravel/lumen-installer
+./composer.json has been created
+Loading composer repositories with package information
+Updating dependencies (including require-dev)
+Package operations: 12 installs, 0 updates, 0 removals
+  - Installing symfony/process (v4.4.2): Downloading (100%)
+  - Installing psr/container (1.0.0): Downloading (100%)
+  - Installing symfony/service-contracts (v1.1.8): Downloading (100%)
+  - Installing symfony/polyfill-php73 (v1.13.1): Downloading (100%)
+  - Installing symfony/polyfill-mbstring (v1.13.1): Downloading (100%)
+  - Installing symfony/console (v4.4.2): Downloading (100%)
+  - Installing ralouphie/getallheaders (3.0.3): Loading from cache
+  - Installing psr/http-message (1.0.1): Downloading (100%)
+  - Installing guzzlehttp/psr7 (1.6.1): Loading from cache
+  - Installing guzzlehttp/promises (v1.3.1): Downloading (100%)
+  - Installing guzzlehttp/guzzle (6.5.2): Downloading (100%)
+  - Installing laravel/lumen-installer (v1.1.1): Downloading (100%)
+symfony/service-contracts suggests installing symfony/service-implementation
+symfony/console suggests installing symfony/event-dispatcher
+symfony/console suggests installing symfony/lock
+symfony/console suggests installing psr/log (For using the console logger)
+guzzlehttp/psr7 suggests installing zendframework/zend-httphandlerrunner (Emit PSR-7 responses)
+guzzlehttp/guzzle suggests installing psr/log (Required for using the Log middleware)
+guzzlehttp/guzzle suggests installing ext-intl (Required for Internationalized Domain Name (IDN) support)
+Writing lock file
+Generating autoload files
+
+C:\projects>
+
+
+
+lumen new mud-back-02
+
+
+
+
+  Problem 1
+    - This package requires php ^7.2 but your HHVM version does not satisfy that requirement.
+  Problem 2
+    - Installation request for doctrine/lexer 1.2.0 -> satisfiable by doctrine/lexer[1.2.0].
+    - doctrine/lexer 1.2.0 requires php ^7.2 -> your PHP version (7.1.22) does not satisfy that requirement.
+  Problem 3
+    - Installation request for illuminate/auth v6.8.0 -> satisfiable by illuminate/auth[v6.8.0].
+    - illuminate/auth v6.8.0 requires php ^7.2 -> your PHP version (7.1.22) does not satisfy that requirement.
+  Problem 4
+    - Installation request for illuminate/broadcasting v6.8.0 -> satisfiable by illuminate/broadcasting[v6.8.0].
+    - illuminate/broadcasting v6.8.0 requires php ^7.2 -> your PHP version (7.1.22) does not satisfy that requirement.
+  Problem 5
+    - Installation request for illuminate/bus v6.8.0 -> satisfiable by illuminate/bus[v6.8.0].
+    - illuminate/bus v6.8.0 requires php ^7.2 -> your PHP version (7.1.22) does not satisfy that requirement.
+  Problem 6
+    - Installation request for illuminate/cache v6.8.0 -> satisfiable by illuminate/cache[v6.8.0].
+    - illuminate/cache v6.8.0 requires php ^7.2 -> your PHP version (7.1.22) does not satisfy that requirement.
+  Problem 7
+    - Installation request for illuminate/config v6.8.0 -> satisfiable by illuminate/config[v6.8.0].
+    - illuminate/config v6.8.0 requires php ^7.2 -> your PHP version (7.1.22) does not satisfy that requirement.
+
+
+
+
+
+composer change php version
+
+
+открыл новое окно cmd
+
+cd C:\projects
+
+
+lumen new mud-back-02
+
+
+
+C:\projects>lumen new mud-back-02
+Crafting application...
+Loading composer repositories with package information
+Installing dependencies (including require-dev) from lock file
+Package operations: 87 installs, 0 updates, 0 removals
+  - Installing doctrine/inflector (1.3.1): Downloading (100%)
+  - Installing doctrine/lexer (1.2.0): Downloading (100%)
+  - Installing egulias/email-validator (2.1.12): Downloading (100%)
+  - Installing symfony/process (v4.4.2): Loading from cache
+  - Installing psr/container (1.0.0): Loading from cache
+  - Installing symfony/service-contracts (v2.0.1): Downloading (100%)
+  - Installing symfony/polyfill-php73 (v1.13.1): Loading from cache
+  - Installing symfony/polyfill-mbstring (v1.13.1): Loading from cache
+  - Installing symfony/console (v4.4.2): Loading from cache
+  - Installing symfony/translation-contracts (v2.0.1): Downloading (100%)
+  - Installing symfony/translation (v4.4.2): Downloading (100%)
+  - Installing nesbot/carbon (2.28.0): Downloading (100%)
+  - Installing psr/simple-cache (1.0.1): Downloading (100%)
+  - Installing illuminate/contracts (v6.8.0): Downloading (100%)
+  - Installing illuminate/support (v6.8.0): Downloading (100%)
+  - Installing illuminate/console (v6.8.0): Downloading (100%)
+  - Installing symfony/polyfill-php72 (v1.13.1): Downloading (100%)
+  - Installing symfony/polyfill-intl-idn (v1.13.1): Downloading (100%)
+  - Installing symfony/mime (v5.0.2): Downloading (100%)
+  - Installing symfony/http-foundation (v4.4.2): Downloading (100%)
+  - Installing symfony/finder (v4.4.2): Downloading (100%)
+  - Installing illuminate/filesystem (v6.8.0): Downloading (100%)
+  - Installing illuminate/session (v6.8.0): Downloading (100%)
+  - Installing symfony/polyfill-ctype (v1.13.1): Downloading (100%)
+  - Installing phpoption/phpoption (1.7.2): Downloading (100%)
+  - Installing vlucas/phpdotenv (v3.6.0): Downloading (100%)
+  - Installing symfony/var-dumper (v4.4.2): Downloading (100%)
+  - Installing symfony/event-dispatcher-contracts (v1.1.7): Downloading (100%)
+  - Installing symfony/event-dispatcher (v4.4.2): Downloading (100%)
+  - Installing psr/log (1.1.2): Downloading (100%)
+  - Installing symfony/debug (v4.4.2): Downloading (100%)
+  - Installing symfony/error-handler (v4.4.2): Downloading (100%)
+  - Installing symfony/http-kernel (v4.4.2): Downloading (100%)
+  - Installing nikic/fast-route (v1.3.0): Downloading (100%)
+  - Installing illuminate/container (v6.8.0): Downloading (100%)
+  - Installing illuminate/events (v6.8.0): Downloading (100%)
+  - Installing illuminate/view (v6.8.0): Downloading (100%)
+  - Installing illuminate/translation (v6.8.0): Downloading (100%)
+  - Installing illuminate/validation (v6.8.0): Downloading (100%)
+  - Installing opis/closure (3.5.1): Downloading (100%)
+  - Installing illuminate/pipeline (v6.8.0): Downloading (100%)
+  - Installing illuminate/database (v6.8.0): Downloading (100%)
+  - Installing illuminate/queue (v6.8.0): Downloading (100%)
+  - Installing illuminate/pagination (v6.8.0): Downloading (100%)
+  - Installing monolog/monolog (2.0.2): Downloading (100%)
+  - Installing illuminate/log (v6.8.0): Downloading (100%)
+  - Installing illuminate/http (v6.8.0): Downloading (100%)
+  - Installing illuminate/hashing (v6.8.0): Downloading (100%)
+  - Installing illuminate/encryption (v6.8.0): Downloading (100%)
+  - Installing illuminate/config (v6.8.0): Downloading (100%)
+  - Installing illuminate/cache (v6.8.0): Downloading (100%)
+  - Installing illuminate/bus (v6.8.0): Downloading (100%)
+  - Installing illuminate/broadcasting (v6.8.0): Downloading (100%)
+  - Installing illuminate/auth (v6.8.0): Downloading (100%)
+  - Installing dragonmantank/cron-expression (v2.3.0): Downloading (100%)
+  - Installing laravel/lumen-framework (v6.2.0): Downloading (100%)
+  - Installing fzaninotto/faker (v1.9.1): Downloading (100%)
+  - Installing sebastian/recursion-context (3.0.0): Downloading (100%)
+  - Installing sebastian/exporter (3.1.2): Downloading (100%)
+  - Installing sebastian/diff (3.0.2): Downloading (100%)
+  - Installing sebastian/comparator (3.0.2): Downloading (100%)
+  - Installing hamcrest/hamcrest-php (v2.0.0): Downloading (100%)
+  - Installing mockery/mockery (1.3.0): Downloading (100%)
+  - Installing webmozart/assert (1.6.0): Downloading (100%)
+  - Installing phpdocumentor/reflection-common (2.0.0): Downloading (100%)
+  - Installing phpdocumentor/type-resolver (1.0.1): Downloading (100%)
+  - Installing phpdocumentor/reflection-docblock (4.3.3): Downloading (100%)
+  - Installing phpunit/php-token-stream (3.1.1): Downloading (100%)
+  - Installing sebastian/version (2.0.1): Downloading (100%)
+  - Installing sebastian/type (1.1.3): Downloading (100%)
+  - Installing sebastian/resource-operations (2.0.1): Downloading (100%)
+  - Installing sebastian/object-reflector (1.1.1): Downloading (100%)
+  - Installing sebastian/object-enumerator (3.0.3): Downloading (100%)
+  - Installing sebastian/global-state (3.0.0): Downloading (100%)
+  - Installing sebastian/environment (4.2.3): Downloading (100%)
+  - Installing phpunit/php-timer (2.1.2): Downloading (100%)
+  - Installing phpunit/php-text-template (1.2.1): Downloading (100%)
+  - Installing phpunit/php-file-iterator (2.0.2): Downloading (100%)
+  - Installing theseer/tokenizer (1.1.3): Loading from cache
+  - Installing sebastian/code-unit-reverse-lookup (1.0.1): Downloading (100%)
+  - Installing phpunit/php-code-coverage (7.0.10): Downloading (100%)
+  - Installing doctrine/instantiator (1.3.0): Downloading (100%)
+  - Installing phpspec/prophecy (1.10.1): Downloading (100%)
+  - Installing phar-io/version (2.0.1): Downloading (100%)
+  - Installing phar-io/manifest (1.0.3): Downloading (100%)
+  - Installing myclabs/deep-copy (1.9.4): Downloading (100%)
+  - Installing phpunit/phpunit (8.5.0): Downloading (100%)
+egulias/email-validator suggests installing ext-intl (PHP Internationalization Libraries are required to use the SpoofChecking validation)
+symfony/service-contracts suggests installing symfony/service-implementation
+symfony/console suggests installing symfony/lock
+symfony/translation suggests installing symfony/config
+symfony/translation suggests installing symfony/yaml
+illuminate/support suggests installing moontoast/math (Required to use ordered UUIDs (^1.1).)
+illuminate/support suggests installing ramsey/uuid (Required to use Str::uuid() (^3.7).)
+illuminate/console suggests installing guzzlehttp/guzzle (Required to use the ping methods on schedules (^6.0).)
+symfony/polyfill-intl-idn suggests installing ext-intl (For best performance)
+illuminate/filesystem suggests installing league/flysystem (Required to use the Flysystem local and FTP drivers (^1.0).)
+illuminate/filesystem suggests installing league/flysystem-aws-s3-v3 (Required to use the Flysystem S3 driver (^1.0).)
+illuminate/filesystem suggests installing league/flysystem-cached-adapter (Required to use the Flysystem cache (^1.0).)
+illuminate/filesystem suggests installing league/flysystem-sftp (Required to use the Flysystem SFTP driver (^1.0).)
+illuminate/filesystem suggests installing psr/http-message (Required to allow Storage::put to accept a StreamInterface (^1.0))
+symfony/var-dumper suggests installing ext-intl (To show region name in time zone dump)
+symfony/event-dispatcher-contracts suggests installing psr/event-dispatcher
+symfony/event-dispatcher suggests installing symfony/dependency-injection
+symfony/http-kernel suggests installing symfony/browser-kit
+symfony/http-kernel suggests installing symfony/config
+symfony/http-kernel suggests installing symfony/dependency-injection
+illuminate/database suggests installing doctrine/dbal (Required to rename columns and drop SQLite columns (^2.6).)
+illuminate/queue suggests installing aws/aws-sdk-php (Required to use the SQS queue driver and DynamoDb failed job storage (^3.0).)
+illuminate/queue suggests installing ext-pcntl (Required to use all features of the queue worker.)
+illuminate/queue suggests installing ext-posix (Required to use all features of the queue worker.)
+illuminate/queue suggests installing illuminate/redis (Required to use the Redis queue driver (^6.0).)
+illuminate/queue suggests installing pda/pheanstalk (Required to use the Beanstalk queue driver (^4.0).)
+monolog/monolog suggests installing aws/aws-sdk-php (Allow sending log messages to AWS services like DynamoDB)
+monolog/monolog suggests installing doctrine/couchdb (Allow sending log messages to a CouchDB server)
+monolog/monolog suggests installing elasticsearch/elasticsearch (Allow sending log messages to an Elasticsearch server via official client)
+monolog/monolog suggests installing ext-amqp (Allow sending log messages to an AMQP server (1.0+ required))
+monolog/monolog suggests installing graylog2/gelf-php (Allow sending log messages to a GrayLog2 server)
+monolog/monolog suggests installing mongodb/mongodb (Allow sending log messages to a MongoDB server (via library))
+monolog/monolog suggests installing php-amqplib/php-amqplib (Allow sending log messages to an AMQP server using php-amqplib)
+monolog/monolog suggests installing php-console/php-console (Allow sending log messages to Google Chrome)
+monolog/monolog suggests installing rollbar/rollbar (Allow sending log messages to Rollbar)
+monolog/monolog suggests installing ruflin/elastica (Allow sending log messages to an Elastic Search server)
+illuminate/cache suggests installing ext-memcached (Required to use the memcache cache driver.)
+illuminate/cache suggests installing illuminate/redis (Required to use the redis cache driver (^6.0).)
+illuminate/cache suggests installing symfony/cache (Required to PSR-6 cache bridge (^4.3.4).)
+illuminate/broadcasting suggests installing pusher/pusher-php-server (Required to use the Pusher broadcast driver (^4.0).)
+laravel/lumen-framework suggests installing laravel/tinker (Required to use the tinker console command (^1.0).)
+sebastian/global-state suggests installing ext-uopz (*)
+sebastian/environment suggests installing ext-posix (*)
+phpunit/php-code-coverage suggests installing ext-xdebug (^2.7.2)
+phpunit/phpunit suggests installing ext-xdebug (*)
+phpunit/phpunit suggests installing phpunit/php-invoker (^2.0.0)
+Generating optimized autoload files
+Application ready! Build something amazing.
+
+C:\projects>
+
+
+
+вроде ок
+
+
+

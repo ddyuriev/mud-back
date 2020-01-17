@@ -1,0 +1,166 @@
+«акрытые вкладки:
+
+-----
+
+https://www.php.net/manual/ru/function.fwrite.php
+
+fwrite
+(PHP 4, PHP 5, PHP 7)
+
+fwrite Ч Ѕинарно-безопасна€ запись в файл
+
+
+-----
+
+https://www.php.net/manual/ru/function.stream-socket-client.php
+
+stream_socket_client
+(PHP 5, PHP 7)
+
+stream_socket_client Ч ќткрыть соединение с интернет-сокетом или с доменным сокетом Unix
+
+-----
+
+google:
+php worker
+
+-----
+
+https://habr.com/ru/post/300952/
+
+ћногопоточные вычислени€ в PHP: pthreads
+
+-----
+
+https://www.php.net/manual/ru/class.worker.php
+
+ ласс Worker
+
+-----
+
+https://lumen.laravel.com/docs/5.4/middleware
+
+-----
+
+https://www.php.net/manual/ru/function.microtime.php
+
+-----
+
+google:
+php timer
+
+-----
+
+https://github.com/Ayesh/php-timer
+
+-----
+
+https://stackoverflow.com/questions/8310487/start-and-stop-a-timer-php
+
+-----
+
+google:
+php socket vs stream
+
+-----
+
+https://stackoverflow.com/questions/9760548/php-sockets-vs-streams/30940074
+
+-----
+
+======================================================================
+
+
+google:
+сокеты
+
+-----
+
+https://learn.javascript.ru/server-sent-events
+
+-----
+
+======================================================================
+
+
+
+
+https://bootstrap-4.ru/docs/4.3.1/components/input-group/
+-----
+
+https://getbootstrap.com/docs/4.0/components/card/
+-----
+
+google:
+js new line
+-----
+
+google:
+bootstrap 4 card height fullscreen
+-----
+
+https://stackoverflow.com/questions/47840534/bootstrap-cards-with-100-height-and-margin-bottom
+-----
+
+https://stackoverflow.com/questions/44451246/bootstrap-4-cards-of-same-height-in-columns
+-----
+
+google:
+bootstrap 4 full height container
+-----
+
+
+https://stackoverflow.com/questions/47183803/bootstrap-4-fluid-height-layout
+-----
+
+https://stackoverflow.com/questions/41830769/bootstrap-4-container-with-100-height-of-section
+-----
+
+https://stackoverflow.com/questions/51765635/bootstrap-4-full-height
+-----
+
+https://getbootstrap.com/docs/4.0/utilities/sizing/
+-----
+
+https://stackoverflow.com/questions/52247794/make-row-occupy-full-height-in-bootstrap-4
+-----
+
+https://www.codeply.com/go/tpecZ31njp
+-----
+
+https://ru.stackoverflow.com/questions/843199/bootstrap-4-%D0%B2%D0%B5%D1%80%D1%81%D1%82%D0%BA%D0%B0-row-%D0%B2%D0%BD%D1%83%D1%82%D1%80%D0%B8-container-100-height
+-----
+
+google:
+html text bottom of div
+-----
+
+https://stackoverflow.com/questions/5288336/put-text-at-bottom-of-div
+-----
+
+google:
+html scroll div
+-----
+
+https://stackoverflow.com/questions/838545/div-vertical-scrollbar-show
+-----
+
+http://jsfiddle.net/xEy9E/273/
+-----
+
+google:
+jquery div set height
+-----
+
+https://api.jquery.com/height/
+-----
+
+google:
+css scroll to bottom
+-----
+
+https://codepen.io/jimbol/pen/YVJzBg
+-----
+
+
+

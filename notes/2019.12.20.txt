@@ -1,0 +1,141 @@
+Подумал, что неплохо бы вникнуть в основы
+
+
+https://habr.com/ru/post/209864/
+
+"
+До этого момента я имел смутные представления о серверных сокетах. Почитав исходники нескольких библиотек для работы с вебсокетами я столкнулся с двумя схемами их реализаций:
+
+используя расширение php «socket»:
+$socket = socket_create(AF_INET, SOCK_STREAM, SOL_TCP);//создаём сокет
+socket_bind($socket, '127.0.0.1', 8000);//привязываем его к указанным ip и порту
+socket_set_option($socket, SOL_SOCKET, SO_REUSEADDR, 1);//разрешаем использовать один порт для нескольких соединений
+socket_listen($socket);//слушаем сокет
+
+или используя расширение php «stream»:
+$socket = stream_socket_server("tcp://127.0.0.1:8000", $errno, $errstr);
+"
+
+https://stackoverflow.com/questions/9760548/php-sockets-vs-streams/30940074
+
+
+------------------------
+
+
+
+https://habr.com/ru/post/179585/
+
+
+
+
+пробую запустить пример чата:
+
+cd C:\projects\simple_socket
+
+
+php index_01.php
+
+
+
+C:\projects\simple_socket>php index_01.php
+
+Warning: stream_socket_pair(): failed to create sockets: [10042]: Aey auciaa getsockopt eee setsockopt aue oeacai iaecaanoiue, iaaiionoeiue eee iaiiaaa??eaaaiue ia?aiao? eee o?iaaiu.
+ in C:\projects\simple_socket\index_01.php on line 36
+
+Fatal error: Uncaught Error: Call to undefined function pcntl_fork() in C:\projects\simple_socket\index_01.php:38
+Stack trace:
+#0 C:\projects\simple_socket\index_01.php(17): WebsocketServer->spawnWorkers()
+#1 C:\projects\simple_socket\index_01.php(456): WebsocketServer->start()
+#2 {main}
+  thrown in C:\projects\simple_socket\index_01.php on line 38
+
+
+
+
+
+https://stackoverflow.com/questions/16826530/pcntl-fork-returning-fatal-error-call-to-undefined-function-pcntl-fork
+
+
+pcntl_* functions, Process Control support in PHP is not enabled by default. You have to compile the CGI or CLI version (don't used as Apache module) of PHP with --enable-pcntl configuration option when compiling PHP to enable Process Control support.
+
+Currently, this module will not function on non-Unix platforms (Windows).
+
+ref
+
+
+
+
+php -i | grep pcntl
+
+
+
+
+
+root@ubu0115:/home/dmitri# docker exec -it csc bash
+root@21c9f3a3715f:/var/www/app# php -i | grep pcntl
+/usr/local/etc/php/conf.d/docker-php-ext-pcntl.ini,
+pcntl
+pcntl support => enabled
+
+
+
+вообщем да... на винде болт. на линухе надо пробовать
+
+
+
+
+
+
+
+--------------
+
+
+which php
+
+
+
+root@21c9f3a3715f:/var/www/app/public/storage# which php
+/usr/local/bin/php
+
+
+cd /usr/local/bin
+
+oot@21c9f3a3715f:/usr/local/bin# ls
+docker-php-entrypoint  docker-php-ext-configure  docker-php-ext-enable	docker-php-ext-install	docker-php-source  pear  peardev  pecl	phar  phar.phar  php  php-config  phpdbg  phpize  wkhtmltopdf
+
+типа есть.
+
+cd /var/www/app/public/storage/
+
+
+chmod +x index_01.php
+
+./index_01.php -h -- foo
+
+
+ура. тест получился
+
+
+
+
+--------------------------------
+
+
+
+так... Вроде запустилось но что дальше.
+Как проверить работоспособность?
+
+
+
+docker run -it -p 80:80 -p 8000:8000 --network app-local --name=csc --volume /var/www/customer-service:/var/www/app customer-service
+
+
+cd /var/www/app/public/storage/
+./index_01.php
+
+
+ура!
+file:///C:/ddyuriev/mud-client/client.html
+
+в браузере не ругается
+
