@@ -36,3 +36,7 @@ git push -u origin master
 git add .
 git commit -m "2020.01.20 переписал \App\SocketServer\MySql"
 git push -u origin master
+
+git add .
+git commit -m "2020.01.20 переписал \App\SocketServer\MySql 1.1"
+git push -u origin master
