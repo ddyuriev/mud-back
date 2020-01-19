@@ -1,21 +1,30 @@
 <?php
 
-namespace SocketServer;
+namespace App\SocketServer;
 
-use Server\LoggerInterface;
+
+use App\SocketServer\Contracts\LoggerInterface;
 
 /*
 * Логирование в файл.
 *
 */
 
-class Logger/* implements LoggerInterface*/
+class Logger implements LoggerInterface
 {
     private $config;
 
     public function __construct($config)
     {
-        $path = __DIR__ . '../../' . $config['folder'];
+//        $path = __DIR__ . '../../' . $config['folder'];
+        /**/
+//        $path = __DIR__ . '../../../' . $config['folder'];
+//        $path = __DIR__ . '../' . $config['folder'];
+//        $path = __DIR__ . '/' . $config['folder'];
+
+        //storage\logs\SocketServerLog
+        $path = storage_path() . '/logs/' . $config['folder'];
+        /**/
 
         if (!file_exists($path)) {
             mkdir($path, 0777);  // создаем папку, если еще не создана

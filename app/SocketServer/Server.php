@@ -8,50 +8,35 @@ namespace App\SocketServer;
 //require_once __DIR__ . '/config.php';
 //require_once __DIR__ . '/../vendor/autoload.php';
 
-use Workerman\Worker;
-
 //use Logger;
 
-//use Workerman\Worker;
+use App\SocketServer\Contracts\DataInterface;
+use App\SocketServer\Contracts\LoggerInterface;
+use Workerman\Worker;
 //use Server\Mysql;
 //use Server\Logger;
 //use Server\DataInterface;
 //use Server\LoggerInterface;
-//use Workerman\Lib\Timer;
+use Workerman\Lib\Timer;
 
 //use SocketServer\Logger;
 
 
-use Server\DataInterface;
-use Server\LoggerInterface;
 
 class Server
 {
-//    private $users;
-//    private $db;
+    private $users;
+    private $db;
 
-//    public function __construct($config, DataInterface $db, LoggerInterface $logger)
-//    {
-//        $this->ws_worker        = new Worker("websocket://$config[host]:$config[port]");
-//        $this->db               = $db;
-//        $this->logger           = $logger;
-//        $this->ws_worker->count = $config['countWorkers'];
-//        $this->config           = $config;
-//    }
-
-    public function __construct($config/*, DataInterface $db*/, LoggerInterface $logger)
+    public function __construct($config, DataInterface $db, LoggerInterface $logger)
     {
-//        $this->ws_worker        = new Worker("websocket://$config[host]:$config[port]");
-        /**/
-        $this->ws_worker        = new Worker("websocket://$config[host]:$config[port]");
-        /**/
-//        $this->db               = $db;
-        $this->logger           = $logger;
-//        $this->ws_worker->count = $config['countWorkers'];
-//        $this->config           = $config;
-
-//        \Server\Logger::class;
+        $this->ws_worker = new Worker("websocket://$config[host]:$config[port]");
+        $this->db = $db;
+        $this->logger = $logger;
+        $this->ws_worker->count = $config['countWorkers'];
+        $this->config = $config;
     }
+
 
     public function serverStart()
     {
@@ -76,9 +61,28 @@ class Server
         *
         */
         $this->ws_worker->onMessage = function ($connection, $data) use (&$users) {
-            $data       = json_decode($data);
-            $time       = date("H:i:s");
+            $data = json_decode($data);
+            $time = date("H:i:s");
             $data->time = $time;
+
+
+            /**/
+            $debugFile = 'storage\debug1111111-onMessage.txt';
+            file_exists($debugFile) ? $current = file_get_contents($debugFile) : $current = null;
+            $results = print_r($data, true);
+            !empty($current) ? $current .= "\r\n" . $results : $current .= "\n" . $results;
+            file_put_contents($debugFile, $current);
+            /**/
+
+
+            /**/
+            $debugFile = 'storage\debug1111111-onMessage-$this-users.txt';
+            file_exists($debugFile) ? $current = file_get_contents($debugFile) : $current = null;
+            $results = print_r($this->users, true);
+            !empty($current) ? $current .= "\r\n" . $results : $current .= "\n" . $results;
+            file_put_contents($debugFile, $current);
+            /**/
+
 
 //            $findUser = $this->db->select('users', 'uniqueId', null, 'uniqueId', $data->uniqueId);  // ищем пользователя по уникальному ИД в базе
 //
@@ -105,6 +109,16 @@ class Server
 //            }
 
             foreach ($this->users as $value) {
+
+                /**/
+                $debugFile = 'storage\debug1111111-$data.txt';
+                file_exists($debugFile) ? $current = file_get_contents($debugFile) : $current = null;
+                $results = print_r($data, true);
+                !empty($current) ? $current .= "\r\n" . $results : $current .= "\n" . $results;
+                file_put_contents($debugFile, $current);
+                /**/
+
+
                 $value->send(json_encode($data));
             }
         };
@@ -114,12 +128,22 @@ class Server
         *
         */
         $this->ws_worker->onConnect = function ($connection) use (&$users) {
+
+            /**/
+            $debugFile = 'storage\debug1111111-onConnect.txt';
+            file_exists($debugFile) ? $current = file_get_contents($debugFile) : $current = null;
+            $results = print_r($users, true);
+            !empty($current) ? $current .= "\r\n" . $results : $current .= "\n" . $results;
+            file_put_contents($debugFile, $current);
+            /**/
+
+
             $connection->onWebSocketConnect = function ($connection) use (&$users) {
 
 //                $this->logger->save(date("H:i:s"), 'Service', 'Пользователь присоединился');
 //                $result = $this->db->select('users us', 'name, color, time, message', 'message me on us.uniqueId = me.uniqueId'); // достаем из БД все сообщения пользователей
 //
-//                $this->users[$connection->id] = $connection;
+                $this->users[$connection->id] = $connection;
 //
 //                if (!is_array($result)) {
 //                    $this->logger->save(date("H:i:s"), 'Service', $result); // если пришел не массив - ошибка при запросе

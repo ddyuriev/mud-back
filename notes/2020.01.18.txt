@@ -1,0 +1,53 @@
+Задача:
+причесать Chat-WebSocket-WorkerMan
+------------------------------------------
+
+Такс.. по коду тут вопрос...
+
+
+Стартуем сервер и пингуем БД каждую минуту, что бы сохранить подключение
+
+https://ru.stackoverflow.com/questions/751969/%D0%9F%D0%BE%D1%81%D1%82%D0%BE%D1%8F%D0%BD%D0%BD%D0%BE%D0%B5-%D1%81%D0%BE%D0%B5%D0%B4%D0%B8%D0%BD%D0%B5%D0%BD%D0%B8%D0%B5-%D1%81-%D0%B1%D0%B0%D0%B7%D0%BE%D0%B9-mysql
+
+https://ru.stackoverflow.com/questions/751969/Постоянное-соединение-с-базой-mysql
+
+https://www.php.net/manual/ru/pdo.connections.php
+
+хм... вариант смотреть кол-во активных соединений в mysql
+
+**
+При успешном подключении к базе данных в скрипт будет возвращен созданный объект PDO.
+Соединение остается активным на протяжении всего времени жизни объекта. Чтобы закрыть соединение,
+необходимо уничтожить объект путем удаления всех ссылок на него (этого можно добиться, присваивая NULL всем переменным,
+указывающим на объект). Если не сделать этого явно, PHP автоматически закроет соединение по окончании работы скрипта.
+**
+Походу не нужен пинг базы
+
+!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+https://stackoverflow.com/questions/7432241/mysql-show-status-active-or-total-connections
+
+Connections
+
+The number of connection attempts (successful or not) to the MySQL server.
+
+You can see the number of active connections either through the Threads_connected status variable:
+
+Threads_connected
+
+The number of currently open connections.
+
+
+!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+
+Разношу интерфейсы
+ок
+
+переношу папку log
+
+__DIR__
+C:\projects\mud-back-02\app\SocketServer
+
+OK.
+
+Завтра причесать работу с бд
+

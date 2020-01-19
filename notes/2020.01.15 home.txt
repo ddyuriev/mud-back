@@ -1,0 +1,48 @@
+Если вы хотите использовать привычный адрес localhost для подключения к MySQL, PostgreSQL,
+ FTP или Memcache серверу, то достаточно создать стандартный домен или алиас с именем localhost.
+
+Это меня наколяет, что с dbforge соединяюсь по ip
+
+
+бля. походу без разницы
+
+------------------------
+
+cmder change startup directory
+
+
+https://superuser.com/questions/1135129/how-to-change-default-path-in-cmder
+
+Go to 'settings'
+
+In the settings group 'Startup', click on 'Tasks'
+
+Click the console you want to modify (e.g. cmd::Cmder, cmd::Cmder as Admin, bash::bash etc.)
+
+Click the button that says 'Startup dir...'
+
+Select the directory you want the console to start up in by default
+
+Enjoy
+
+OK!!!
+
+
+------------------------
+
+
+
+php artisan mycommand:hello-world myArgument --myOption="bla-bla-bla"
+
+
+Настраиваю локальный коннект
+SQLSTATE[HY000] [2002] No connection could be made because the target machine actively refused it.
+(SQL: select * from `users`)
+
+
+ога... получилось
+
+следующая задача на гитхаб проект засунуть
+
+
+

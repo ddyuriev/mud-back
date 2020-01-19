@@ -13,18 +13,18 @@ mud-back-02=>mud-back
 
 
 ----------------------------------------------
-A personal access token (git: https://github.com/ on YURIEV at 17-янв-2020 15:21) with gist and repo scopes was recently added to your account.
+A personal access token (git: https://github.com/ on YURIEV at 17-СЏРЅРІ-2020 15:21) with gist and repo scopes was recently added to your account.
 Visit https://github.com/settings/tokens for more information.
 ----------------------------------------------
 
 
 
 
-так...
+С‚Р°Рє...
 
 http://chat-websocket-workerman/
 
-работает.
+СЂР°Р±РѕС‚Р°РµС‚.
 
 
 C:\projects\mud_back>
@@ -38,7 +38,7 @@ php artisan command2:hello-world myArgument --myOption="bla-bla-bla"
 
 php artisan cache:clear
 
-бля
+Р±Р»СЏ
 
 
 C:\projects\mud_back>php artisan mycommand:hello-world
@@ -53,17 +53,17 @@ In Connection.php line 331:
   SQLSTATE[42S02]: Base table or view not found: 1146 Table 'mud-back.users' doesn't exist
 
 
-и ппц
+Рё РїРїС†
 
 ----------------------------------------------------
 
-мб нужна таблица users.. бля хз
+РјР± РЅСѓР¶РЅР° С‚Р°Р±Р»РёС†Р° users.. Р±Р»СЏ С…Р·
 
-php artisan make:migration create_users_table –create=users
+php artisan make:migration create_users_table вЂ“create=users
 
 
 
-C:\projects\mud_back>php artisan make:migration create_users_table –create=users
+C:\projects\mud_back>php artisan make:migration create_users_table вЂ“create=users
 
 
   Too many arguments, expected arguments "command" "name".
@@ -78,7 +78,7 @@ ok
 php artisan migrate
 
 
-Ясно... это отсюда
+РЇСЃРЅРѕ... СЌС‚Рѕ РѕС‚СЃСЋРґР°
 
     protected $name = 'command2:hello-world';
 
@@ -94,7 +94,7 @@ OK!
 
 --------------------
 
-Надо разбираться как он работает
+РќР°РґРѕ СЂР°Р·Р±РёСЂР°С‚СЊСЃСЏ РєР°Рє РѕРЅ СЂР°Р±РѕС‚Р°РµС‚
 
 php artisan make:command Command3
 
@@ -112,7 +112,7 @@ php artisan make:command Command3
 php artisan mudserver:start 1
 OK
 
-так....
+С‚Р°Рє....
 
 
 In Command2.php line 75:
@@ -120,9 +120,41 @@ In Command2.php line 75:
   Class 'SocketServer\Server' not found
 
 
-Заебался с этим.
-Перенес в app - OK!
+Р—Р°РµР±Р°Р»СЃСЏ СЃ СЌС‚РёРј.
+РџРµСЂРµРЅРµСЃ РІ app - OK!
 
-отправлю заметки в гит
+РѕС‚РїСЂР°РІР»СЋ Р·Р°РјРµС‚РєРё РІ РіРёС‚
+
+
+--------------------------------
+
+РґР°Р»СЊС€Рµ РёР· РґРѕРјР°;
+
+
+local lambda = "#"
+
+РЅРёС…СѓСЏ...
+
+---
+
+О» php artisan mudserver:start
+
+In Server.php line 42:
+
+  Argument 2 passed to App\SocketServer\Server::__construct() must be an instance of Server\LoggerInterface,
+   int given, called in C:\projects\mud-back-02\app\Console\Commands\Command2.php on line 76
+
+---
+
+
+!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+РІРѕРѕР±С‰РµРј Р·Р°РґР°С‡Р° РёРЅС‚РµРіСЂРёСЂРѕРІР°С‚СЊ С‡Р°С‚ С†РµР»РёРєРѕРј.
+
+РєРѕРЅС„РёРі РІ .env
+Р±Р°Р·Сѓ С‡РµСЂРµР· eloquent
+!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+
+
+РЈР Рђ!!!! СЃРґРµР»Р°РЅРѕ. СЃРѕРѕР±С‰РµРЅРёСЏ С…РѕРґСЏС‚.
 
 
