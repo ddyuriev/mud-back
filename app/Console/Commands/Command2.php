@@ -3,6 +3,8 @@
 namespace App\Console\Commands;
 
 use App\Http\Controllers\CharacterController;
+use App\Services\MessageService;
+use App\Services\UserService;
 use App\SocketServer\Logger;
 use App\SocketServer\MySql;
 use Illuminate\Console\Command;
@@ -25,37 +27,6 @@ class Command2 extends Command
 
     public function handle()
     {
-
-
-        /**/
-//        $debugFile = 'storage\debug1111111-MyCommand.txt';
-//        file_exists($debugFile) ? $current = file_get_contents($debugFile) : $current = null;
-//        $results = print_r([$this->argument(), $this->option()], true);
-//        !empty($current) ? $current .= "\r\n" . $results : $current .= "\n" . $results;
-//        file_put_contents($debugFile, $current);
-        /**/
-
-
-//        $config = [
-//            'db' => [
-//                'host' => 'localhost',
-//                'user' => 'root',
-//                'password' => '',
-//                'dbname' => 'chat',
-//                'charset' => 'utf8'
-//            ],
-//            'log' => [
-//                'folder' => 'log',
-//                'fileName' => 'LogFile.txt'
-//            ],
-//            'webSocket' => [
-//                'host' => '127.0.0.1',
-//                'port' => '8000',
-//                'countWorkers' => '4',
-//                'intervalPing' => 60
-//            ]
-//        ];
-
         $webSocketConfig = [
             'host' => env("WEBSOCKET_HOST"),
             'port' => env("WEBSOCKET_PORT"),
@@ -63,14 +34,14 @@ class Command2 extends Command
             'intervalPing' => env("WEBSOCKET_INTERVALPING")
         ];
 
-        $dbConfig = [
-            'host' => env("DB_HOST"),
-            'user' => env("DB_USERNAME"),
-            'password' => env("DB_PASSWORD"),
-            'dbname' => env("DB_DATABASE"),
-//            'charset' => env("WEBSOCKET_HOST"),
-        ];
-        $db     = new MySql($dbConfig);
+//        $dbConfig = [
+//            'host' => env("DB_HOST"),
+//            'user' => env("DB_USERNAME"),
+//            'password' => env("DB_PASSWORD"),
+//            'dbname' => env("DB_DATABASE"),
+////            'charset' => env("WEBSOCKET_HOST"),
+//        ];
+//        $db = new MySql($dbConfig);
 
         $logConfig = [
             'folder' => env("LOG_FOLDER"),
@@ -78,7 +49,10 @@ class Command2 extends Command
         ];
         $log = new Logger($logConfig);
 
-        $server = new Server($webSocketConfig, $db, $log);
+//        $server = app(Server::class);
+//        $server = new Server(new UserService(), $webSocketConfig, $db, $log);
+        $server = new Server(new UserService(), new MessageService(), $webSocketConfig, /*$db,*/ $log);
+
         $server->serverStart();
 
     }

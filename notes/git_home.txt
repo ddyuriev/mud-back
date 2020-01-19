@@ -1,0 +1,38 @@
+
+2020.01.16
+
+##
+
+git config --global user.email "therion@mail.ru"
+git config --global user.name "Dmitriy Yuriev"
+
+git commit -m "first commit"
+
+git remote add origin https://github.com/ddyuriev/mud_back.git
+
+git push -u origin master
+
+##
+
+---------------------------------------------------
+
+2020.01.17
+
+C:\projects\mud-back-02 (master -> origin)
+? git pull
+
+
+---------------------------------------------------
+
+2020.01.19
+
+cd C:\projects\mud-back-02 
+
+git add .
+git commit -m "2020.01.19 logger ok"
+git push -u origin master
+
+--
+git add .
+git commit -m "2020.01.20 переписал \App\SocketServer\MySql"
+git push -u origin master

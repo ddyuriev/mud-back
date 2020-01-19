@@ -10,9 +10,12 @@ namespace App\SocketServer;
 
 //use Logger;
 
+use App\Services\MessageService;
+use App\Services\UserService;
 use App\SocketServer\Contracts\DataInterface;
 use App\SocketServer\Contracts\LoggerInterface;
 use Workerman\Worker;
+
 //use Server\Mysql;
 //use Server\Logger;
 //use Server\DataInterface;
@@ -22,24 +25,50 @@ use Workerman\Lib\Timer;
 //use SocketServer\Logger;
 
 
-
 class Server
 {
     private $users;
     private $db;
 
-    public function __construct($config, DataInterface $db, LoggerInterface $logger)
+    /**/
+    private $userService;
+    private $messageService;
+
+    /**/
+
+    public function __construct(
+        UserService $userService,
+        MessageService $messageService,
+        $config,
+//        DataInterface $db,
+        LoggerInterface $logger
+    )
     {
         $this->ws_worker = new Worker("websocket://$config[host]:$config[port]");
-        $this->db = $db;
+//        $this->db = $db;
         $this->logger = $logger;
         $this->ws_worker->count = $config['countWorkers'];
         $this->config = $config;
+        /**/
+        $this->userService = $userService;
+        $this->messageService = $messageService;
+        /**/
     }
 
 
     public function serverStart()
     {
+
+        /**/
+//        $debugFile = 'storage\debug1111111-$this-userService.txt';
+//        file_exists($debugFile) ? $current = file_get_contents($debugFile) : $current = null;
+//        $results = print_r($this->userService->findByUniqueId(345), true);
+//        !empty($current) ? $current .= "\r\n" . $results : $current .= "\n" . $results;
+//        file_put_contents($debugFile, $current);
+        /**/
+
+//        exit();
+
         $this->users = [];
         /*
         * Стартуем сервер и пингуем БД каждую минуту, что бы сохранить подключение
@@ -51,7 +80,8 @@ class Server
             $time_interval = $this->config['intervalPing'];
 
             $timer_id = Timer::add($time_interval, function () {
-                $result = $this->db->ping();
+//                $result = $this->db->ping();
+                $result = 'пинг...';
                 $this->logger->save(date("H:i:s"), 'Service', $result);
             });
         };
@@ -84,29 +114,61 @@ class Server
             /**/
 
 
-//            $findUser = $this->db->select('users', 'uniqueId', null, 'uniqueId', $data->uniqueId);  // ищем пользователя по уникальному ИД в базе
-//
-//            if ($findUser) {
-//                $result = $this->db->save('message', ['time', 'message', 'uniqueId'], [
-//                    $time,
-//                    $data->message,
-//                    $data->uniqueId
-//                ]); // если пользователь был найден - сохраняем в связанную таблицу его сообщение
-//                $this->logger->save(date("H:i:s"), 'Service', $result);
-//            } else {
-//                $result = $this->db->save('users', ['uniqueId', 'name', 'color'], [
-//                    $data->uniqueId,
-//                    $data->name,
-//                    $data->userColor
-//                ]); // если такого пользователя нет - записываем его в БД и сохраняем в связанную таблицу его сообщение
-//                $this->logger->save(date("H:i:s"), 'Service', $result);
+            // ищем пользователя по уникальному ИД в базе
+//            $findUser = $this->db->select('users', 'uniqueId', null, 'uniqueId', $data->uniqueId);
+            $findUser = $this->userService->findByUniqueId($data->uniqueId);
+
+            /**/
+//            $debugFile = 'storage\debug1111111-onMessage-$user.txt';
+//            file_exists($debugFile) ? $current = file_get_contents($debugFile) : $current = null;
+//            $results = print_r($user, true);
+//            !empty($current) ? $current .= "\r\n" . $results : $current .= "\n" . $results;
+//            file_put_contents($debugFile, $current);
+            /**/
+
+
+            if ($findUser) {
+                // если пользователь был найден - сохраняем в связанную таблицу его сообщение
 //                $result = $this->db->save('message', ['time', 'message', 'uniqueId'], [
 //                    $time,
 //                    $data->message,
 //                    $data->uniqueId
 //                ]);
-//                $this->logger->save(date("H:i:s"), 'Service', $result);
-//            }
+
+                $result = $this->messageService->create([
+                    'time' => $time,
+                    'message' => $data->message,
+                    'uniqueId' => $data->uniqueId
+                ]);
+
+                $this->logger->save(date("H:i:s"), 'Service', $result);
+            } else {
+                // если такого пользователя нет - записываем его в БД и сохраняем в связанную таблицу его сообщение
+//                $result = $this->db->save('users', ['uniqueId', 'name', 'color'], [
+//                    $data->uniqueId,
+//                    $data->name,
+//                    $data->userColor
+//                ]);
+                $result = $this->userService->create([
+                    'uniqueId' => $data->uniqueId,
+                    'name' => $data->name,
+                    'color' => $data->userColor
+                ]);
+                $this->logger->save(date("H:i:s"), 'Service', $result);
+
+//                $result = $this->db->save('message', ['time', 'message', 'uniqueId'], [
+//                    $time,
+//                    $data->message,
+//                    $data->uniqueId
+//                ]);
+                $result = $this->messageService->create([
+                    'time' => $time,
+                    'message' => $data->message,
+                    'uniqueId' => $data->uniqueId
+                ]);
+
+                $this->logger->save(date("H:i:s"), 'Service', $result);
+            }
 
             foreach ($this->users as $value) {
 
@@ -140,17 +202,37 @@ class Server
 
             $connection->onWebSocketConnect = function ($connection) use (&$users) {
 
-//                $this->logger->save(date("H:i:s"), 'Service', 'Пользователь присоединился');
-//                $result = $this->db->select('users us', 'name, color, time, message', 'message me on us.uniqueId = me.uniqueId'); // достаем из БД все сообщения пользователей
-//
+                $this->logger->save(date("H:i:s"), 'Service', 'Пользователь присоединился');
+                // достаем из БД все сообщения пользователей
+//                $result = $this->db->select('users us', 'name, color, time, message', 'message me on us.uniqueId = me.uniqueId');
+
+                /**/
+//                $debugFile = 'storage\debug1111111--------------++++$result.txt';
+//                file_exists($debugFile) ? $current = file_get_contents($debugFile) : $current = null;
+//                $results = print_r($result, true);
+//                !empty($current) ? $current .= "\r\n" . $results : $current .= "\n" . $results;
+//                file_put_contents($debugFile, $current);
+                /**/
+
+                $result = $this->messageService->selectWithUser()->toArray();
+
+                /**/
+//                $debugFile = 'storage\debug1111111--------------++++$resultTest.txt';
+//                file_exists($debugFile) ? $current = file_get_contents($debugFile) : $current = null;
+//                $results = print_r($result, true);
+//                !empty($current) ? $current .= "\r\n" . $results : $current .= "\n" . $results;
+//                file_put_contents($debugFile, $current);
+                /**/
+
+
                 $this->users[$connection->id] = $connection;
-//
-//                if (!is_array($result)) {
-//                    $this->logger->save(date("H:i:s"), 'Service', $result); // если пришел не массив - ошибка при запросе
-//                } else {
-//                    $result = json_encode(['dialog' => $result]);
-//                    $this->users[$connection->id]->send($result);
-//                }
+
+                if (!is_array($result)) {
+                    $this->logger->save(date("H:i:s"), 'Service', $result); // если пришел не массив - ошибка при запросе
+                } else {
+                    $result = json_encode(['dialog' => $result]);
+                    $this->users[$connection->id]->send($result);
+                }
 
                 foreach ($this->users as $value) {
                     $service = json_encode(['service' => 'Пользователь присоединился.']);

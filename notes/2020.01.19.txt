@@ -1,0 +1,65 @@
+Написать миграции и и сиды для
+users
+messages
+characters
+
+-----------
+
+очищаю таблицу
+\App\Character::query()->truncate();
+
+----
+
+пробую dependency injection lumen
+  Unresolvable dependency resolving [Parameter #0 [ <required> $config ]] in class App\SocketServer\Server
+
+ Задал вопрос:
+ https://stackoverflow.com/questions/59812040/dependency-injection-in-lumen
+
+ ---------------------
+
+ class UserServiceProvider extends ServiceProvider
+ {
+     /**
+      * Register any application services.
+      *
+      * @return void
+      */
+     public function register()
+     {
+         $this->app->singleton(Server::class, function ($app) {
+             $config = [
+                 'host' => env("DB_HOST"),
+                 'user' => env("DB_USERNAME"),
+                 'password' => env("DB_PASSWORD"),
+                 'dbname' => env("DB_DATABASE"),
+             ];
+             return new Server(new UserService(), $config);
+         });
+
+     }
+ }
+
+  $server = app(Server::class);
+
+  так зависимость подтягивается...
+  НО бля мне не надо чтобы параметры в сервис провайдере подставлялись...
+
+ ---------------------
+
+
+
+Сделаю пока поле
+uniqueId
+потом, когда подымется все на элоквинте переименую в unique_id
+
+php artisan make:migration create_messages_table
+
+ ---------------------
+
+так.. вроде ок
+можно \App\SocketServer\MySql отключать
+
+
+
+

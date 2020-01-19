@@ -23,7 +23,11 @@ $router->get('/', function () use ($router) {
 //    return $message;
 
 
-    $users = \App\User::All();
+//    $users = \App\User::All();
+
+    $messageService = new \App\Services\MessageService();
+
+    $users = $messageService->selectWithUser();
 
     return $users;
 
