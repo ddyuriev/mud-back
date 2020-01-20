@@ -1,0 +1,23 @@
+Так... Что дальше?
+
+php artisan migrate:fresh --seed
+
+
+Dropped all tables successfully.
+Migration table created successfully.
+Migrating: 2019_12_24_115837_create_characters_table
+Migrated:  2019_12_24_115837_create_characters_table (0.5 seconds)
+Migrating: 2020_01_17_142929_create_users_table
+Migrated:  2020_01_17_142929_create_users_table (0.25 seconds)
+Migrating: 2020_01_19_192909_create_messages_table
+Migrated:  2020_01_19_192909_create_messages_table (0.25 seconds)
+Seeding: CharactersTableSeeder
+Seeded:  CharactersTableSeeder (0.16 seconds)
+Database seeding completed successfully.
+
+C:\projects\mud_back>
+
+---------------------------------------------
+
+Сделать чтото типа авторизации
+.env синхронизировать
