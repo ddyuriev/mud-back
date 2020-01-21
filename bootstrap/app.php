@@ -63,7 +63,7 @@ $app->singleton(
 // ]);
 
 $app->routeMiddleware([
-//     'auth' => App\Http\Middleware\Authenticate::class,
+    'auth' => App\Http\Middleware\Authenticate::class,
     'cors' => \App\Http\Middleware\Cors::class
 ]);
 
@@ -83,6 +83,7 @@ $app->register(App\Providers\AuthServiceProvider::class);
 // $app->register(App\Providers\EventServiceProvider::class);
 //my
 //$app->register(\App\Providers\UserServiceProvider::class);
+$app->register(Tymon\JWTAuth\Providers\LumenServiceProvider::class);
 
 /*
 |--------------------------------------------------------------------------
