@@ -52,3 +52,10 @@ $router->get('/', function () use ($router) {
 
 
 $router->post('/userinput', ['middleware' => 'cors', 'uses' => 'CharacterController@userInput']);
+
+// API route group
+$router->group(['prefix' => 'api'], function () use ($router) {
+    // Matches "/api/register
+    $router->post('register', 'AuthController@register');
+
+});

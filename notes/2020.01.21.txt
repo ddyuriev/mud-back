@@ -1,0 +1,94 @@
+Делаю авторизацию вообщем.
+
+есть аутентификация и авторизация
+
+https://lumen.laravel.com/docs/6.x/authentication
+
+https://lumen.laravel.com/docs/6.x/authorization
+
+в чем разница?
+
+Влад: аутентификация это логин, авторизация - разделение по правам
+
+----------------
+
+!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+
+Авториза́ция (англ. authorization «разрешение; уполномочивание») — предоставление определённому лицу или группе лиц прав на выполнение определённых действий;
+а также процесс проверки (подтверждения) данных прав при попытке выполнения этих действий.
+Часто можно услышать выражение, что какой-то человек «авторизован» для выполнения данной операции — это значит, что он имеет на неё право.
+
+Авторизацию не следует путать с аутентификацией — процедурой проверки легальности пользователя или данных,
+например, проверки соответствия введённого пользователем пароля к учётной записи паролю в базе данных,
+или проверка цифровой подписи письма по ключу шифрования, или проверка контрольной суммы файла на соответствие заявленной автором этого файла.
+Авторизация же производит контроль доступа к различным ресурсам системы в процессе работы легальных пользователей после успешного прохождения ими аутентификации.
+
+--------------------
+
+Аутентифика́ция (англ. authentication < греч. αὐθεντικός [authentikos] «реальный, подлинный» < αὐτός [autos] «сам; он самый») — процедура проверки подлинности, например:
+
+    - проверка подлинности пользователя путём сравнения введённого им пароля (для указанного логина) с паролем, сохранённым в базе данных пользовательских логинов;
+
+!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+
+те сначала Аутентифика́ция
+https://lumen.laravel.com/docs/6.x/authentication
+
+!!!
+Аутентификация в Lumen, при использовании тех же базовых библиотек, что и в Laravel, настраивается совсем не так, как в полном фреймворке Laravel.
+Так как Lumen не поддерживает состояние сеанса(session), входящие запросы, которые вы хотите аутентифицировать, должны быть аутентифицированы через механизм без участия, такой как API-токены.
+!!!
+
+!!!
+Note: Before using Lumen's authentication features, you should uncomment the call to register the AuthServiceProvider service provider in your bootstrap/app.php file.
+!!!
+раскоментил:
+ $app->register(App\Providers\AuthServiceProvider::class);
+
+
+ https://dev.to/ndiecodes/build-a-jwt-authenticated-api-with-lumen-2afm
+
+
+SQLSTATE[42S22]: Column not found: 1054 Unknown column 'email' in 'where clause' (SQL: select count(*) as aggregate from `users` where `email` = therion@mail.ru)
+
+
+добавляю в users email.
+
+
+{"password":["The password confirmation does not match."]}
+
+
+https://stackoverflow.com/questions/38954531/laravel-password-confirm-doesnt-work
+
+This is best approach for password confirmation:
+
+  'password' => 'required|between:8,255|confirmed'
+Explain:
+
+confirmed: The field under validation must have a matching field of foo_confirmation.
+
+For example, password field named: password
+
+password confirmation field would be: password_confirmation
+
+Then the confirmed property will add default check for password confirmation.
+
+OK, сохранил.
+------------------------------------------
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
