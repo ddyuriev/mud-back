@@ -1,0 +1,154 @@
+composer update
+
+
+C:\projects\mud_back>composer update
+Loading composer repositories with package information
+Updating dependencies (including require-dev)
+Package operations: 5 installs, 40 updates, 0 removals
+  - Updating symfony/var-dumper (v4.4.2 => v4.4.3): Downloading (100%)
+  - Updating symfony/mime (v5.0.2 => v5.0.3): Downloading (100%)
+  - Updating symfony/http-foundation (v4.4.2 => v4.4.3): Downloading (100%)
+  - Updating symfony/event-dispatcher (v4.4.2 => v4.4.3): Downloading (100%)
+  - Updating symfony/debug (v4.4.2 => v4.4.3): Downloading (100%)
+  - Updating symfony/error-handler (v4.4.2 => v4.4.3): Downloading (100%)
+  - Updating symfony/http-kernel (v4.4.2 => v4.4.3):     Update failed (C:\projects\mud_back\vendor/symfony/http-kernel does not exist and could not be created.)
+    Would you like to try reinstalling the package instead [yes]? y
+  - Removing symfony/http-kernel (v4.4.2)
+  - Installing symfony/http-kernel (v4.4.3): Downloading (100%)
+  - Updating symfony/translation (v4.4.2 => v4.4.3): Downloading (100%)
+  - Updating nesbot/carbon (2.28.0 => 2.29.1): Downloading (100%)
+  - Updating illuminate/contracts (v6.11.0 => v6.12.0): Loading from cache
+  - Updating illuminate/support (v6.11.0 => v6.12.0): Downloading (100%)
+  - Updating illuminate/log (v6.11.0 => v6.12.0): Loading from cache
+  - Updating symfony/finder (v4.4.2 => v4.4.3): Downloading (100%)
+  - Updating illuminate/filesystem (v6.11.0 => v6.12.0): Downloading (100%)
+  - Updating illuminate/container (v6.11.0 => v6.12.0): Loading from cache
+  - Updating illuminate/events (v6.11.0 => v6.12.0): Loading from cache
+  - Updating illuminate/view (v6.11.0 => v6.12.0): Loading from cache
+  - Updating illuminate/translation (v6.11.0 => v6.12.0): Loading from cache
+  - Updating egulias/email-validator (2.1.14 => 2.1.15): Downloading (100%)
+  - Updating illuminate/validation (v6.11.0 => v6.12.0): Downloading (100%)
+  - Updating symfony/process (v4.4.2 => v4.4.3): Downloading (100%)
+  - Updating illuminate/pipeline (v6.11.0 => v6.12.0): Loading from cache
+  - Updating illuminate/database (v6.11.0 => v6.12.0): Downloading (100%)
+  - Updating symfony/console (v4.4.2 => v4.4.3): Downloading (100%)
+  - Updating illuminate/console (v6.11.0 => v6.12.0): Loading from cache
+  - Updating illuminate/queue (v6.11.0 => v6.12.0): Loading from cache
+  - Updating illuminate/pagination (v6.11.0 => v6.12.0): Loading from cache
+  - Updating illuminate/session (v6.11.0 => v6.12.0): Loading from cache
+  - Updating illuminate/http (v6.11.0 => v6.12.0): Downloading (100%)
+  - Updating illuminate/hashing (v6.11.0 => v6.12.0): Loading from cache
+  - Updating illuminate/encryption (v6.11.0 => v6.12.0): Loading from cache
+  - Updating illuminate/config (v6.11.0 => v6.12.0): Loading from cache
+  - Updating illuminate/cache (v6.11.0 => v6.12.0): Downloading (100%)
+  - Updating illuminate/bus (v6.11.0 => v6.12.0): Loading from cache
+  - Updating illuminate/broadcasting (v6.11.0 => v6.12.0): Loading from cache
+  - Updating illuminate/auth (v6.11.0 => v6.12.0): Loading from cache
+  - Updating laravel/lumen-framework (v6.3.0 => v6.3.1): Downloading (100%)
+  - Updating workerman/workerman (v3.5.24 => v3.5.25): Downloading (100%)
+  - Updating myclabs/deep-copy (1.9.4 => 1.9.5): Downloading (100%)
+  - Updating phpspec/prophecy (1.10.1 => v1.10.2): Downloading (100%)
+  - Installing symfony/polyfill-util (v1.13.1): Downloading (100%)
+  - Installing symfony/polyfill-php56 (v1.13.1): Downloading (100%)
+  - Installing lcobucci/jwt (3.3.1): Downloading (100%)
+  - Installing namshi/jose (7.2.3): Downloading (100%)
+  - Installing tymon/jwt-auth (dev-develop f57a0ff): Downloading (100%)
+namshi/jose suggests installing phpseclib/phpseclib (Allows to use Phpseclib as crypto engine, use version ^2.0.)
+Generating optimized autoload files
+
+------------------------------------------------------------------------------------------------------------------------
+
+Создаю репо для фронта
+
+https://github.com/ddyuriev/mud-client.git
+
+…or create a new repository on the command line
+echo "# mud-client" >> README.md
+git init
+git add README.md
+git commit -m "first commit"
+git remote add origin https://github.com/ddyuriev/mud-client.git
+git push -u origin master
+…or push an existing repository from the command line
+git remote add origin https://github.com/ddyuriev/mud-client.git
+git push -u origin master
+…or import code from another repository
+You can initialize this repository with code from a Subversion, Mercurial, or TFS project.
+
+
+
+---------
+
+https://ru.stackoverflow.com/questions/498614/Каково-назначение-ключа-u-при-git-push
+
+Если сделать git push ветки без ключа -u, Git не свяжет локальную ветку с веткой удалённого репозитория.
+Последующая операция git pull в этой ветке будет неудачной, так как Git не будет знать, из какой удалённой ветки подтягивать изменения,
+это придётся указать явно при помощи команды git branch --set-upstream-to=origin/master.
+Смысл использовать ключ -u есть только при пуше новых веток, для существующих (связанных с удалёнными) веток каждый раз перезаписывать связку необязательно.
+
+---------
+
+
+
+далее по мануальчику
+
+https://dev.to/ndiecodes/build-a-jwt-authenticated-api-with-lumen-2afm
+
+create file config/auth.php with below config
+//config.auth.php
+
+...
+
+
+
+mud-back/api/login
+
+ошибка:
+
+Class 'App\Http\Controllers\Auth' not found
+
+in AuthController.php line 69
+
+поправил. Далее:
+
+Fatal error: Interface 'App\JWTSubject' not found in C:\projects\mud_back\app\User.php on line 11
+Interface 'App\JWTSubject' not found
+
+
+----
+Ура:
+
+{
+    "token": "eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJpc3MiOiJodHRwOlwvXC9tdWQtYmFja1wvYXBpXC9sb2dpbiIsImlhdCI6MTU3OTcwNjg5MCwiZXhwIjoxNTc5NzEwNDkwLCJuYmYiOjE1Nzk3MDY4OTAsImp0aSI6InNKbDVWMEVqdExxeUM3c1YiLCJzdWIiOjEsInBydiI6Ijg3ZTBhZjFlZjlmZDE1ODEyZmRlYzk3MTUzYTE0ZTBiMDQ3NTQ2YWEifQ.kySDgaSwIMO8a_s1kftlMT0sx0DsowP6ksRojlSVGaE",
+    "token_type": "bearer",
+    "expires_in": 3600
+}
+
+Так.. теперь наверное будет пробный логин..
+
+
+
+mud-back/api/profile
+ошибка:
+
+Argument 3 passed to Lcobucci\JWT\Signer\Hmac::doVerify() must be an instance of Lcobucci\JWT\Signer\Key, null given,
+ called in C:\projects\mud_back\vendor\lcobucci\jwt\src\Signer\BaseSigner.php on line 44
+
+
+(1/1) TypeError
+Argument 3 passed to Lcobucci\JWT\Signer\Hmac::doVerify() must be an instance of Lcobucci\JWT\Signer\Key,
+ null given, called in C:\projects\mud_back\vendor\lcobucci\jwt\src\Signer\BaseSigner.php on line 44
+
+
+ C:\projects\mud_back>php artisan jwt:secret
+ jwt-auth secret [yBM3XjiPDa1e57PPJakVmZ3rsj6Z2oDsmb00ppWhFSapkz4DaijabGmzOE2Tmw6j] set successfully.
+
+ УРА!!!
+
+ -------
+
+ код этого всего на гитхаб:
+
+ https://github.com/ndiecodes/lumen-auth-example
+
+ 
