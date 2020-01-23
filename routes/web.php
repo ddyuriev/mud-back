@@ -32,7 +32,6 @@ $router->get('/', function () use ($router) {
     return $users;
 
 
-
 });
 
 
@@ -53,17 +52,20 @@ $router->get('/', function () use ($router) {
 
 $router->post('/userinput', ['middleware' => 'cors', 'uses' => 'CharacterController@userInput']);
 
+//$router->get('/api/profile', ['middleware' => 'cors', 'uses' => 'UserController@profile']);
+
+
 // API route group
-$router->group(['prefix' => 'api'], function () use ($router) {
+$router->group(['prefix' => 'api', 'middleware' => 'cors'], function () use ($router) {
     // Matches "/api/register
     $router->post('register', 'AuthController@register');
 
     // Matches "/api/login
     $router->post('login', 'AuthController@login');
 
-
     // Matches "/api/profile
     $router->get('profile', 'UserController@profile');
+//    $router->get('profile', ['middleware' => 'cors', 'uses' => 'UserController@profile']);
 
     // Matches "/api/users/1
     //get one user by id

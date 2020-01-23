@@ -1,0 +1,53 @@
+Так... сделать авторизацию на фронте
+
+
+jquery-3.4.1.min.js:2 OPTIONS http://mud-back/api/profile 405 (Method Not Allowed)
+send @ jquery-3.4.1.min.js:2
+ajax @ jquery-3.4.1.min.js:2
+(anonymous) @ main.js:4
+client.html:1 Access to XMLHttpRequest at 'http://mud-back/api/profile' from origin 'null' has been blocked by CORS policy:
+Response to preflight request doesn't pass access control check: No 'Access-Control-Allow-Origin' header is present on the requested resource.
+
+--------------
+
+
+так... в postman заголовок приходит:
+
+\App\Http\Middleware\Authenticate::handle
+
+    [authorization] => Array
+        (
+            [0] => Bearer eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJpc3MiOiJodHRwOlwvXC9tdWQtYmFja1wvYXBpXC9sb2dpbiIsImlhdCI6MTU3OTc5NDI4OCwiZXhwIjoxNTc5Nzk3ODg4LCJuYmYiOjE1Nzk3OTQyODgsImp0aSI6IlI4Mnd2U1o5T3lUOXRnUGYiLCJzdWIiOjEsInBydiI6Ijg3ZTBhZjFlZjlmZDE1ODEyZmRlYzk3MTUzYTE0ZTBiMDQ3NTQ2YWEifQ.be6KgNP1i2DrvV9JWE6Swvp4gP9se898xyO60jURwsc
+        )
+
+---
+google:
+
+jquery ajax does not send authorization header
+
+
+
+Access to fetch at 'http://mud-back/api/profile' from origin 'null' has been blocked by CORS policy: Response to preflight request doesn't pass access control check: No 'Access-Control-Allow-Origin' header is present on the requested resource.
+ If an opaque response serves your needs, set the request's mode to 'no-cors' to fetch the resource with CORS disabled.
+
+
+
+
+ -------------
+
+пиздец бля...
+
+https://github.com/tymondesigns/jwt-auth/wiki/Authentication
+
+
+Note to Apache users
+
+Apache seems to discard the Authorization header if it is not a base64 encoded user/pass combo. So to fix this you can add the following to your apache config
+
+RewriteEngine On
+RewriteCond %{HTTP:Authorization} ^(.*)
+RewriteRule .* - [e=HTTP_AUTHORIZATION:%1]
+Alternatively you can include the token via a query string
+
+http://api.mysite.com/me?token={yourtokenhere}
+

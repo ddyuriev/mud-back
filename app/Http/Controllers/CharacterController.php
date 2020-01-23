@@ -21,7 +21,7 @@ class CharacterController extends Controller
     public function index()
     {
         /**/
-        $debugFile = '_logs/debug1111111-index.txt';
+        $debugFile = 'debug1111111-index.txt';
         file_exists($debugFile) ? $current = file_get_contents($debugFile) : $current = NULL;
         $results = print_r('index', true);
         !empty($current) ? $current .= "\r\n" . $results : $current .= "\n" . $results;
@@ -35,7 +35,7 @@ class CharacterController extends Controller
     {
 
         /**/
-        $debugFile = '_logs/debug1111111-userInput.txt';
+        $debugFile = 'debug1111111-userInput.txt';
         file_exists($debugFile) ? $current = file_get_contents($debugFile) : $current = NULL;
         $results = print_r($request->all(), true);
         !empty($current) ? $current .= "\r\n" . $results : $current .= "\n" . $results;

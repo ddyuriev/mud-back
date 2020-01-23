@@ -1,0 +1,49 @@
+
+Array
+(
+    [authorization] => Array
+        (
+            [0] => Bearer eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJpc3MiOiJodHRwOlwvXC9tdWQtYmFja1wvYXBpXC9sb2dpbiIsImlhdCI6MTU3OTc5NDI4OCwiZXhwIjoxNTc5Nzk3ODg4LCJuYmYiOjE1Nzk3OTQyODgsImp0aSI6IlI4Mnd2U1o5T3lUOXRnUGYiLCJzdWIiOjEsInBydiI6Ijg3ZTBhZjFlZjlmZDE1ODEyZmRlYzk3MTUzYTE0ZTBiMDQ3NTQ2YWEifQ.be6KgNP1i2DrvV9JWE6Swvp4gP9se898xyO60jURwsc
+        )
+
+    [content-type] => Array
+        (
+            [0] => application/json
+        )
+
+    [user-agent] => Array
+        (
+            [0] => PostmanRuntime/7.21.0
+        )
+
+    [accept] => Array
+        (
+            [0] => */*
+        )
+
+    [cache-control] => Array
+        (
+            [0] => no-cache
+        )
+
+    [postman-token] => Array
+        (
+            [0] => 4daff4f9-d084-4508-bab1-5dbad7cb87e3
+        )
+
+    [host] => Array
+        (
+            [0] => mud-back
+        )
+
+    [accept-encoding] => Array
+        (
+            [0] => gzip, deflate
+        )
+
+    [connection] => Array
+        (
+            [0] => keep-alive
+        )
+
+)

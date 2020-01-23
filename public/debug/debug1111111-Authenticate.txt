@@ -1,0 +1,166 @@
+
+Array
+(
+    [host] => Array
+        (
+            [0] => mud-back
+        )
+
+    [connection] => Array
+        (
+            [0] => keep-alive
+        )
+
+    [user-agent] => Array
+        (
+            [0] => Mozilla/5.0 (Windows NT 6.1; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/79.0.3945.117 Safari/537.36
+        )
+
+    [accept] => Array
+        (
+            [0] => */*
+        )
+
+    [accept-encoding] => Array
+        (
+            [0] => gzip, deflate
+        )
+
+    [accept-language] => Array
+        (
+            [0] => ru-RU,ru;q=0.9,en-US;q=0.8,en;q=0.7
+        )
+
+)
+
+Array
+(
+    [host] => Array
+        (
+            [0] => mud-back
+        )
+
+    [connection] => Array
+        (
+            [0] => keep-alive
+        )
+
+    [pragma] => Array
+        (
+            [0] => no-cache
+        )
+
+    [cache-control] => Array
+        (
+            [0] => no-cache
+        )
+
+    [user-agent] => Array
+        (
+            [0] => Mozilla/5.0 (Windows NT 6.1; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/79.0.3945.117 Safari/537.36
+        )
+
+    [accept] => Array
+        (
+            [0] => */*
+        )
+
+    [accept-encoding] => Array
+        (
+            [0] => gzip, deflate
+        )
+
+    [accept-language] => Array
+        (
+            [0] => ru-RU,ru;q=0.9,en-US;q=0.8,en;q=0.7
+        )
+
+)
+
+Array
+(
+    [host] => Array
+        (
+            [0] => mud-back
+        )
+
+    [connection] => Array
+        (
+            [0] => keep-alive
+        )
+
+    [pragma] => Array
+        (
+            [0] => no-cache
+        )
+
+    [cache-control] => Array
+        (
+            [0] => no-cache
+        )
+
+    [accept] => Array
+        (
+            [0] => */*
+        )
+
+    [origin] => Array
+        (
+            [0] => null
+        )
+
+    [user-agent] => Array
+        (
+            [0] => Mozilla/5.0 (Windows NT 6.1; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/79.0.3945.117 Safari/537.36
+        )
+
+    [accept-encoding] => Array
+        (
+            [0] => gzip, deflate
+        )
+
+    [accept-language] => Array
+        (
+            [0] => ru-RU,ru;q=0.9,en-US;q=0.8,en;q=0.7
+        )
+
+)
+
+Array
+(
+    [host] => Array
+        (
+            [0] => mud-back
+        )
+
+    [connection] => Array
+        (
+            [0] => keep-alive
+        )
+
+    [accept] => Array
+        (
+            [0] => */*
+        )
+
+    [origin] => Array
+        (
+            [0] => null
+        )
+
+    [user-agent] => Array
+        (
+            [0] => Mozilla/5.0 (Windows NT 6.1; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/79.0.3945.117 Safari/537.36
+        )
+
+    [accept-encoding] => Array
+        (
+            [0] => gzip, deflate
+        )
+
+    [accept-language] => Array
+        (
+            [0] => ru-RU,ru;q=0.9,en-US;q=0.8,en;q=0.7
+        )
+
+)

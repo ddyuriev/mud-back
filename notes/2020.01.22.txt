@@ -151,4 +151,3 @@ Argument 3 passed to Lcobucci\JWT\Signer\Hmac::doVerify() must be an instance of
 
  https://github.com/ndiecodes/lumen-auth-example
 
- 

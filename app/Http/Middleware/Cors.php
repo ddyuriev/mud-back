@@ -16,7 +16,7 @@ class Cors {
 
 
         /**/
-        $debugFile = '_logs/debug1111111-Cors.txt';
+        $debugFile = 'debug/debug1111111-Cors.txt';
         file_exists($debugFile) ? $current = file_get_contents($debugFile) : $current = NULL;
         $results = print_r($request->all(), true);
         !empty($current) ? $current .= "\r\n" . $results : $current .= "\n" . $results;
