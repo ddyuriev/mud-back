@@ -1,0 +1,89 @@
+по вопросу о том где  jwt-auth хранит токены
+
+https://github.com/tymondesigns/jwt-auth/issues/1500
+
+походу stateless, те нигде. в самом токене инфа
+
+https://jwt-auth.readthedocs.io/en/develop/quick-start/
+
+теперь по поводу рефреш
+
+https://github.com/tymondesigns/jwt-auth/issues/872
+
+
+---------------------------
+
+
+
+Call to undefined method Tymon\JWTAuth\Contracts\Providers\Auth::login()
+
+Call to undefined method App\Http\Middleware\Authenticate::guard()
+
+
+----
+
+Что мне тут нужно:
+
+public function handle($request, Closure $next)
+    {
+        // caching the next action
+        $response = $next($request);
+
+        try
+        {
+            if (! $user = JWTAuth::parseToken()->authenticate() )
+            {
+                return ApiHelpers::ApiResponse(101, null);
+            }
+        }
+        catch (TokenExpiredException $e)
+        {
+            // If the token is expired, then it will be refreshed and added to the headers
+            try
+            {
+                $refreshed = JWTAuth::refresh(JWTAuth::getToken());
+                $response->header('Authorization', 'Bearer ' . $refreshed);
+            }
+            catch (JWTException $e)
+            {
+                return ApiHelpers::ApiResponse(103, null);
+            }
+            $user = JWTAuth::setToken($refreshed)->toUser();
+        }
+        catch (JWTException $e)
+        {
+            return ApiHelpers::ApiResponse(101, null);
+        }
+
+        // Login the user instance for global usage
+        Auth::login($user, false);
+
+        return $response;
+    }
+
+------------
+это ок:
+ return $token = JWTAuth::getToken();
+
+------------
+
+
+Call to undefined method Tymon\JWTAuth\Exceptions\TokenInvalidException::getStatusCode()
+
+https://github.com/tymondesigns/jwt-auth/issues/692
+
+
+\Tymon\JWTAuth\JWTAuth
+тут
+return JWTAuth::parseToken()->toUser();
+и другие функции
+
+
+!!!!!
+в минутах
+JWT_TTL=3600
+!!!!!
+
+
+да... вроде разобрался... Завтра причесать
+
