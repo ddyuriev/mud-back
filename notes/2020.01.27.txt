@@ -38,3 +38,21 @@ OK
 ---------
 
 Пробую всеже на отдельную страницу логин
+
+---------
+дома
+настраиваю вхост в апаче.
+http://mud-client/
+
+---------
+
+
+
+https://bootsnipp.com/tags/login/4?page=2
+Логин:
+https://bootsnipp.com/snippets/350np
+
+
+
+
+
