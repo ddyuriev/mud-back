@@ -1,0 +1,40 @@
+Вопрос, выносить ли авторизацию в отдельную страницу...
+
+Could not get any response
+There was an error connecting to mud-back/api/profile.
+
+
+Это после того как токен протухает, и его дергаешь несколько раз..
+
+тут какой то баг:
+
+            try {
+                $refreshed = JWTAuth::refresh(JWTAuth::getToken());
+
+//                return $refreshed;
+
+                $response->header('Authorization', 'Bearer ' . $refreshed);
+            } catch (JWTException $e) {
+//                return ApiHelpers::ApiResponse(103, null);
+//                return response($e->getMessage(), 103);
+                return response()->json(['message' => $e->getMessage()], 103);
+            }
+
+        это глюк:
+        return response()->json(['message' => $e->getMessage()], 103);
+
+
+---------
+так..... apache Authorization и в ответе рубит...
+
+
+---------
+client.html => index.html
+
+и настраиваю вхост в апаче.
+
+OK
+
+---------
+
+Пробую всеже на отдельную страницу логин
