@@ -204,17 +204,7 @@ class Server
 
                 $this->logger->save(date("H:i:s"), 'Service', 'Пользователь присоединился');
                 // достаем из БД все сообщения пользователей
-//                $result = $this->db->select('users us', 'name, color, time, message', 'message me on us.uniqueId = me.uniqueId');
-
-                /**/
-//                $debugFile = 'storage\debug1111111--------------++++$result.txt';
-//                file_exists($debugFile) ? $current = file_get_contents($debugFile) : $current = null;
-//                $results = print_r($result, true);
-//                !empty($current) ? $current .= "\r\n" . $results : $current .= "\n" . $results;
-//                file_put_contents($debugFile, $current);
-                /**/
-
-                $result = $this->messageService->selectWithUser()->toArray();
+//                $result = $this->messageService->selectWithUser()->toArray();
 
                 /**/
 //                $debugFile = 'storage\debug1111111--------------++++$resultTest.txt';
@@ -225,19 +215,29 @@ class Server
                 /**/
 
 
+                /**/
+                $debugFile = 'storage\debug1111111--------------++++$connection.txt';
+                file_exists($debugFile) ? $current = file_get_contents($debugFile) : $current = null;
+                $results = print_r($connection, true);
+                !empty($current) ? $current .= "\r\n" . $results : $current .= "\n" . $results;
+                file_put_contents($debugFile, $current);
+                /**/
+
+
                 $this->users[$connection->id] = $connection;
-
-                if (!is_array($result)) {
-                    $this->logger->save(date("H:i:s"), 'Service', $result); // если пришел не массив - ошибка при запросе
-                } else {
-                    $result = json_encode(['dialog' => $result]);
-                    $this->users[$connection->id]->send($result);
-                }
-
+//
+//                if (!is_array($result)) {
+//                    $this->logger->save(date("H:i:s"), 'Service', $result); // если пришел не массив - ошибка при запросе
+//                } else {
+//                    $result = json_encode(['dialog' => $result]);
+//                    $this->users[$connection->id]->send($result);
+//                }
+//
                 foreach ($this->users as $value) {
                     $service = json_encode(['service' => 'Пользователь присоединился.']);
                     $value->send($service);
                 }
+
             };
         };
 

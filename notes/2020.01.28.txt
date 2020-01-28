@@ -6,4 +6,45 @@ https://stackoverflow.com/questions/19973506/cannot-ignore-idea-workspace-xml-ke
 Что сделать сегодня...
 
 
+-------------------------
+Вечер. Делаю гуид для юзера.
 
+https://stackoverflow.com/questions/37948764/laravel-uuid-generation
+
+php artisan migrate:fresh --seed
+
+
+
+(1/1) Error
+Class 'Ramsey\Uuid\Uuid' not found
+
+
+Yeah, just do a composer require ramsey/uuid
+
+composer require ramsey/uuid
+
+
+-------------------------
+?????????????????????????
+
+js wait ajax response
+
+https://stackoverflow.com/questions/12615169/is-there-any-way-to-wait-for-ajax-response-and-halt-execution/12615282
+
+один варик
+async: false,
+
+еще там чтото про промисы...
+?????????????????????????
+-------------------------
+
+
+C:\projects\mud-back-02 (master -> origin)
+λ php artisan mudserver:start
+----------------------- WORKERMAN -----------------------------
+Workerman version:3.5.26          PHP version:7.3.9
+------------------------ WORKERS -------------------------------
+worker               listen                              processes status
+none                 websocket://127.0.0.1:8000          4         [ok]
+PDOException: SQLSTATE[42S22]: Column not found: 1054 Unknown column 'users.uniqueId' in 'on clause' in C:\projects\mud-back-02\vendor\illuminate\database\Connection.php:331
+Stack trace:

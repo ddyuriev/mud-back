@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use Illuminate\Http\Request;
 use  App\User;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Str;
 
 class AuthController extends Controller
 {
@@ -32,7 +33,8 @@ class AuthController extends Controller
             $plainPassword  = $request->input('password');
             $user->password = app('hash')->make($plainPassword);
             /**/
-            $user->uniqueId = app('hash')->make($plainPassword);
+//            $user->uniqueId = app('hash')->make($plainPassword);
+            $user->uuid = Str::uuid()->toString();;
             $user->color    = 'red';
             /**/
 
