@@ -1,0 +1,9 @@
+На фронте:
+Cannot ignore .idea/workspace.xml - keeps popping up
+https://stackoverflow.com/questions/19973506/cannot-ignore-idea-workspace-xml-keeps-popping-up
+-------------------------
+
+Что сделать сегодня...
+
+
+
