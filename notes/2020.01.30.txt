@@ -1,3 +1,28 @@
 Вчера забыл сделать коммиты...
 
 Сегодня можно промисы посмотреть, async ajax, recursive ajax
+
+
+---------------------------
+
+чем плох async ajax
+https://stackoverflow.com/questions/12615169/is-there-any-way-to-wait-for-ajax-response-and-halt-execution/12615282
+
+A quick explanation of why I say it's wrong to turn off async:
+
+Turning off async will freeze the browser while waiting for the ajax call. The user cannot click on anything,
+cannot scroll and in the worst case, if the user is low on memory, sometimes when the user drags the window off the screen
+ and drags it in again he will see empty spaces because the browser is frozen and cannot redraw.
+For single threaded browsers like IE7 it's even worse: all websites freeze!
+Users who experience this may think you site is buggy.
+If you really don't want to do it asynchronously then just do your processing in the back
+end and refresh the whole page. It would at least feel not buggy.
+
+---------------------------
+
+
+Перепишу без jquery ajax...
+
+
+
+https://stackoverflow.com/questions/9181090/is-onload-equal-to-readystate-4-in-xmlhttprequest
