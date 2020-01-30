@@ -189,7 +189,7 @@ class Server
         * При новом подключении уведомляем пользователей, достаем старые сообщения, пишем в лог
         *
         */
-        $this->ws_worker->onConnect = function ($connection) use (&$users) {
+        $this->ws_worker->onConnect = function ($connection/*, $data/**/) use (&$users) {
 
             /**/
             $debugFile = 'storage\debug1111111-onConnect.txt';
@@ -197,6 +197,14 @@ class Server
             $results = print_r($users, true);
             !empty($current) ? $current .= "\r\n" . $results : $current .= "\n" . $results;
             file_put_contents($debugFile, $current);
+            /**/
+
+            /**/
+//            $debugFile = 'storage\debug1111111-onConnect-$data.txt';
+//            file_exists($debugFile) ? $current = file_get_contents($debugFile) : $current = null;
+//            $results = print_r($data, true);
+//            !empty($current) ? $current .= "\r\n" . $results : $current .= "\n" . $results;
+//            file_put_contents($debugFile, $current);
             /**/
 
 
@@ -207,11 +215,11 @@ class Server
 //                $result = $this->messageService->selectWithUser()->toArray();
 
                 /**/
-//                $debugFile = 'storage\debug1111111--------------++++$resultTest.txt';
-//                file_exists($debugFile) ? $current = file_get_contents($debugFile) : $current = null;
-//                $results = print_r($result, true);
-//                !empty($current) ? $current .= "\r\n" . $results : $current .= "\n" . $results;
-//                file_put_contents($debugFile, $current);
+                $debugFile = 'storage\debug1111111--------------++++$resultTest.txt';
+                file_exists($debugFile) ? $current = file_get_contents($debugFile) : $current = null;
+                $results = print_r($_GET['user'], true);
+                !empty($current) ? $current .= "\r\n" . $results : $current .= "\n" . $results;
+                file_put_contents($debugFile, $current);
                 /**/
 
 
@@ -222,6 +230,15 @@ class Server
                 !empty($current) ? $current .= "\r\n" . $results : $current .= "\n" . $results;
                 file_put_contents($debugFile, $current);
                 /**/
+
+                /**/
+                $debugFile = 'storage\debug1111111--------------++++$connection2.txt';
+                file_exists($debugFile) ? $current = file_get_contents($debugFile) : $current = null;
+                $results = print_r($users, true);
+                !empty($current) ? $current .= "\r\n" . $results : $current .= "\n" . $results;
+                file_put_contents($debugFile, $current);
+                /**/
+
 
 
                 $this->users[$connection->id] = $connection;

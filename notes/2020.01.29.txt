@@ -1,0 +1,64 @@
+Вопрос:
+Принимается ли data при onConnection
+
+
+Чтобы написать %user% подключился к сети.
+
+
+$this->ws_worker->onConnect
+походу нет...
+
+
+не по теме но тут интересно:
+https://github.com/walkor/Workerman/issues/214
+
+
+УРА!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+
+https://qna.habr.com/q/637301
+
+Работаю вот с этим примером https://github.com/morozovsk/workerman-examples/bl... и там есть вот такой момент:
+$ws_worker->onConnect = function($connection) use (&$users)
+{
+    $connection->onWebSocketConnect = function($connection) use (&$users)
+    {
+        // поместите get-параметр в коллекцию $users при подключении нового пользователя
+        // на странице сайта можно задать любой параметр. например client.html: ws = new WebSocket("ws://127.0.0.1:8000/?user=tester01");
+        $users[$_GET['user']] = $connection;
+        // or you can use another parameter for user identification, for example $_COOKIE['PHPSESSID']
+    };
+};
+
+не могу догнать, как сюда передать GET метод или COOKI
+пишет вот ошибку:
+Undefined property: Workerman\Connection\TcpConnection::$uid in file /socket.php on line 22
+
+вот эта линия:
+$ws_worker->onClose = function($connection) use(&$users)
+{
+    if(isset($users[$connection->uid]))
+    {
+      // параметр отключения, когда пользователь отключается
+      unset($users[$connection->uid]);
+    }
+};
+
+Надеюсь кто-то знает что не так, я понимаю что он не может определить, но почему хз...
+
+
+
+$_GET['user'] = 'foo';
+$ws_worker->onConnect = function($connection) use (&$users)
+{
+    // $_GET['user'] = 'foo2';
+    $connection->onWebSocketConnect = function($connection) use (&$users)
+    {
+        // поместите get-параметр в коллекцию $users при подключении нового пользователя
+        // на странице сайта можно задать любой параметр. например client.html: ws = new WebSocket("ws://127.0.0.1:8000/?user=tester01");
+        $users[$_GET['user']] = $connection;
+        // or you can use another parameter for user identification, for example $_COOKIE['PHPSESSID']
+    };
+};
+
+ПОЛУЧИЛОСЬ!!!
+теперь не обязательно делать сенд мессадж при коннекте
