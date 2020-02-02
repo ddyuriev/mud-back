@@ -1,0 +1,26 @@
+
+Думаю автоматизировать локальные бэкапы
+https://stackoverflow.com/questions/16994879/how-to-append-date-to-directory-path-in-xcopy
+
+https://www.robvanderwoude.com/datetimentparse.php
+
+
+FOR /F "tokens=1-3 delims=/-" %%A IN ("%Today%") DO (
+	SET DayMonth=%%A
+	SET MonthDay=%%B
+	SET Year=%%C
+)
+
+
+https://stackoverflow.com/questions/34600979/why-wont-this-increment-work-in-batch
+
+
+setlocal EnableDelayedExpansion
+и
+ 	echo !minutes!
+ 	в цикле показалось.
+
+
+-----------
+ура! бэкап фронта сделал.
+
