@@ -1,0 +1,17 @@
+If you want to find just the OS version, you can use ver command.
+Open command window and execute ver command. But note that this does not show service pack version.
+
+C:\>ver
+
+------------------------------------------------------------------
+
+Так...
+
+Что сейчас:
+
+перенести авторазицаю в main.js
+
+
+
+
+
