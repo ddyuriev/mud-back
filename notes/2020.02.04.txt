@@ -1,0 +1,52 @@
+Пробую переписать main.js
+
+бля как из fetch достать данные еба!!!!
+пробую
+js return fetch data
+
+main2.js:5 Uncaught SyntaxError: await is only valid in async function
+
+УРА!!! получилось!!!!!!!!!
+бля. не совсем
+
+Бля... ну не выйти за рамки функции чтото...
+
+
+Что мне там вообще нужно:
+
+получил ответ с пользователем - приконектился
+
+
+const start = async function () {
+    const fetchResponse = await fetch(
+        url + bearer)
+        .then(response => response.json())
+        .then(
+            // json => console.log(json)
+            json => {
+                return json
+            }
+        )
+        .catch(error => console.error('error:', error));
+
+    // console.log('json');
+    // console.log(json);
+
+    console.log(fetchResponse);
+
+    // return response;
+};
+start();
+
+
+-------------
+
+За функцию выходим то
+
+обнаружить  это можно с помощью setTimeout
+
+
+вообщем, вроде получилось все частями.
+Теперь надо скомпоновать
+
+
