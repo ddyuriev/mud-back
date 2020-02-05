@@ -1,0 +1,25 @@
+
+main3.js:20 GET http://mud-back/api/profile?token=eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJpc3MiOiJodHRwOlwvXC9tdWQtYmFja1wvYXBpXC9sb2dpbiIsImlhdCI6MTU4MDg5OTEwMywiZXhwIjoxNTgwODk5MTYzLCJuYmYiOjE1ODA4OTkxMDMsImp0aSI6ImZrelhQZ1JhbWdybDRoY0IiLCJzdWIiOjEsInBydiI6Ijg3ZTBhZjFlZjlmZDE1ODEyZmRlYzk3MTUzYTE0ZTBiMDQ3NTQ2YWEifQ.qX4WgUYc6E2ZP_EKfH8uRTHHdQ__OzMFao5Y6Wfg2-g 401 (Unauthorized)
+xhrGetProfile @ main3.js:20
+(anonymous) @ main3.js:74
+main3.js:34 {code: 0, refreshed_token: "eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJpc3MiOiJod…hYSJ9.r5EK-6LYCpQiCUDnt1ONQFifTALyEs_MARBrK7MXMo8"}
+
+
+хм чтото fetch не показывает ошибку:
+        .catch(error => console.error('error:', error));
+
+можно так:
+    const fetchResponse = await fetch(url + bearer).then((response) => {
+        if (response.ok) {
+            return response.json();
+        } else {
+            throw new Error('Something went wrong');
+        }
+    })
+        .then((responseJson) => {
+            // Do something with the response
+        })
+        .catch((error) => {
+            console.log(error)
+        });
+но не уверен что мне это будет удобно.
