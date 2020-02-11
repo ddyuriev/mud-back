@@ -1,0 +1,25 @@
+Вообщем, с рекурсией так:
+C:\projects\mud-client\public\main3.js
+Тут, если надо, в переменную кладу json ответ на refresh.
+Надо ли оно?
+ХЗ...
+
+Так... чтобы протолкнуть эту злосчастную тему с авторизацией, сравниваю с аяксовским main.js - первой версией
+
+case 0:
+
+    main.js:
+                        ajaxProfile(jqXHR.responseJSON.refreshed_token);
+                        localStorage.setItem("token", jqXHR.responseJSON.refreshed_token);
+
+    main4.js:
+                    xhrGetProfile(refreshedToken).then(jsonXXX => {
+                        localStorage.setItem("token", refreshedToken);
+//                        fetchResponse2 = fetchResponse;
+                    });
+
+----------------
+
+завтра ето почитать
+js fetch recursive async
+https://medium.com/@mannycodes/recursive-http-requests-in-javascript-44ea4beb74b5
