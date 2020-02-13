@@ -25,7 +25,9 @@ class UserController extends Controller
      */
     public function profile()
     {
-        sleep(7);
+//        sleep(7);
+
+        sleep(3);
 
         return response()->json(['user' => Auth::user()], 200);
     }
