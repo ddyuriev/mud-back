@@ -1,0 +1,38 @@
+Как бы обозначить что происходит на фронте...
+
+
+функция асинхронная. Те она выполняется - не ждет результата
+
+а что если в таймаут обернуть - не получится.
+
+
+https://stackoverflow.com/questions/46393529/array-from-recursive-fetch-request-not-returning-properly
+
+
+It is because code inside the then function is executed later (hello async await :).
+
+------------------------------------
+
+1.
+Разобраться с fetch.
+самый простой случай получение пользователя по токену.
+асинхр или нет
+
+
+хм... тут прям ждет, как синхронный аякс
+
+Вообщем перенес:
+index2.html main5.js
+
+На кнопки реагирует, аякс на другой апи шлет норм...
+ТЕ вроде как не создает проблем пользователю.
+
+
+хммммм
+а если
+
+ xhrGetProfile = async function (bearer) {
+    const fetchResponse = await fetch(
+
+еще в одну функцию обернуть...
+
