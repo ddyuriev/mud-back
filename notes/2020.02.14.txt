@@ -1,0 +1,37 @@
+Так... Вроде работает. main5.js
+
+1я задача сегодня - описать как я понял как работают промисы и fetch.
+
+
+const xhrGetProfile = async function (bearer) {
+    const fetchResponse = await fetch(
+        url + bearer)
+        .then(response => response.json())
+        .catch(error => console.error('error:', error));
+
+    console.log('fetchResponse:');
+    console.log(fetchResponse);
+
+    if (fetchResponse && fetchResponse.hasOwnProperty("user")){
+        console.log('случай удачного подключения - присваеваем user:');
+        user = fetchResponse;
+        newWebSocketConnection(user);
+    }
+
+        xhrGetProfileResult = fetchResponse;
+};
+
+
+отрабатывает !асинхронно! но так как указан await - то !синхронно!
+
+Впринципе все элементарно.
+Первый вызов выполняется синхронно, но блоки then и finally не будут ждать, если запустится рекурсия, окончания второго вызова
+
+----------------------------------------------------------------------------
+
+2. Убрать мусор.
+
+--------------------------------
+
+так... Не могу понять, почему user прописывается в кнопку в обоих случаях, хотя реализован 1
+

@@ -27,7 +27,7 @@ class UserController extends Controller
     {
 //        sleep(7);
 
-        sleep(3);
+//        sleep(3);
 
         return response()->json(['user' => Auth::user()], 200);
     }

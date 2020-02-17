@@ -43,6 +43,9 @@ class Authenticate
      */
     public function handle($request, Closure $next, $guard = null)
     {
+
+//        sleep(6);
+
         /**/
 //        $debugFile = 'debug/debug1111111-Authenticate.txt';
 //        file_exists($debugFile) ? $current = file_get_contents($debugFile) : $current = null;
@@ -126,6 +129,7 @@ class Authenticate
 //        $this->guard()->attempt($credentials);
 
 //        return $response;
+
         return $next($request);
         /**/
     }
