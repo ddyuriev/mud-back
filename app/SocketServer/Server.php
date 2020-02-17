@@ -241,6 +241,7 @@ class Server
                 file_put_contents($debugFile, $current);
                 /**/
 
+                //test backup0217
 
                 /**/
                 // а это сообщение будет отправлено клиенту
