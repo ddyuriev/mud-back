@@ -1,0 +1,8 @@
+Что сегодня:
+При подключении вывести строчку Добро пожаловать чувак через сокет.
+
+
+---
+https://timeweb.com/ru/community/articles/chat-na-websocket-ah-1
+
+---

@@ -210,6 +210,8 @@ class Server
 
             $connection->onWebSocketConnect = function ($connection) use (&$users) {
 
+                $userFromClient = $_GET['user'];
+
                 $this->logger->save(date("H:i:s"), 'Service', 'Пользователь присоединился');
                 // достаем из БД все сообщения пользователей
 //                $result = $this->messageService->selectWithUser()->toArray();
@@ -217,18 +219,18 @@ class Server
                 /**/
                 $debugFile = 'storage\debug1111111--------------++++$resultTest.txt';
                 file_exists($debugFile) ? $current = file_get_contents($debugFile) : $current = null;
-                $results = print_r($_GET['user'], true);
+                $results = print_r($userFromClient, true);
                 !empty($current) ? $current .= "\r\n" . $results : $current .= "\n" . $results;
                 file_put_contents($debugFile, $current);
                 /**/
 
 
                 /**/
-                $debugFile = 'storage\debug1111111--------------++++$connection.txt';
-                file_exists($debugFile) ? $current = file_get_contents($debugFile) : $current = null;
-                $results = print_r($connection, true);
-                !empty($current) ? $current .= "\r\n" . $results : $current .= "\n" . $results;
-                file_put_contents($debugFile, $current);
+//                $debugFile = 'storage\debug1111111--------------++++$connection.txt';
+//                file_exists($debugFile) ? $current = file_get_contents($debugFile) : $current = null;
+//                $results = print_r($connection, true);
+//                !empty($current) ? $current .= "\r\n" . $results : $current .= "\n" . $results;
+//                file_put_contents($debugFile, $current);
                 /**/
 
                 /**/
@@ -240,6 +242,12 @@ class Server
                 /**/
 
 
+                /**/
+                // а это сообщение будет отправлено клиенту
+//                $connection->send("Здарово, $userFromClient,  чувак!");
+                $service0 = json_encode(['service' => "Здарово,  чувак!"]);
+                $connection->send($service0);
+                /**/
 
                 $this->users[$connection->id] = $connection;
 //
@@ -251,7 +259,7 @@ class Server
 //                }
 //
                 foreach ($this->users as $value) {
-                    $service = json_encode(['service' => 'Пользователь присоединился.']);
+                    $service = json_encode(['service' => "Пользователь $userFromClient присоединился."]);
                     $value->send($service);
                 }
 
