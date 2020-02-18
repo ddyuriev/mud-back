@@ -45,7 +45,7 @@ class AuthController extends Controller
 
         } catch (\Exception $e) {
 
-//            dd($e->getMessage());
+            dd($e->getMessage());
             //return error message
             return response()->json(['message' => 'User Registration Failed!'], 409);
         }

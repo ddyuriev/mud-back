@@ -1,0 +1,27 @@
+Так... вчера затупил
+
+                $service0 = json_encode(['service_current_user' => "Здарово,  чувак!"]);
+                $connection->send($service0);
+
+
+никак не приходил на фронт.
+Тупо надо рестартовать сервер
+php artisan mudserver:start
+
+---------------------
+
+регаю нового пользователя:
+
+mud-back/api/register
+
+Class 'Ramsey\Uuid\Uuid' not found
+
+in Str.php line 637
+
+composer update
+
+OK!!
+
+--
+Дальше:
+Сделать создание персонажа

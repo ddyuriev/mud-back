@@ -21,7 +21,7 @@ class CreateUsersTable extends Migration
             $table->string('uuid');
             $table->string('name');
             $table->string('password');
-            $table->string('color');
+            $table->string('color')->nullable();
 //            $table->timestamps();
         });
     }

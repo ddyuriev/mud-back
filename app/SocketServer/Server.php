@@ -45,6 +45,9 @@ class Server
     )
     {
         $this->ws_worker = new Worker("websocket://$config[host]:$config[port]");
+        /**/
+//        $this->ws_worker = new Worker("websocket://192.168.215.29:$config[port]");
+        /**/
 //        $this->db = $db;
         $this->logger = $logger;
         $this->ws_worker->count = $config['countWorkers'];
@@ -246,7 +249,7 @@ class Server
                 /**/
                 // а это сообщение будет отправлено клиенту
 //                $connection->send("Здарово, $userFromClient,  чувак!");
-                $service0 = json_encode(['service' => "Здарово,  чувак!"]);
+                $service0 = json_encode(['service_current_user' => "Здарово,  чувак!"]);
                 $connection->send($service0);
                 /**/
 
