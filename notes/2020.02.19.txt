@@ -1,0 +1,17 @@
+js:
+knowledge_base/2020.02.19 hotkey.txt:13
+ok
+------------------------
+
+js always focus on input
+
+https://stackoverflow.com/questions/14820952/change-bootstrap-input-focus-blue-glow
+
+.form-control:focus {
+        border-color: #28a745;
+        box-shadow: 0 0 0 0.2rem rgba(40, 167, 69, 0.25);
+    }
+ok
+------------------------
+
+
