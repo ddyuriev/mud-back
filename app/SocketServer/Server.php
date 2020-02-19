@@ -249,8 +249,28 @@ class Server
                 /**/
                 // а это сообщение будет отправлено клиенту
 //                $connection->send("Здарово, $userFromClient,  чувак!");
-                $service0 = json_encode(['service_current_user' => "Здарово,  чувак!"]);
+
+                $selectCharacterDialog = <<<STR
+Аккaунт [{$userFromClient}] Персонаж [Тэрион]
+Добро пожаловать в MUD Adamant Adan!
+0) Выход из AdamantAdan-MUDа.
+1) Начать игру.
+2) Ввести описание своего персонажа.
+3) Прочитать начальную историю.
+4) Поменять пароль.
+5) Удалить этого персонажа.
+--------------------------------
+В этом аккаунте вы также можете:
+6) Выбрать другого персонажа. 
+7) Создать нового персонажа. 
+8) Другие операции с аккаунтом.
+
+STR;
+
+                $service0 = json_encode(['selectCharacterDialog' => $selectCharacterDialog]);
                 $connection->send($service0);
+
+
                 /**/
 
                 $this->users[$connection->id] = $connection;
