@@ -5,6 +5,12 @@ ok
 
 js always focus on input
 
+onblur="this.focus()" autofocus
+
+ok
+------------------------
+
+
 https://stackoverflow.com/questions/14820952/change-bootstrap-input-focus-blue-glow
 
 .form-control:focus {

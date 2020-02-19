@@ -95,17 +95,20 @@ class Server
         */
         $this->ws_worker->onMessage = function ($connection, $data) use (&$users) {
             $data = json_decode($data);
-            $time = date("H:i:s");
-            $data->time = $time;
-
 
             /**/
-            $debugFile = 'storage\debug1111111-onMessage.txt';
+            $debugFile = 'storage\debug1111111-onMessage-$data.txt';
             file_exists($debugFile) ? $current = file_get_contents($debugFile) : $current = null;
             $results = print_r($data, true);
             !empty($current) ? $current .= "\r\n" . $results : $current .= "\n" . $results;
             file_put_contents($debugFile, $current);
             /**/
+
+            $time = date("H:i:s");
+            $data->time = $time;
+
+
+
 
 
             /**/
@@ -119,7 +122,8 @@ class Server
 
             // ищем пользователя по уникальному ИД в базе
 //            $findUser = $this->db->select('users', 'uniqueId', null, 'uniqueId', $data->uniqueId);
-            $findUser = $this->userService->findByUniqueId($data->uniqueId);
+//            $findUser = $this->userService->findByUniqueId($data->uniqueId);
+            $findUser = $this->userService->findByUuid($data->uuid);
 
             /**/
 //            $debugFile = 'storage\debug1111111-onMessage-$user.txt';
@@ -130,48 +134,48 @@ class Server
             /**/
 
 
-            if ($findUser) {
-                // если пользователь был найден - сохраняем в связанную таблицу его сообщение
-//                $result = $this->db->save('message', ['time', 'message', 'uniqueId'], [
-//                    $time,
-//                    $data->message,
-//                    $data->uniqueId
+//            if ($findUser) {
+//                // если пользователь был найден - сохраняем в связанную таблицу его сообщение
+////                $result = $this->db->save('message', ['time', 'message', 'uniqueId'], [
+////                    $time,
+////                    $data->message,
+////                    $data->uniqueId
+////                ]);
+//
+//                $result = $this->messageService->create([
+//                    'time' => $time,
+//                    'message' => $data->message,
+//                    'uniqueId' => $data->uniqueId
 //                ]);
-
-                $result = $this->messageService->create([
-                    'time' => $time,
-                    'message' => $data->message,
-                    'uniqueId' => $data->uniqueId
-                ]);
-
-                $this->logger->save(date("H:i:s"), 'Service', $result);
-            } else {
-                // если такого пользователя нет - записываем его в БД и сохраняем в связанную таблицу его сообщение
-//                $result = $this->db->save('users', ['uniqueId', 'name', 'color'], [
-//                    $data->uniqueId,
-//                    $data->name,
-//                    $data->userColor
+//
+//                $this->logger->save(date("H:i:s"), 'Service', $result);
+//            } else {
+//                // если такого пользователя нет - записываем его в БД и сохраняем в связанную таблицу его сообщение
+////                $result = $this->db->save('users', ['uniqueId', 'name', 'color'], [
+////                    $data->uniqueId,
+////                    $data->name,
+////                    $data->userColor
+////                ]);
+//                $result = $this->userService->create([
+//                    'uniqueId' => $data->uniqueId,
+//                    'name' => $data->name,
+//                    'color' => $data->userColor
 //                ]);
-                $result = $this->userService->create([
-                    'uniqueId' => $data->uniqueId,
-                    'name' => $data->name,
-                    'color' => $data->userColor
-                ]);
-                $this->logger->save(date("H:i:s"), 'Service', $result);
-
-//                $result = $this->db->save('message', ['time', 'message', 'uniqueId'], [
-//                    $time,
-//                    $data->message,
-//                    $data->uniqueId
+//                $this->logger->save(date("H:i:s"), 'Service', $result);
+//
+////                $result = $this->db->save('message', ['time', 'message', 'uniqueId'], [
+////                    $time,
+////                    $data->message,
+////                    $data->uniqueId
+////                ]);
+//                $result = $this->messageService->create([
+//                    'time' => $time,
+//                    'message' => $data->message,
+//                    'uniqueId' => $data->uniqueId
 //                ]);
-                $result = $this->messageService->create([
-                    'time' => $time,
-                    'message' => $data->message,
-                    'uniqueId' => $data->uniqueId
-                ]);
-
-                $this->logger->save(date("H:i:s"), 'Service', $result);
-            }
+//
+//                $this->logger->save(date("H:i:s"), 'Service', $result);
+//            }
 
             foreach ($this->users as $value) {
 

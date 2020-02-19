@@ -25,10 +25,10 @@ class UserService
      * @param $uniqueId
      * @return mixed
      */
-    public function findByUniqueId($uniqueId)
+    public function findByUuid($uuid)
     {
 //        return User::where('unique_id', $uniqueId)->first();
-        return User::where('uniqueId', $uniqueId)->first();
+        return User::where('uuid', $uuid)->first();
     }
 
 }
