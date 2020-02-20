@@ -23,12 +23,18 @@ class UserService
 
     /**
      * @param $uniqueId
+     *
      * @return mixed
      */
     public function findByUuid($uuid)
     {
 //        return User::where('unique_id', $uniqueId)->first();
         return User::where('uuid', $uuid)->first();
+    }
+
+    public function findByEmail($email)
+    {
+        return User::where('email', $email)->first();
     }
 
 }

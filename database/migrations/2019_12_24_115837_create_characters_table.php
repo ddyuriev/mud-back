@@ -15,12 +15,14 @@ class CreateCharactersTable extends Migration
     {
         Schema::create('characters', function (Blueprint $table) {
             $table->increments('id');
+            $table->integer('user_id');
             $table->string('name');
             $table->smallInteger('strength');
             $table->smallInteger('dexterity');
             $table->smallInteger('constitution');
             $table->smallInteger('intellect');
             $table->smallInteger('wisdom');
+            $table->tinyInteger('is_active')->default(0);
             $table->timestamps();
         });
     }

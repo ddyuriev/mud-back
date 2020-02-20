@@ -3,6 +3,7 @@
 namespace App\Console\Commands;
 
 use App\Http\Controllers\CharacterController;
+use App\Services\CharacterService;
 use App\Services\MessageService;
 use App\Services\UserService;
 use App\SocketServer\Logger;
@@ -51,7 +52,7 @@ class Command2 extends Command
 
 //        $server = app(Server::class);
 //        $server = new Server(new UserService(), $webSocketConfig, $db, $log);
-        $server = new Server(new UserService(), new MessageService(), $webSocketConfig, /*$db,*/ $log);
+        $server = new Server(new UserService(), new CharacterService(),  new MessageService(), $webSocketConfig, /*$db,*/ $log);
 
         $server->serverStart();
 

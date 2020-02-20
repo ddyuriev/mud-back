@@ -10,6 +10,8 @@ namespace App\SocketServer;
 
 //use Logger;
 
+use App\Http\Controllers\CharacterController;
+use App\Services\CharacterService;
 use App\Services\MessageService;
 use App\Services\UserService;
 use App\SocketServer\Contracts\DataInterface;
@@ -28,16 +30,19 @@ use Workerman\Lib\Timer;
 class Server
 {
     private $users;
-    private $db;
 
-    /**/
+//    private $db;
+
     private $userService;
+    private $characterService;
     private $messageService;
 
-    /**/
+    private $gameState;
+
 
     public function __construct(
         UserService $userService,
+        CharacterService $characterService,
         MessageService $messageService,
         $config,
 //        DataInterface $db,
@@ -45,33 +50,23 @@ class Server
     )
     {
         $this->ws_worker = new Worker("websocket://$config[host]:$config[port]");
-        /**/
 //        $this->ws_worker = new Worker("websocket://192.168.215.29:$config[port]");
-        /**/
+
 //        $this->db = $db;
-        $this->logger = $logger;
+        $this->logger           = $logger;
         $this->ws_worker->count = $config['countWorkers'];
-        $this->config = $config;
-        /**/
-        $this->userService = $userService;
-        $this->messageService = $messageService;
-        /**/
+        $this->config           = $config;
+
+        $this->userService      = $userService;
+        $this->characterService = $characterService;
+        $this->messageService   = $messageService;
+
+        $gameState = new \stdClass();
     }
 
 
     public function serverStart()
     {
-
-        /**/
-//        $debugFile = 'storage\debug1111111-$this-userService.txt';
-//        file_exists($debugFile) ? $current = file_get_contents($debugFile) : $current = null;
-//        $results = print_r($this->userService->findByUniqueId(345), true);
-//        !empty($current) ? $current .= "\r\n" . $results : $current .= "\n" . $results;
-//        file_put_contents($debugFile, $current);
-        /**/
-
-//        exit();
-
         $this->users = [];
         /*
         * Стартуем сервер и пингуем БД каждую минуту, что бы сохранить подключение
@@ -89,108 +84,6 @@ class Server
             });
         };
 
-        /*
-        * При получении сообщения записываем его в БД и рассылаем пользователям
-        *
-        */
-        $this->ws_worker->onMessage = function ($connection, $data) use (&$users) {
-            $data = json_decode($data);
-
-            /**/
-            $debugFile = 'storage\debug1111111-onMessage-$data.txt';
-            file_exists($debugFile) ? $current = file_get_contents($debugFile) : $current = null;
-            $results = print_r($data, true);
-            !empty($current) ? $current .= "\r\n" . $results : $current .= "\n" . $results;
-            file_put_contents($debugFile, $current);
-            /**/
-
-            $time = date("H:i:s");
-            $data->time = $time;
-
-
-
-
-
-            /**/
-            $debugFile = 'storage\debug1111111-onMessage-$this-users.txt';
-            file_exists($debugFile) ? $current = file_get_contents($debugFile) : $current = null;
-            $results = print_r($this->users, true);
-            !empty($current) ? $current .= "\r\n" . $results : $current .= "\n" . $results;
-            file_put_contents($debugFile, $current);
-            /**/
-
-
-            // ищем пользователя по уникальному ИД в базе
-//            $findUser = $this->db->select('users', 'uniqueId', null, 'uniqueId', $data->uniqueId);
-//            $findUser = $this->userService->findByUniqueId($data->uniqueId);
-            $findUser = $this->userService->findByUuid($data->uuid);
-
-            /**/
-//            $debugFile = 'storage\debug1111111-onMessage-$user.txt';
-//            file_exists($debugFile) ? $current = file_get_contents($debugFile) : $current = null;
-//            $results = print_r($user, true);
-//            !empty($current) ? $current .= "\r\n" . $results : $current .= "\n" . $results;
-//            file_put_contents($debugFile, $current);
-            /**/
-
-
-//            if ($findUser) {
-//                // если пользователь был найден - сохраняем в связанную таблицу его сообщение
-////                $result = $this->db->save('message', ['time', 'message', 'uniqueId'], [
-////                    $time,
-////                    $data->message,
-////                    $data->uniqueId
-////                ]);
-//
-//                $result = $this->messageService->create([
-//                    'time' => $time,
-//                    'message' => $data->message,
-//                    'uniqueId' => $data->uniqueId
-//                ]);
-//
-//                $this->logger->save(date("H:i:s"), 'Service', $result);
-//            } else {
-//                // если такого пользователя нет - записываем его в БД и сохраняем в связанную таблицу его сообщение
-////                $result = $this->db->save('users', ['uniqueId', 'name', 'color'], [
-////                    $data->uniqueId,
-////                    $data->name,
-////                    $data->userColor
-////                ]);
-//                $result = $this->userService->create([
-//                    'uniqueId' => $data->uniqueId,
-//                    'name' => $data->name,
-//                    'color' => $data->userColor
-//                ]);
-//                $this->logger->save(date("H:i:s"), 'Service', $result);
-//
-////                $result = $this->db->save('message', ['time', 'message', 'uniqueId'], [
-////                    $time,
-////                    $data->message,
-////                    $data->uniqueId
-////                ]);
-//                $result = $this->messageService->create([
-//                    'time' => $time,
-//                    'message' => $data->message,
-//                    'uniqueId' => $data->uniqueId
-//                ]);
-//
-//                $this->logger->save(date("H:i:s"), 'Service', $result);
-//            }
-
-            foreach ($this->users as $value) {
-
-                /**/
-                $debugFile = 'storage\debug1111111-$data.txt';
-                file_exists($debugFile) ? $current = file_get_contents($debugFile) : $current = null;
-                $results = print_r($data, true);
-                !empty($current) ? $current .= "\r\n" . $results : $current .= "\n" . $results;
-                file_put_contents($debugFile, $current);
-                /**/
-
-
-                $value->send(json_encode($data));
-            }
-        };
 
         /*
         * При новом подключении уведомляем пользователей, достаем старые сообщения, пишем в лог
@@ -206,31 +99,18 @@ class Server
             file_put_contents($debugFile, $current);
             /**/
 
-            /**/
-//            $debugFile = 'storage\debug1111111-onConnect-$data.txt';
-//            file_exists($debugFile) ? $current = file_get_contents($debugFile) : $current = null;
-//            $results = print_r($data, true);
-//            !empty($current) ? $current .= "\r\n" . $results : $current .= "\n" . $results;
-//            file_put_contents($debugFile, $current);
-            /**/
-
-
             $connection->onWebSocketConnect = function ($connection) use (&$users) {
 
-                $userFromClient = $_GET['user'];
-
-                $this->logger->save(date("H:i:s"), 'Service', 'Пользователь присоединился');
-                // достаем из БД все сообщения пользователей
-//                $result = $this->messageService->selectWithUser()->toArray();
+                $userEmailFromClient = $_GET['user'];
+                $activeCharacter     = $this->characterService->getActiveCharacterByUserEmail($userEmailFromClient);
 
                 /**/
-                $debugFile = 'storage\debug1111111--------------++++$resultTest.txt';
+                $debugFile = 'storage\debug1111111--------------++++$character.txt';
                 file_exists($debugFile) ? $current = file_get_contents($debugFile) : $current = null;
-                $results = print_r($userFromClient, true);
+                $results = print_r($activeCharacter, true);
                 !empty($current) ? $current .= "\r\n" . $results : $current .= "\n" . $results;
                 file_put_contents($debugFile, $current);
                 /**/
-
 
                 /**/
 //                $debugFile = 'storage\debug1111111--------------++++$connection.txt';
@@ -241,21 +121,21 @@ class Server
                 /**/
 
                 /**/
-                $debugFile = 'storage\debug1111111--------------++++$connection2.txt';
-                file_exists($debugFile) ? $current = file_get_contents($debugFile) : $current = null;
-                $results = print_r($users, true);
-                !empty($current) ? $current .= "\r\n" . $results : $current .= "\n" . $results;
-                file_put_contents($debugFile, $current);
+//                $debugFile = 'storage\debug1111111--------++++onConnect-$users.txt';
+//                file_exists($debugFile) ? $current = file_get_contents($debugFile) : $current = null;
+//                $results = print_r($users, true);
+//                !empty($current) ? $current .= "\r\n" . $results : $current .= "\n" . $results;
+//                file_put_contents($debugFile, $current);
                 /**/
 
-                //test backup0217
 
                 /**/
                 // а это сообщение будет отправлено клиенту
-//                $connection->send("Здарово, $userFromClient,  чувак!");
+
+                $charName = !empty($activeCharacter) ? $activeCharacter->name : "Не выбран";
 
                 $selectCharacterDialog = <<<STR
-Аккaунт [{$userFromClient}] Персонаж [Тэрион]
+Аккaунт [{$userEmailFromClient}] Персонаж [{$charName}]
 Добро пожаловать в MUD Adamant Adan!
 0) Выход из AdamantAdan-MUDа.
 1) Начать игру.
@@ -268,7 +148,6 @@ class Server
 6) Выбрать другого персонажа. 
 7) Создать нового персонажа. 
 8) Другие операции с аккаунтом.
-
 STR;
 
                 $service0 = json_encode(['selectCharacterDialog' => $selectCharacterDialog]);
@@ -287,11 +166,74 @@ STR;
 //                }
 //
                 foreach ($this->users as $value) {
-                    $service = json_encode(['service' => "Пользователь $userFromClient присоединился."]);
+                    $service = json_encode(['service' => "Пользователь $userEmailFromClient присоединился."]);
                     $value->send($service);
                 }
 
             };
+        };
+
+
+        /*
+        * При получении сообщения записываем его в БД и рассылаем пользователям
+        *
+        */
+        $this->ws_worker->onMessage = function ($connection, $data) use (&$users) {
+            $data = json_decode($data);
+
+            /**/
+            $debugFile = 'storage\debug1111111-onMessage-$data.txt';
+            file_exists($debugFile) ? $current = file_get_contents($debugFile) : $current = null;
+            $results = print_r($data, true);
+            !empty($current) ? $current .= "\r\n" . $results : $current .= "\n" . $results;
+            file_put_contents($debugFile, $current);
+            /**/
+
+            $time       = date("H:i:s");
+            $data->time = $time;
+
+            /**/
+            $debugFile = 'storage\debug1111111-onMessage-$this-users.txt';
+            file_exists($debugFile) ? $current = file_get_contents($debugFile) : $current = null;
+            $results = print_r($this->users, true);
+            !empty($current) ? $current .= "\r\n" . $results : $current .= "\n" . $results;
+            file_put_contents($debugFile, $current);
+            /**/
+
+
+            // ищем пользователя по уникальному ИД в базе
+//            $findUser = $this->userService->findByUuid($data->uuid);
+
+            $state = 1;
+            if($state == 1){
+                switch ($data->message) {
+                    case 1:
+                        $connection->send(json_encode(['for_client' => "\r\nПриветствуем вас на бескрайних просторах мира чудес и приключений!"]));
+
+                        break;
+//                    case 'stop':
+//                        $this->stopDaemon();
+//                        break;
+                }
+            }
+
+            //отправить конкретному пользователю
+            $connection->send(json_encode(['current_user' => time()]));
+
+            //рассылка всем
+            foreach ($this->users as $value) {
+
+                /**/
+//                $debugFile = 'storage\debug1111111-$data.txt';
+//                file_exists($debugFile) ? $current = file_get_contents($debugFile) : $current = null;
+//                $results = print_r($data, true);
+//                !empty($current) ? $current .= "\r\n" . $results : $current .= "\n" . $results;
+//                file_put_contents($debugFile, $current);
+                /**/
+
+
+                $value->send(json_encode($data));
+            }
         };
 
         /*
@@ -308,25 +250,3 @@ STR;
         Worker::runAll();
     }
 }
-
-//$db     = new Mysql($config['db']);
-//$log    = new Logger($config['log']);
-/**/
-//$log    = new \Server\Logger($config['log']);
-//$log    = new Logger($config['log']);
-//$log    = new \SocketServer\Logger($config['log']);
-/**/
-
-
-//$log    = new Logger($config['log']);
-//$log    = new Logger();
-
-
-//$server = new Server2($config['webSocket'], /*$db,*/ $log);
-//$server->serverStart();
-
-
-//$db     = new Mysql($config['db']);
-//$log    = new Logger($config['log']);
-//$server = new Server2($config['webSocket'], /*$db,*/ $log);
-//$server->serverStart();

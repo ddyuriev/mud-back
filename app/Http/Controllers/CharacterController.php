@@ -22,10 +22,11 @@ class CharacterController extends Controller
     {
         /**/
         $debugFile = 'debug1111111-index.txt';
-        file_exists($debugFile) ? $current = file_get_contents($debugFile) : $current = NULL;
+        file_exists($debugFile) ? $current = file_get_contents($debugFile) : $current = null;
         $results = print_r('index', true);
         !empty($current) ? $current .= "\r\n" . $results : $current .= "\n" . $results;
         file_put_contents($debugFile, $current);
+
         /**/
 
         return Character::find(1);
@@ -35,14 +36,33 @@ class CharacterController extends Controller
     {
 
         /**/
+//        $debugFile = 'debug1111111-userInput.txt';
+//        file_exists($debugFile) ? $current = file_get_contents($debugFile) : $current = null;
+//        $results = print_r($request->all(), true);
+//        !empty($current) ? $current .= "\r\n" . $results : $current .= "\n" . $results;
+//        file_put_contents($debugFile, $current);
+        /**/
+
+        $email = 'therion@mail.ru';
+
+        $result = Character::with(['user' => function ($query) use ($email) {
+            $query->where('email', $email);
+        }])->where('is_active', true)->get();
+
+//        $result = Character::whereHas('user', function ($query) {
+//            $query->where('email', 'therion@mail.ru');
+//        })->where('is_active', true)->get();
+
+        /**/
         $debugFile = 'debug1111111-userInput.txt';
-        file_exists($debugFile) ? $current = file_get_contents($debugFile) : $current = NULL;
-        $results = print_r($request->all(), true);
+        file_exists($debugFile) ? $current = file_get_contents($debugFile) : $current = null;
+        $results = print_r($result, true);
         !empty($current) ? $current .= "\r\n" . $results : $current .= "\n" . $results;
         file_put_contents($debugFile, $current);
         /**/
 
-        return $request->all();
-//        return Character::find(2);
+        return $result;
     }
+
+
 }

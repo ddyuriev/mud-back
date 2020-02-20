@@ -1,0 +1,39 @@
+Что сделать:
+очищать input
+ok
+-------------
+
+Сделать активного персонажа
+
+
+----
+select * from `characters` where exists (select * from `users` where `characters`.`id` = `users`.`character_id` and `email` = ?)
+
+об работают.
+        $result = Character::with(['user' => function ($query) use ($email) {
+            $query->where('email', $email);
+        }])->get();
+
+        $result = Character::whereHas('user', function ($query) {
+            $query->where('email', 'therion@mail.ru');
+        })->toSql();
+
+        надо было норм функцию определить:
+
+            public function user()
+            {
+        //        return $this->hasOne('App\User');
+                return $this->hasOne('App\User', 'id', 'user_id');
+            }
+
+Второй варик наверное лучше, в нем toSql корректнее
+
+---------------------
+
+Короче нужно создавать коллекцию чтобы следать за состоянием каждого подключения.
+
+Так: были наработки по таймеру:
+что то не нахожу..
+
+ТУТ:
+\App\Http\Controllers\TimeController
