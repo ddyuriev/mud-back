@@ -15,7 +15,7 @@ class CharactersTableSeeder extends Seeder
 
         \DB::table('characters')->insert([
             'user_id' => 1,
-            'name' => 'Воин Тэрион',
+            'name' => 'Тэрион',
             'strength' => '14',
             'dexterity' => '12',
             'constitution' => '12',
