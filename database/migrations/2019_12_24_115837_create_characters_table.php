@@ -25,9 +25,11 @@ class CreateCharactersTable extends Migration
             $table->smallInteger('constitution');
             $table->smallInteger('intellect');
             $table->smallInteger('wisdom');
+//            $table->smallInteger('size');
             $table->smallInteger('HP');
             $table->smallInteger('VP');
             $table->integer('coins')->default(0);
+            $table->smallInteger('delevels_count')->default(0);
             $table->tinyInteger('is_active')->default(0);
             $table->timestamps();
         });

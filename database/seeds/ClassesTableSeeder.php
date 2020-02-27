@@ -18,5 +18,9 @@ class ClassesTableSeeder extends Seeder
         \DB::table('classes')->insert([
             'name' => 'Маг',
         ]);
+
+        \DB::table('classes')->insert([
+            'name' => 'Вор',
+        ]);
     }
 }

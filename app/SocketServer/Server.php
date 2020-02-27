@@ -29,15 +29,20 @@ use Workerman\Lib\Timer;
 
 class Server
 {
-    private $users;
+//    private $users;
+    private $connections;
 
 //    private $db;
 
     private $userService;
+
     private $characterService;
+
     private $messageService;
 
-    private $gameState;
+//    private $gameState;
+
+    private $characters;
 
 
     public function __construct(
@@ -61,13 +66,16 @@ class Server
         $this->characterService = $characterService;
         $this->messageService   = $messageService;
 
-        $gameState = new \stdClass();
+//        $gameState = new \stdClass();
+
+        $characters = [];
     }
 
 
     public function serverStart()
     {
-        $this->users = [];
+//        $this->users = [];
+        $this->connections = [];
         /*
         * Стартуем сервер и пингуем БД каждую минуту, что бы сохранить подключение
         *
@@ -103,6 +111,8 @@ class Server
 
                 $userEmailFromClient = $_GET['user'];
                 $activeCharacter     = $this->characterService->getActiveCharacterByUserEmail($userEmailFromClient);
+
+                $this->characters[$activeCharacter->user->uuid] = $activeCharacter;
 
                 /**/
                 $debugFile = 'storage\debug1111111--------------++++$character.txt';
@@ -156,7 +166,8 @@ STR;
 
                 /**/
 
-                $this->users[$connection->id] = $connection;
+//                $this->users[$connection->id] = $connection;
+                $this->connections[$connection->id] = $connection;
 //
 //                if (!is_array($result)) {
 //                    $this->logger->save(date("H:i:s"), 'Service', $result); // если пришел не массив - ошибка при запросе
@@ -165,7 +176,7 @@ STR;
 //                    $this->users[$connection->id]->send($result);
 //                }
 //
-                foreach ($this->users as $value) {
+                foreach ($this->connections as $value) {
                     $service = json_encode(['service' => "Пользователь $userEmailFromClient присоединился."]);
                     $value->send($service);
                 }
@@ -193,35 +204,73 @@ STR;
             $data->time = $time;
 
             /**/
-            $debugFile = 'storage\debug1111111-onMessage-$this-users.txt';
+            $debugFile = 'storage\debug1111111-onMessage-$this-connections.txt';
             file_exists($debugFile) ? $current = file_get_contents($debugFile) : $current = null;
-            $results = print_r($this->users, true);
+            $results = print_r($this->connections, true);
             !empty($current) ? $current .= "\r\n" . $results : $current .= "\n" . $results;
             file_put_contents($debugFile, $current);
             /**/
 
 
+            $dataUserUuid = $data->uuid;
+
             // ищем пользователя по уникальному ИД в базе
 //            $findUser = $this->userService->findByUuid($data->uuid);
 
-            $state = 1;
-            if($state == 1){
-                switch ($data->message) {
-                    case 1:
-                        $connection->send(json_encode(['for_client' => "\r\nПриветствуем вас на бескрайних просторах мира чудес и приключений!"]));
+            //начало
+            $state = !empty($this->characters[$dataUserUuid]['state']) ? $this->characters[$dataUserUuid]['state'] : 1;
+            //на 1-це
+//            if ($state == 1) {
+//                switch ($data->message) {
+//                    case 1:
+//                        $connection->send(json_encode(['for_client' => "\r\nПриветствуем вас на бескрайних просторах мира чудес и приключений!"]));
+//                        $this->characters['user_uuid']['state'] = 2;
+//                        break;
+////                    case 'stop':
+////                        $this->stopDaemon();
+////                        break;
+//                }
+//            } else{
+//                $connection->send(json_encode(['for_client' => "\r\nКакой-то левый поц детектед!"]));
+//            }
 
-                        break;
+            $character =  $this->characters[$dataUserUuid];
+
+            switch ($state) {
+                //на 1-це
+                case 1:
+                    switch ($data->message) {
+                        case 1:
+                            $connection->send(json_encode(['for_client' => "\r\nПриветствуем вас на бескрайних просторах мира чудес и приключений!"]));
+                            //!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!! косяк
+                            $this->characters[$dataUserUuid]['state'] = 2;
+                            break;
 //                    case 'stop':
 //                        $this->stopDaemon();
 //                        break;
-                }
+                    }
+                    break;
+                case 2:
+                    switch ($data->message) {
+                        case 'см':
+                            $connection->send(json_encode(['for_client' => "\r\nПеред вами абсолютное ничто во все стороны!"]));
+                            break;
+                        case 'сч':
+                            $message = <<<STR
+Вы {$character->name}, {$character->class} уровень {$character->exp}.
+Ваш E-mail: {$character->user->email}
+STR;
+                            $connection->send(json_encode(['for_client' => "\r\n$message"]));
+                            break;
+                    }
+                    break;
             }
 
             //отправить конкретному пользователю
             $connection->send(json_encode(['current_user' => time()]));
 
             //рассылка всем
-            foreach ($this->users as $value) {
+            foreach ($this->connections as $value) {
 
                 /**/
 //                $debugFile = 'storage\debug1111111-$data.txt';
@@ -242,7 +291,7 @@ STR;
         */
         $this->ws_worker->onClose = function ($connection) use (&$users) {
             $this->logger->save(date("H:i:s"), 'Service', 'Пользователь отключился');
-            foreach ($this->users as $value) {
+            foreach ($this->connections as $value) {
                 $service = json_encode(['service' => 'Пользователь отключился.']);
                 $value->send($service);
             }

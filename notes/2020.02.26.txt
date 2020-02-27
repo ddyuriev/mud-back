@@ -31,12 +31,5 @@ php artisan make:seeder ClassesTableSeeder
 
 макс считается от уровня, профы, модификаторов, мб магии, делевово - те по формуле в любом случае
 
-----------------------------
----
-https://davidwees.com/content/exploring-multi-user-online-text-spaces-collaborative-game-building/
----
-Barsentiy
-21a09a81Dax
-----------------------------
 
 мб уровень не хранить... только опыт
