@@ -234,15 +234,22 @@ STR;
 //                $connection->send(json_encode(['for_client' => "\r\nКакой-то левый поц детектед!"]));
 //            }
 
-            $character =  $this->characters[$dataUserUuid];
+            $character = $this->characters[$dataUserUuid];
+
+//            $stateString = <<<STR
+//\r\n
+//{$character->HP}H {$character->VP}V 1855881X {$character->coins}C Вых:Ю>
+//STR;
+            $stateString = "<br>{$character->HP}H {$character->VP}V 1999X {$character->coins}C Вых:Ю>";
 
             switch ($state) {
                 //на 1-це
                 case 1:
                     switch ($data->message) {
                         case 1:
-                            $connection->send(json_encode(['for_client' => "\r\nПриветствуем вас на бескрайних просторах мира чудес и приключений!"]));
-                            //!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!! косяк
+//                            $connection->send(json_encode(['for_client' => "\r\nПриветствуем вас на бескрайних просторах мира чудес и приключений!" . $stateString]));
+                            $connection->send(json_encode(['for_client' => "<br>Приветствуем вас на бескрайних просторах мира чудес и приключений!" . $stateString]));
+
                             $this->characters[$dataUserUuid]['state'] = 2;
                             break;
 //                    case 'stop':
@@ -253,14 +260,21 @@ STR;
                 case 2:
                     switch ($data->message) {
                         case 'см':
-                            $connection->send(json_encode(['for_client' => "\r\nПеред вами абсолютное ничто во все стороны!"]));
+//                            $connection->send(json_encode(['for_client' => "\r\nПеред вами абсолютное ничто во все стороны!"]));
+                            $connection->send(json_encode(['for_client' => "<br>Перед вами абсолютное ничто во все стороны!" . $stateString]));
                             break;
                         case 'сч':
                             $message = <<<STR
-Вы {$character->name}, {$character->class} уровень {$character->exp}.
+Вы {$character->name}, {$character->profession->name} {$character->experience} уровня.
 Ваш E-mail: {$character->user->email}
+Вы набрали {$character->experience} опыта и имеете {$character->coins} монеты.
 STR;
-                            $connection->send(json_encode(['for_client' => "\r\n$message"]));
+
+//                            $connection->send(json_encode(['for_client' => '<span style="color:darkgreen">' . "\r\n{$message}{$stateString}" . '</span>']));
+//                            $connection->send(json_encode(['for_client' => "<br>{$message}{$stateString}"]));
+//                            $connection->send(json_encode(['for_client' => '<text style="color:darkgreen">' . "<br>{$message}{$stateString}" . '</text>']));
+//                            $connection->send(json_encode(['for_client' => "<br>{$message}"]));
+                            $connection->send(json_encode(['for_client' => '<br><i>' . "{$message}{$stateString}" . '</i>']));
                             break;
                     }
                     break;

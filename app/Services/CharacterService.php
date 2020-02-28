@@ -26,7 +26,7 @@ class CharacterService
 
         $character= Character::with(['user' => function ($query) use ($email) {
             $query->where('email', $email);
-        }])->first();
+        }, 'profession'])->first();
 
 //        $character->user_uuid = $character->
 

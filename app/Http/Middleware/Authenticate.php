@@ -91,6 +91,7 @@ class Authenticate
                 ], 401);
             } catch (JWTException $e) {
                 //тут врядли что будет, на всяк случай
+
                 return response([
                     'code'    => 3,
                     'message' => $e->getMessage()

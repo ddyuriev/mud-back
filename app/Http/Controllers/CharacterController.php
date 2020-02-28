@@ -43,15 +43,28 @@ class CharacterController extends Controller
 //        file_put_contents($debugFile, $current);
         /**/
 
-        $email = 'therion@mail.ru';
+//        $email = 'therion@mail.ru';
+        $email = 'dimas@mail.ru';
 
-        $result = Character::with(['user' => function ($query) use ($email) {
-            $query->where('email', $email);
-        }])->where('is_active', true)->get();
+//        $result = Character::with(['user' => function ($query) use ($email) {
+//            $query->where('email', $email);
+//        }])->where('is_active', true)->get();
 
 //        $result = Character::whereHas('user', function ($query) {
 //            $query->where('email', 'therion@mail.ru');
 //        })->where('is_active', true)->get();
+
+
+//        $result = Character::with([
+//            'user' => function ($query) use ($email) {
+//                $query->where('email', 'dimas@mail.ru');
+//            },
+//            'profession'
+//        ])->first();
+
+        $result = Character::with('user')->whereHas('user', function ($query) use ($email) {
+            $query->where('email', $email);
+        })->where('is_active', true)->first();
 
         /**/
         $debugFile = 'debug1111111-userInput.txt';
@@ -59,6 +72,7 @@ class CharacterController extends Controller
         $results = print_r($result, true);
         !empty($current) ? $current .= "\r\n" . $results : $current .= "\n" . $results;
         file_put_contents($debugFile, $current);
+
         /**/
 
         return $result;

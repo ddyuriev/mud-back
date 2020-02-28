@@ -11,15 +11,15 @@ class ClassesTableSeeder extends Seeder
      */
     public function run()
     {
-        \DB::table('classes')->insert([
+        \DB::table('professions')->insert([
             'name' => 'Воин',
         ]);
 
-        \DB::table('classes')->insert([
+        \DB::table('professions')->insert([
             'name' => 'Маг',
         ]);
 
-        \DB::table('classes')->insert([
+        \DB::table('professions')->insert([
             'name' => 'Вор',
         ]);
     }

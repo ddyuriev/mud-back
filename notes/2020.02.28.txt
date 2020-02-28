@@ -1,0 +1,20 @@
+Наверное в объект персонажа надо класть клетку
+
+------------
+
+Так как class резервное слово, переделаю в profession
+
+
+php artisan make:migration create_professions_table
+php artisan make:seeder ProfessionsTableSeeder
+
+
+------------
+
+
+Прикольно:
+
+
+{code: 3, message: "Token has expired and can no longer be refreshed"}
+code: 3
+message: "Token has expired and can no longer be refreshed"

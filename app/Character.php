@@ -14,4 +14,9 @@ class Character extends Model
 //        return $this->hasOne('App\User');
         return $this->hasOne('App\User', 'id', 'user_id');
     }
+
+    public function profession()
+    {
+        return $this->hasOne('App\Profession', 'id', 'profession_id');
+    }
 }
