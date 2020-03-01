@@ -24,7 +24,7 @@ class CharacterService
 //            $query->where('email', $email);
 //        })->where('is_active', true)->first();
 
-        $character= Character::with(['user' => function ($query) use ($email) {
+        $character = Character::with(['user' => function ($query) use ($email) {
             $query->where('email', $email);
         }, 'profession'])->first();
 

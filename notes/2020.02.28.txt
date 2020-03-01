@@ -18,3 +18,16 @@ php artisan make:seeder ProfessionsTableSeeder
 {code: 3, message: "Token has expired and can no longer be refreshed"}
 code: 3
 message: "Token has expired and can no longer be refreshed"
+
+
+----------------------------------------
+
+
+        $result = Character::with('user')->whereHas('user', function ($query) use ($email) {
+            $query->where('email', $email);
+        })->where('is_active', true)->toSql();
+
+select * from `characters` where exists (select * from `users` where `characters`.`user_id` = `users`.`id` and `email` =
+?) and `is_active` = ?
+
+вообщем это правильно.

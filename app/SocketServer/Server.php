@@ -145,22 +145,38 @@ class Server
                 $charName = !empty($activeCharacter) ? $activeCharacter->name : "Не выбран";
 
                 $selectCharacterDialog = <<<STR
-Аккaунт [{$userEmailFromClient}] Персонаж [{$charName}]
-Добро пожаловать в MUD Adamant Adan!
-0) Выход из AdamantAdan-MUDа.
-1) Начать игру.
-2) Ввести описание своего персонажа.
-3) Прочитать начальную историю.
-4) Поменять пароль.
-5) Удалить этого персонажа.
---------------------------------
-В этом аккаунте вы также можете:
-6) Выбрать другого персонажа. 
-7) Создать нового персонажа. 
+<span>
+Аккaунт [{$userEmailFromClient}] Персонаж [{$charName}]<br>
+Добро пожаловать в MUD Adamant Adan!<br>
+0) Выход из AdamantAdan-MUDа.<br>
+1) Начать игру.<br>
+2) Ввести описание своего персонажа.<br>
+3) Прочитать начальную историю.<br>
+4) Поменять пароль.<br>
+5) Удалить этого персонажа.<br>
+--------------------------------<br>
+В этом аккаунте вы также можете:<br>
+6) Выбрать другого персонажа.<br>
+7) Создать нового персонажа.<br>
 8) Другие операции с аккаунтом.
+</span>
 STR;
 
+//                $selectCharacterDialog = <<<STR
+//<span>
+//</span>
+//STR;
+
                 $service0 = json_encode(['selectCharacterDialog' => $selectCharacterDialog]);
+
+                /**/
+//                $debugFile = 'storage\debug1111111--------------++++$service0.txt';
+//                file_exists($debugFile) ? $current = file_get_contents($debugFile) : $current = null;
+//                $results = print_r($service0, true);
+//                !empty($current) ? $current .= "\r\n" . $results : $current .= "\n" . $results;
+//                file_put_contents($debugFile, $current);
+                /**/
+
                 $connection->send($service0);
 
 
@@ -240,7 +256,7 @@ STR;
 //\r\n
 //{$character->HP}H {$character->VP}V 1855881X {$character->coins}C Вых:Ю>
 //STR;
-            $stateString = "<br>{$character->HP}H {$character->VP}V 1999X {$character->coins}C Вых:Ю>";
+            $stateString = "<span style='color:darkgreen'>{$character->HP}H {$character->VP}V 1999X {$character->coins}C Вых:Ю></span>";
 
             switch ($state) {
                 //на 1-це
@@ -248,7 +264,8 @@ STR;
                     switch ($data->message) {
                         case 1:
 //                            $connection->send(json_encode(['for_client' => "\r\nПриветствуем вас на бескрайних просторах мира чудес и приключений!" . $stateString]));
-                            $connection->send(json_encode(['for_client' => "<br>Приветствуем вас на бескрайних просторах мира чудес и приключений!" . $stateString]));
+//                            $connection->send(json_encode(['for_client' => "<br>Приветствуем вас на бескрайних просторах мира чудес и приключений!" . $stateString]));
+                            $connection->send(json_encode(['for_client' => "<span>Приветствуем вас на бескрайних просторах мира чудес и приключений!</span>" . $stateString]));
 
                             $this->characters[$dataUserUuid]['state'] = 2;
                             break;
@@ -261,20 +278,20 @@ STR;
                     switch ($data->message) {
                         case 'см':
 //                            $connection->send(json_encode(['for_client' => "\r\nПеред вами абсолютное ничто во все стороны!"]));
-                            $connection->send(json_encode(['for_client' => "<br>Перед вами абсолютное ничто во все стороны!" . $stateString]));
+                            $connection->send(json_encode(['for_client' => "<span>Перед вами абсолютное ничто во все стороны!</span>" . $stateString]));
                             break;
                         case 'сч':
                             $message = <<<STR
-Вы {$character->name}, {$character->profession->name} {$character->experience} уровня.
-Ваш E-mail: {$character->user->email}
-Вы набрали {$character->experience} опыта и имеете {$character->coins} монеты.
+Вы {$character->name}, {$character->profession->name} {$character->experience} уровня.<br>
+Ваш E-mail: {$character->user->email}<br>
+Вы набрали {$character->experience} опыта и имеете {$character->coins} монеты.<br>
 STR;
 
 //                            $connection->send(json_encode(['for_client' => '<span style="color:darkgreen">' . "\r\n{$message}{$stateString}" . '</span>']));
 //                            $connection->send(json_encode(['for_client' => "<br>{$message}{$stateString}"]));
 //                            $connection->send(json_encode(['for_client' => '<text style="color:darkgreen">' . "<br>{$message}{$stateString}" . '</text>']));
 //                            $connection->send(json_encode(['for_client' => "<br>{$message}"]));
-                            $connection->send(json_encode(['for_client' => '<br><i>' . "{$message}{$stateString}" . '</i>']));
+                            $connection->send(json_encode(['for_client' => '<span>' . "{$message}{$stateString}" . '</span>']));
                             break;
                     }
                     break;

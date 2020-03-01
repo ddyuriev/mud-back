@@ -52,19 +52,21 @@ class CharacterController extends Controller
 
 //        $result = Character::whereHas('user', function ($query) {
 //            $query->where('email', 'therion@mail.ru');
-//        })->where('is_active', true)->get();
+//        })->where('is_active', true)->first();
 
 
+        //косяк
 //        $result = Character::with([
 //            'user' => function ($query) use ($email) {
-//                $query->where('email', 'dimas@mail.ru');
+//                $query->where('user.email', 'dimas@mail.ru');
 //            },
 //            'profession'
 //        ])->first();
 
-        $result = Character::with('user')->whereHas('user', function ($query) use ($email) {
+
+        $result = Character::with('user', 'profession')->whereHas('user', function ($query) use ($email) {
             $query->where('email', $email);
-        })->where('is_active', true)->first();
+        })->where('is_active', true)->toSql();
 
         /**/
         $debugFile = 'debug1111111-userInput.txt';
@@ -72,7 +74,6 @@ class CharacterController extends Controller
         $results = print_r($result, true);
         !empty($current) ? $current .= "\r\n" . $results : $current .= "\n" . $results;
         file_put_contents($debugFile, $current);
-
         /**/
 
         return $result;
