@@ -265,7 +265,7 @@ STR;
                         case 1:
 //                            $connection->send(json_encode(['for_client' => "\r\nПриветствуем вас на бескрайних просторах мира чудес и приключений!" . $stateString]));
 //                            $connection->send(json_encode(['for_client' => "<br>Приветствуем вас на бескрайних просторах мира чудес и приключений!" . $stateString]));
-                            $connection->send(json_encode(['for_client' => "<span>Приветствуем вас на бескрайних просторах мира чудес и приключений!</span>" . $stateString]));
+                            $connection->send(json_encode(['for_client' => $stateString . "<span>Приветствуем вас на бескрайних просторах мира чудес и приключений!</span>"]));
 
                             $this->characters[$dataUserUuid]['state'] = 2;
                             break;
@@ -278,7 +278,7 @@ STR;
                     switch ($data->message) {
                         case 'см':
 //                            $connection->send(json_encode(['for_client' => "\r\nПеред вами абсолютное ничто во все стороны!"]));
-                            $connection->send(json_encode(['for_client' => "<span>Перед вами абсолютное ничто во все стороны!</span>" . $stateString]));
+                            $connection->send(json_encode(['for_client' => $stateString . "<span>Лесная поляна на перекрестке тропинок.</span>"]));
                             break;
                         case 'сч':
                             $message = <<<STR
