@@ -11,6 +11,7 @@ namespace App\SocketServer;
 //use Logger;
 
 use App\Http\Controllers\CharacterController;
+use App\Room;
 use App\Services\CharacterService;
 use App\Services\MessageService;
 use App\Services\UserService;
@@ -58,13 +59,13 @@ class Server
 //        $this->ws_worker = new Worker("websocket://192.168.215.29:$config[port]");
 
 //        $this->db = $db;
-        $this->logger           = $logger;
+        $this->logger = $logger;
         $this->ws_worker->count = $config['countWorkers'];
-        $this->config           = $config;
+        $this->config = $config;
 
-        $this->userService      = $userService;
+        $this->userService = $userService;
         $this->characterService = $characterService;
-        $this->messageService   = $messageService;
+        $this->messageService = $messageService;
 
 //        $gameState = new \stdClass();
 
@@ -74,6 +75,18 @@ class Server
 
     public function serverStart()
     {
+        //грузим зоны
+        $rooms = Room::all();
+
+        /**/
+        $debugFile = 'storage\debug1111111-$rooms.txt';
+        file_exists($debugFile) ? $current = file_get_contents($debugFile) : $current = null;
+        $results = print_r($rooms, true);
+        !empty($current) ? $current .= "\r\n" . $results : $current .= "\n" . $results;
+        file_put_contents($debugFile, $current);
+        /**/
+
+
 //        $this->users = [];
         $this->connections = [];
         /*
@@ -110,7 +123,7 @@ class Server
             $connection->onWebSocketConnect = function ($connection) use (&$users) {
 
                 $userEmailFromClient = $_GET['user'];
-                $activeCharacter     = $this->characterService->getActiveCharacterByUserEmail($userEmailFromClient);
+                $activeCharacter = $this->characterService->getActiveCharacterByUserEmail($userEmailFromClient);
 
                 $this->characters[$activeCharacter->user->uuid] = $activeCharacter;
 
@@ -216,7 +229,7 @@ STR;
             file_put_contents($debugFile, $current);
             /**/
 
-            $time       = date("H:i:s");
+            $time = date("H:i:s");
             $data->time = $time;
 
             /**/
@@ -265,9 +278,14 @@ STR;
                         case 1:
 //                            $connection->send(json_encode(['for_client' => "\r\nПриветствуем вас на бескрайних просторах мира чудес и приключений!" . $stateString]));
 //                            $connection->send(json_encode(['for_client' => "<br>Приветствуем вас на бескрайних просторах мира чудес и приключений!" . $stateString]));
-                            $connection->send(json_encode(['for_client' => $stateString . "<span>Приветствуем вас на бескрайних просторах мира чудес и приключений!</span>"]));
+
+                            $helloMessage = "<span>Приветствуем вас на бескрайних просторах мира чудес и приключений!</span>";
 
                             $this->characters[$dataUserUuid]['state'] = 2;
+                            $this->characters[$dataUserUuid]['room_uuid'] = Room::START_ROOM_UUID;
+
+                            $connection->send(json_encode(['for_client' => $stateString . $helloMessage]));
+
                             break;
 //                    case 'stop':
 //                        $this->stopDaemon();

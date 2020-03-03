@@ -1,0 +1,35 @@
+
+02.03:
+Сделать несколько клеток, перемещение между ними.
+Комманды
+умения
+учить
+----------
+
+Думаю все зоны надо в базу закатать. При старте сервера грузить в оперативку
+у каждой комнаты
+имя
+описание
+выходы
+триггеры?
+uuid
+
+ога...
+
+
+
+php artisan make:migration create_rooms_table
+php artisan migrate
+
+----
+в mySql uuid = char(36)
+----
+
+php artisan make:seeder RoomsTableSeeder
+php artisan db:seed --class=UsersTableSeeder
+
+хм... как сделать выходы...
+тут нужен массив направление->uuid клетки
+
+делать ли скрытые выходы?
+пока нет
