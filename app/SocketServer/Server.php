@@ -311,8 +311,16 @@ STR;
                 case 2:
                     switch ($data->message) {
                         case 'см':
-//                            $connection->send(json_encode(['for_client' => "\r\nПеред вами абсолютное ничто во все стороны!"]));
-                            $connection->send(json_encode(['for_client' => $stateString . "<span>Лесная поляна на перекрестке тропинок.</span>"]));
+//                            $connection->send(json_encode(['for_client' => $stateString . "<span>Лесная поляна на перекрестке тропинок.</span>"]));
+
+//                            $stateString = $this->renderStateString($character, $rooms[Room::START_ROOM_UUID]['exits']);
+//                            $roomName    = "<span style='color:indigo'>" . $rooms[Room::START_ROOM_UUID]['name'] . "</span>";
+                            $room            = $rooms[$this->characters[$dataUserUuid]['room_uuid']];
+                            $stateString     = $this->renderStateString($character, $room['exits']);
+                            $roomName        = "<span style='color:indigo'>" . $room['name'] . "</span>";
+                            $roomDescription = "<span>" . $room['description'] . "</span>";
+                            $connection->send(json_encode(['for_client' => $stateString . $roomDescription . $roomName]));
+
                             break;
                         case 'сч':
                             $message = <<<STR
