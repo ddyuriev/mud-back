@@ -286,10 +286,19 @@ STR;
 
                             $helloMessage = "<span>Приветствуем вас на бескрайних просторах мира чудес и приключений!</span>";
 
-                            $this->characters[$dataUserUuid]['state']     = 2;
+                            $this->characters[$dataUserUuid]['state'] = 2;
 //                            $this->characters[$dataUserUuid]['room_uuid'] = Room::START_ROOM_UUID;
                             /**/
                             $this->characters[$dataUserUuid]->room_uuid = Room::START_ROOM_UUID;
+                            /**/
+
+
+                            /**/
+//                            $debugFile = 'storage\debug1111111-onMessage-111111111111-$this-characters$dataUserUuid.txt';
+//                            file_exists($debugFile) ? $current = file_get_contents($debugFile) : $current = null;
+//                            $results = print_r( $this->characters[$dataUserUuid], true);
+//                            !empty($current) ? $current .= "\r\n" . $results : $current .= "\n" . $results;
+//                            file_put_contents($debugFile, $current);
                             /**/
 
                             $stateString = $this->renderStateString($character, $rooms[Room::START_ROOM_UUID]['exits']);
@@ -320,8 +329,10 @@ STR;
                             break;
                         case 'east':
 
-                            $nextRoomUuid = !empty($this->characters[$dataUserUuid]['room_uuid']['exits']['e']) ? $this->characters[$dataUserUuid]['room_uuid']['exits']['e'] : null;
+                            //Бред
+//                            $nextRoomUuid = !empty($this->characters[$dataUserUuid]['room_uuid']['exits']['e']) ? $this->characters[$dataUserUuid]['room_uuid']['exits']['e'] : null;
 
+                            $nextRoomUuid = !empty($rooms[$this->characters[$dataUserUuid]['room_uuid']]['exits']['e']) ? $rooms[$this->characters[$dataUserUuid]['room_uuid']]['exits']['e'] : null;
 
                             /**/
                             $debugFile = 'storage\debug1111111-onMessage-$this-characters-$dataUserUuid.txt';
@@ -340,9 +351,10 @@ STR;
                             /**/
 
                             if ($nextRoomUuid) {
-                                $this->characters[$dataUserUuid]['room_uuid'] = $nextRoomUuid;
-                                $stateString                                  = $this->renderStateString($character, $rooms[$nextRoomUuid]['exits']);
-                                $roomName                                     = "<span style='color:indigo'>" . $rooms[$nextRoomUuid]['name'] . "</span>";
+//                                $this->characters[$dataUserUuid]['room_uuid'] = $nextRoomUuid;
+                                $this->characters[$dataUserUuid]->room_uuid = $nextRoomUuid;
+                                $stateString                                = $this->renderStateString($character, $rooms[$nextRoomUuid]['exits']);
+                                $roomName                                   = "<span style='color:indigo'>" . $rooms[$nextRoomUuid]['name'] . "</span>";
                                 $connection->send(json_encode(['for_client' => $stateString . $roomName]));
                             } else {
                                 $connection->send(json_encode(['for_client' => $stateString . "<span>Вы не можете идти в этом направлении...</span>"]));
