@@ -1,0 +1,33 @@
+
+$this->characters[$dataUserUuid]->room_uuid = Room::START_ROOM_UUID;
+Это пиздец как вырвиглазно...
+
+
+
+$dataUserUuid
+->
+$userUuidFromClient
+
+---------------
+
+пытаюсь получить локальный ip адрес js
+
+внешний есть:
+
+    $(document).ready(function () {
+        $.get('https://www.cloudflare.com/cdn-cgi/trace', function(data) {
+            console.log(data)
+        })
+    });
+
+хм... проще при логине
+http://mud-back/api/profile?token=
+отдавать с бэка признак дом/работа
+
+Шото начались тормоза дома - это было связано с отладкой - записью в файло
+debug1111111-onMessage-$this-connections.txt
+
+
+Так ну перемещение по клеткам есть!!!!!!!!
+
+

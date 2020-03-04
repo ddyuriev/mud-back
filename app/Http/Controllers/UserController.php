@@ -4,7 +4,8 @@ namespace App\Http\Controllers;
 
 use Laravel\Lumen\Routing\Controller as BaseController;
 use Illuminate\Support\Facades\Auth;
-use  App\User;
+use App\User;
+use Illuminate\Http\Request;
 
 class UserController extends Controller
 {
@@ -19,17 +20,27 @@ class UserController extends Controller
     }
 
     /**
-     * Get the authenticated User.
-     *
-     * @return Response
+     * @param Request $request
+     * @return \Illuminate\Http\JsonResponse
      */
-    public function profile()
+    public function profile(Request $request)
     {
 //        sleep(7);
 
 //        sleep(3);
 
-        return response()->json(['user' => Auth::user()], 200);
+        $user = Auth::user();
+
+        $localIp = $request->ip();
+
+        if ($localIp == env("HOME_IP")){
+            $user->at_home = true;
+        }
+
+
+
+//        return response()->json(['user' => Auth::user()], 200);
+        return response()->json(['user' => $user], 200);
     }
 
     /**
@@ -39,7 +50,7 @@ class UserController extends Controller
      */
     public function allUsers()
     {
-        return response()->json(['users' =>  User::all()], 200);
+        return response()->json(['users' => User::all()], 200);
     }
 
     /**

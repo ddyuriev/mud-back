@@ -35,7 +35,17 @@ class CharacterController extends Controller
     public function userInput(Request $request)
     {
 
-        return \Illuminate\Support\Str::uuid()->toString();
+//        return \Illuminate\Support\Str::uuid()->toString();
+
+        //OK
+//        return  $request->ip();
+
+//        return $request;
+
+//        $request->ip()
+
+
+
         /**/
 //        $debugFile = 'debug1111111-userInput.txt';
 //        file_exists($debugFile) ? $current = file_get_contents($debugFile) : $current = null;
