@@ -59,13 +59,13 @@ class Server
 //        $this->ws_worker = new Worker("websocket://192.168.215.29:$config[port]");
 
 //        $this->db = $db;
-        $this->logger = $logger;
+        $this->logger           = $logger;
         $this->ws_worker->count = $config['countWorkers'];
-        $this->config = $config;
+        $this->config           = $config;
 
-        $this->userService = $userService;
+        $this->userService      = $userService;
         $this->characterService = $characterService;
-        $this->messageService = $messageService;
+        $this->messageService   = $messageService;
 
 //        $gameState = new \stdClass();
 
@@ -76,7 +76,11 @@ class Server
     public function serverStart()
     {
         //грузим зоны
-        $rooms = Room::all();
+        $roomsArray = Room::all()->toArray();
+
+        foreach ($roomsArray as $roomArray) {
+            $rooms[$roomArray['uuid']] = $roomArray;
+        }
 
         /**/
         $debugFile = 'storage\debug1111111-$rooms.txt';
@@ -113,17 +117,17 @@ class Server
         $this->ws_worker->onConnect = function ($connection/*, $data/**/) use (&$users) {
 
             /**/
-            $debugFile = 'storage\debug1111111-onConnect.txt';
-            file_exists($debugFile) ? $current = file_get_contents($debugFile) : $current = null;
-            $results = print_r($users, true);
-            !empty($current) ? $current .= "\r\n" . $results : $current .= "\n" . $results;
-            file_put_contents($debugFile, $current);
+//            $debugFile = 'storage\debug1111111-onConnect.txt';
+//            file_exists($debugFile) ? $current = file_get_contents($debugFile) : $current = null;
+//            $results = print_r($users, true);
+//            !empty($current) ? $current .= "\r\n" . $results : $current .= "\n" . $results;
+//            file_put_contents($debugFile, $current);
             /**/
 
             $connection->onWebSocketConnect = function ($connection) use (&$users) {
 
                 $userEmailFromClient = $_GET['user'];
-                $activeCharacter = $this->characterService->getActiveCharacterByUserEmail($userEmailFromClient);
+                $activeCharacter     = $this->characterService->getActiveCharacterByUserEmail($userEmailFromClient);
 
                 $this->characters[$activeCharacter->user->uuid] = $activeCharacter;
 
@@ -218,7 +222,7 @@ STR;
         * При получении сообщения записываем его в БД и рассылаем пользователям
         *
         */
-        $this->ws_worker->onMessage = function ($connection, $data) use (&$users) {
+        $this->ws_worker->onMessage = function ($connection, $data) use (&$users, $rooms) {
             $data = json_decode($data);
 
             /**/
@@ -229,7 +233,7 @@ STR;
             file_put_contents($debugFile, $current);
             /**/
 
-            $time = date("H:i:s");
+            $time       = date("H:i:s");
             $data->time = $time;
 
             /**/
@@ -269,7 +273,8 @@ STR;
 //\r\n
 //{$character->HP}H {$character->VP}V 1855881X {$character->coins}C Вых:Ю>
 //STR;
-            $stateString = "<span style='color:darkgreen'>{$character->HP}H {$character->VP}V 1999X {$character->coins}C Вых:Ю></span>";
+            $exits       = 'ю';
+            $stateString = "<span style='color:darkgreen'>{$character->HP}H {$character->VP}V 1999X {$character->coins}C Вых:{$exits}></span>";
 
             switch ($state) {
                 //на 1-це
@@ -281,15 +286,17 @@ STR;
 
                             $helloMessage = "<span>Приветствуем вас на бескрайних просторах мира чудес и приключений!</span>";
 
-                            $this->characters[$dataUserUuid]['state'] = 2;
-                            $this->characters[$dataUserUuid]['room_uuid'] = Room::START_ROOM_UUID;
+                            $this->characters[$dataUserUuid]['state']     = 2;
+//                            $this->characters[$dataUserUuid]['room_uuid'] = Room::START_ROOM_UUID;
+                            /**/
+                            $this->characters[$dataUserUuid]->room_uuid = Room::START_ROOM_UUID;
+                            /**/
 
-                            $connection->send(json_encode(['for_client' => $stateString . $helloMessage]));
+                            $stateString = $this->renderStateString($character, $rooms[Room::START_ROOM_UUID]['exits']);
+                            $roomName    = "<span style='color:indigo'>" . $rooms[Room::START_ROOM_UUID]['name'] . "</span>";
+                            $connection->send(json_encode(['for_client' => $stateString . $roomName . $helloMessage]));
 
                             break;
-//                    case 'stop':
-//                        $this->stopDaemon();
-//                        break;
                     }
                     break;
                 case 2:
@@ -310,6 +317,38 @@ STR;
 //                            $connection->send(json_encode(['for_client' => '<text style="color:darkgreen">' . "<br>{$message}{$stateString}" . '</text>']));
 //                            $connection->send(json_encode(['for_client' => "<br>{$message}"]));
                             $connection->send(json_encode(['for_client' => '<span>' . "{$message}{$stateString}" . '</span>']));
+                            break;
+                        case 'east':
+
+                            $nextRoomUuid = !empty($this->characters[$dataUserUuid]['room_uuid']['exits']['e']) ? $this->characters[$dataUserUuid]['room_uuid']['exits']['e'] : null;
+
+
+                            /**/
+                            $debugFile = 'storage\debug1111111-onMessage-$this-characters-$dataUserUuid.txt';
+                            file_exists($debugFile) ? $current = file_get_contents($debugFile) : $current = null;
+                            $results = print_r($this->characters, true);
+                            !empty($current) ? $current .= "\r\n" . $results : $current .= "\n" . $results;
+                            file_put_contents($debugFile, $current);
+                            /**/
+
+                            /**/
+                            $debugFile = 'storage\debug1111111-onMessage-$this-$nextRoomUuid.txt';
+                            file_exists($debugFile) ? $current = file_get_contents($debugFile) : $current = null;
+                            $results = print_r($nextRoomUuid, true);
+                            !empty($current) ? $current .= "\r\n" . $results : $current .= "\n" . $results;
+                            file_put_contents($debugFile, $current);
+                            /**/
+
+                            if ($nextRoomUuid) {
+                                $this->characters[$dataUserUuid]['room_uuid'] = $nextRoomUuid;
+                                $stateString                                  = $this->renderStateString($character, $rooms[$nextRoomUuid]['exits']);
+                                $roomName                                     = "<span style='color:indigo'>" . $rooms[$nextRoomUuid]['name'] . "</span>";
+                                $connection->send(json_encode(['for_client' => $stateString . $roomName]));
+                            } else {
+                                $connection->send(json_encode(['for_client' => $stateString . "<span>Вы не можете идти в этом направлении...</span>"]));
+                            }
+
+
                             break;
                     }
                     break;
@@ -346,5 +385,20 @@ STR;
             }
         };
         Worker::runAll();
+    }
+
+
+    public function renderStateString($character, $exitsArray)
+    {
+        $north = !empty($exitsArray['n']) ? 'С' : '';
+        $east  = !empty($exitsArray['e']) ? 'В' : '';
+        $south = !empty($exitsArray['s']) ? 'Ю' : '';
+        $west  = !empty($exitsArray['w']) ? 'З' : '';
+        $up    = !empty($exitsArray['u']) ? '^' : '';
+        $down  = !empty($exitsArray['d']) ? 'v' : '';
+
+        $exits = $north . $east . $south . $west . $up . $down;
+
+        return "<span style='color:darkgreen'>{$character->HP}H {$character->VP}V 1999X {$character->coins}C Вых:{$exits}></span>";
     }
 }
