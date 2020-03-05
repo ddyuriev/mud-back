@@ -226,12 +226,8 @@ STR;
                         case 1:
                             $helloMessage = "<span style='color:goldenrod'>Приветствуем вас на бескрайних просторах мира чудес и приключений!</span>";
 
-                            $characters[$userUuidFromClient]['state'] = 2;
-//                            $characters[$userUuidFromClient]['room_uuid'] = Room::START_ROOM_UUID;
-                            /**/
+                            $characters[$userUuidFromClient]['state']   = 2;
                             $characters[$userUuidFromClient]->room_uuid = Room::START_ROOM_UUID;
-                            /**/
-
 
                             $stateString = $this->renderStateString($character, $rooms[Room::START_ROOM_UUID]['exits']);
                             $roomName    = "<span style='color:indigo'>" . $rooms[Room::START_ROOM_UUID]['name'] . "</span>";
@@ -275,19 +271,10 @@ STR;
                             $nextRoomUuid = !empty($rooms[$characters[$userUuidFromClient]['room_uuid']]['exits']['e']) ? $rooms[$characters[$userUuidFromClient]['room_uuid']]['exits']['e'] : null;
 
                             /**/
-//                            $debugFile = 'storage\debug1111111-onMessage-$this-characters-$userUuidFromClient.txt';
-//                            file_exists($debugFile) ? $current = file_get_contents($debugFile) : $current = null;
-//                            $results = print_r($characters, true);
-//                            !empty($current) ? $current .= "\r\n" . $results : $current .= "\n" . $results;
-//                            file_put_contents($debugFile, $current);
+//                            Debugger::PrintToFile('-onMessage-$this-characters-$userUuidFromClient', $characters);
                             /**/
-
                             /**/
-//                            $debugFile = 'storage\debug1111111-onMessage-$this-$nextRoomUuid.txt';
-//                            file_exists($debugFile) ? $current = file_get_contents($debugFile) : $current = null;
-//                            $results = print_r($nextRoomUuid, true);
-//                            !empty($current) ? $current .= "\r\n" . $results : $current .= "\n" . $results;
-//                            file_put_contents($debugFile, $current);
+//                            Debugger::PrintToFile('-onMessage-$this-$nextRoomUuid', $nextRoomUuid);
                             /**/
 
                             if ($nextRoomUuid) {
