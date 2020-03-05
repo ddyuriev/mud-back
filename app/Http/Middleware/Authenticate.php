@@ -115,11 +115,11 @@ class Authenticate
         }
 
         /**/
-        $debugFile = 'debug/debug1111111-sdfsfsfsdfs.txt';
-        file_exists($debugFile) ? $current = file_get_contents($debugFile) : $current = null;
-        $results = print_r('sdfsdfsdf', true);
-        !empty($current) ? $current .= "\r\n" . $results : $current .= "\n" . $results;
-        file_put_contents($debugFile, $current);
+//        $debugFile = 'debug/debug1111111-sdfsfsfsdfs.txt';
+//        file_exists($debugFile) ? $current = file_get_contents($debugFile) : $current = null;
+//        $results = print_r('sdfsdfsdf', true);
+//        !empty($current) ? $current .= "\r\n" . $results : $current .= "\n" . $results;
+//        file_put_contents($debugFile, $current);
         /**/
 
         // Login the user instance for global usage

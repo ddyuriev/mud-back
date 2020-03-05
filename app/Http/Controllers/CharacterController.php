@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Character;
+use App\Helpers\Debugger;
 use Illuminate\Http\Request;
 
 class CharacterController extends Controller
@@ -35,6 +36,10 @@ class CharacterController extends Controller
     public function userInput(Request $request)
     {
 
+
+        Debugger::PrintToFile('zzzzzz', $request->all());
+        exit();
+
 //        return \Illuminate\Support\Str::uuid()->toString();
 
         //OK
@@ -43,7 +48,6 @@ class CharacterController extends Controller
 //        return $request;
 
 //        $request->ip()
-
 
 
         /**/
@@ -85,6 +89,7 @@ class CharacterController extends Controller
         $results = print_r($result, true);
         !empty($current) ? $current .= "\r\n" . $results : $current .= "\n" . $results;
         file_put_contents($debugFile, $current);
+
         /**/
 
         return $result;
