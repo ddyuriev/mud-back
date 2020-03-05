@@ -65,26 +65,17 @@ class Server
 
     public function serverStart()
     {
-        //грузим зоны
-        $roomsArray = Room::all()->toArray();
-
-
-        Debugger::PrintToFile('zzzzzz', $roomsArray);
-        exit();
-
         $rooms      = [];
         $characters = [];
 
+        //грузим зоны
+        $roomsArray = Room::all()->toArray();
         foreach ($roomsArray as $roomArray) {
             $rooms[$roomArray['uuid']] = $roomArray;
         }
 
         /**/
-        $debugFile = 'storage\debug1111111-$rooms.txt';
-        file_exists($debugFile) ? $current = file_get_contents($debugFile) : $current = null;
-        $results = print_r($rooms, true);
-        !empty($current) ? $current .= "\r\n" . $results : $current .= "\n" . $results;
-        file_put_contents($debugFile, $current);
+        Debugger::PrintToFile('$rooms', $rooms);
         /**/
 
 
@@ -111,7 +102,7 @@ class Server
         * При новом подключении уведомляем пользователей, достаем старые сообщения, пишем в лог
         *
         */
-        $this->ws_worker->onConnect = function ($connection/*, $data/**/) use (&$users, $characters) {
+        $this->ws_worker->onConnect = function ($connection/*, $data/**/) use (&$users, &$characters) {
 
             /**/
 //            $debugFile = 'storage\debug1111111-onConnect.txt';
@@ -121,7 +112,7 @@ class Server
 //            file_put_contents($debugFile, $current);
             /**/
 
-            $connection->onWebSocketConnect = function ($connection) use (&$users, $characters) {
+            $connection->onWebSocketConnect = function ($connection) use (&$users, &$characters) {
 
                 $userEmailFromClient = $_GET['user'];
                 $activeCharacter     = $this->characterService->getActiveCharacterByUserEmail($userEmailFromClient);
@@ -168,13 +159,8 @@ class Server
 STR;
 
                 $service0 = json_encode(['selectCharacterDialog' => $selectCharacterDialog]);
-
                 /**/
-//                $debugFile = 'storage\debug1111111--------------++++$service0.txt';
-//                file_exists($debugFile) ? $current = file_get_contents($debugFile) : $current = null;
-//                $results = print_r($service0, true);
-//                !empty($current) ? $current .= "\r\n" . $results : $current .= "\n" . $results;
-//                file_put_contents($debugFile, $current);
+                Debugger::PrintToFile('--------------++++$service0', $service0);
                 /**/
 
                 $connection->send($service0);
@@ -203,26 +189,16 @@ STR;
         * При получении сообщения записываем его в БД и рассылаем пользователям
         *
         */
-        $this->ws_worker->onMessage = function ($connection, $data) use (&$users, $rooms, $characters) {
+        $this->ws_worker->onMessage = function ($connection, $data) use (&$users, $rooms, &$characters) {
             $data = json_decode($data);
-
             /**/
-//            $debugFile = 'storage\debug1111111-onMessage-$data.txt';
-//            file_exists($debugFile) ? $current = file_get_contents($debugFile) : $current = null;
-//            $results = print_r($data, true);
-//            !empty($current) ? $current .= "\r\n" . $results : $current .= "\n" . $results;
-//            file_put_contents($debugFile, $current);
+//            Debugger::PrintToFile('-onMessage-$data', $data);
             /**/
 
             $time       = date("H:i:s");
             $data->time = $time;
-
             /**/
-//            $debugFile = 'storage\debug1111111-onMessage-$this-connections.txt';
-//            file_exists($debugFile) ? $current = file_get_contents($debugFile) : $current = null;
-//            $results = print_r($this->connections, true);
-//            !empty($current) ? $current .= "\r\n" . $results : $current .= "\n" . $results;
-//            file_put_contents($debugFile, $current);
+//            Debugger::PrintToFile('-onMessage-$this-connections', $this->connections);
             /**/
 
 

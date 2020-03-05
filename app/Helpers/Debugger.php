@@ -2,12 +2,20 @@
 
 namespace App\Helpers;
 
-
+/**
+ * Class Debugger
+ *
+ * @package App\Helpers
+ */
 class Debugger
 {
+    /**
+     * @param string $fileName
+     * @param        $variable
+     */
     public static function PrintToFile(string $fileName, $variable)
     {
-        $debugDir = is_dir('app') && is_dir('framework') ? '' : 'debug';
+        $debugDir = is_dir('app') && is_dir('bootstrap') && is_dir('vendor') ? 'storage' : 'debug';
 
         $debugFile = "$debugDir/debug1111111-$fileName.txt";
         file_exists($debugFile) ? $current = file_get_contents($debugFile) : $current = null;
