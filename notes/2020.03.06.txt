@@ -1,0 +1,119 @@
+
+!!!!!!!!!!!!!!!!!!!!!?????????????????????????????????????????????????
+
+
+бляя возникли большие сомнения, что присваивание переменной тут прокатит в мультипользовательском режиме
+
+            $character = $characters[$userUuidFromClient];
+            if ($character){
+
+            }
+            $stateString = $this->renderStateString($characters[$userUuidFromClient], $rooms[$character->room_uuid]['exits']);
+
+            ну вот и проверю.
+
+тут можно попробовать ссылки на переменные
+
+        $arr = [
+            10 => 1,
+            20 => 2
+        ];
+        $x = &$arr[10];
+        $x = 1000;
+        return $arr;
+
+        {
+            "10": 1000,
+            "20": 2
+        }
+
+!!!!!!!!!!!!!!!!!!!!!?????????????????????????????????????????????????
+
+
+Сгенерировать пачку uuid
+
+Так.. сделал еще несколько клеток.
+
+теперь вот такой вопрос
+
+case 'south':
+    $nextRoomUuid = !empty($rooms[$characters[$userUuidFromClient]['room_uuid']]['exits']['s']) ? $rooms[$characters[$userUuidFromClient]['room_uuid']]['exits']['s'] : null;
+    if ($nextRoomUuid) {
+        $characters[$userUuidFromClient]->room_uuid = $nextRoomUuid;
+        $stateString = $this->renderStateString($character, $rooms[$nextRoomUuid]['exits']);
+        $roomName = "<span style='color:indigo'>" . $rooms[$nextRoomUuid]['name'] . "</span>";
+        $connection->send(json_encode(['for_client' => $stateString . $roomName]));
+    } else {
+        $connection->send(json_encode(['for_client' => $stateString . "<span>Вы не можете идти в этом направлении...</span>"]));
+    }
+    break;
+как это говно вообще работает...
+
+
+бля... нужны ли вообще room_uuid
+или можно обойтись обычными id
+uuid
++
+у массива $rooms все ключи одного формата, хз как поможет
+-
+inner_id
++
+легче работать
+    -не надо генерить уиды
+    -легче читать когда создается зона
+нет путаницы с uuid юзеров, так как куча массивов с глубокой вложенностью
+
+-
+название както не особо нравится
+
+-------
+Во заебись. Так лучше.
+
+Только не ясно, как
+$nextRoomUuid = !empty($rooms[$characters[$userUuidFromClient]['room_uuid']]['exits']['n']) ? $rooms[$characters[$userUuidFromClient]['room_uuid']]['exits']['n'] : null;
+
+
+$characters[$userUuidFromClient]['room_uuid']
+отрабатывает. Это же динамическое поле объекта...
+
+!!!!!!!!!!!!!!
+Проверяю:
+        $character = Character::find(1);
+
+        $character->room_uuid = 999999999;
+
+        dd($character->room_uuid);
+        dd($character['room_uuid']);
+
+Да, одно и тоже
+!!!!!!!!!!!!!!
+
+Дальше:
+Загрузить моба учитель воин
+npc
+mob, mobile
+
+Зоны обновляются. Мобы привязаны к стартовым клеткам.
+
+
+php artisan make:migration create_mobiles_table
+
+php artisan make:seeder MobilesTableSeeder
+
+??????
+имя мб массивом делать...
+
+https://makitweb.com/how-to-store-array-in-mysql-with-php/
+
+With serialize() and unserialize()
+With implode() and explode()
+With Loop
+
+https://stackoverflow.com/questions/21658926/storing-array-or-std-object-in-database-of-laravel-app
+??????
+
+
+
+
+
+

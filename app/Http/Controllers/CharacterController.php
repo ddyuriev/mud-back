@@ -36,11 +36,56 @@ class CharacterController extends Controller
     public function userInput(Request $request)
     {
 
+        /*-----------------------------------*/
+        $arr = array('x', 'y', 'z');
+//        To insert this into a database field you can use serialize function like this
+        $serializedArr = serialize($arr);
 
-        Debugger::PrintToFile('zzzzzz', $request->all());
-        exit();
+//        print_r($serializedArr);
+//        dd($serializedArr);
+//        dd($arr);
 
-//        return \Illuminate\Support\Str::uuid()->toString();
+        $character = Character::find(1);
+
+
+        Debugger::PrintToFile('$character', $character);
+
+        $name = $character->name;
+//        dd($character);
+
+        print_r($name);
+
+//        $character->name = $serializedArr;
+//        $character->save();
+
+        /*-----------------------------------*/
+
+
+        /*-----------------------------------*/
+//        $character = Character::find(1);
+//        $character->room_uuid = 999999999;
+//        dd($character->room_uuid);
+//        dd($character['room_uuid']);
+        /*-----------------------------------*/
+
+
+        /*-----------------------------------*/
+//        $arr = [
+//            10 => 1,
+//            20 => 2
+//        ];
+//        $x = &$arr[10];
+//        $x = 1000;
+//        return $arr;
+        /*-----------------------------------*/
+
+
+//        Debugger::PrintToFile('zzzzzz', $request->all());
+//        exit();
+
+        /*-----------------------------------*/
+        return \Illuminate\Support\Str::uuid()->toString();
+        /*-----------------------------------*/
 
         //OK
 //        return  $request->ip();

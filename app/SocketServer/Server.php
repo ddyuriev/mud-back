@@ -53,25 +53,26 @@ class Server
 //        $this->ws_worker = new Worker("websocket://192.168.215.29:$config[port]");
 
 //        $this->db = $db;
-        $this->logger           = $logger;
+        $this->logger = $logger;
         $this->ws_worker->count = $config['countWorkers'];
-        $this->config           = $config;
+        $this->config = $config;
 
-        $this->userService      = $userService;
+        $this->userService = $userService;
         $this->characterService = $characterService;
-        $this->messageService   = $messageService;
+        $this->messageService = $messageService;
     }
 
 
     public function serverStart()
     {
-        $rooms      = [];
+        $rooms = [];
         $characters = [];
 
         //грузим зоны
         $roomsArray = Room::all()->toArray();
         foreach ($roomsArray as $roomArray) {
-            $rooms[$roomArray['uuid']] = $roomArray;
+//            $rooms[$roomArray['uuid']] = $roomArray;
+            $rooms[$roomArray['inner_id']] = $roomArray;
         }
 
         /**/
@@ -115,16 +116,12 @@ class Server
             $connection->onWebSocketConnect = function ($connection) use (&$users, &$characters) {
 
                 $userEmailFromClient = $_GET['user'];
-                $activeCharacter     = $this->characterService->getActiveCharacterByUserEmail($userEmailFromClient);
+                $activeCharacter = $this->characterService->getActiveCharacterByUserEmail($userEmailFromClient);
 
                 $characters[$activeCharacter->user->uuid] = $activeCharacter;
 
                 /**/
-                $debugFile = 'storage\debug1111111--------------++++$character.txt';
-                file_exists($debugFile) ? $current = file_get_contents($debugFile) : $current = null;
-                $results = print_r($activeCharacter, true);
-                !empty($current) ? $current .= "\r\n" . $results : $current .= "\n" . $results;
-                file_put_contents($debugFile, $current);
+                Debugger::PrintToFile('--------------++++$character', $activeCharacter);
                 /**/
 
                 /**/
@@ -195,7 +192,7 @@ STR;
 //            Debugger::PrintToFile('-onMessage-$data', $data);
             /**/
 
-            $time       = date("H:i:s");
+            $time = date("H:i:s");
             $data->time = $time;
             /**/
 //            Debugger::PrintToFile('-onMessage-$this-connections', $this->connections);
@@ -212,12 +209,15 @@ STR;
 //            $findUser = $this->userService->findByUuid($data->uuid);
 
             //начало
-            $state = !empty($characters[$userUuidFromClient]['state']) ? $characters[$userUuidFromClient]['state'] : 1;
+            $character = &$characters[$userUuidFromClient];
 
-            $character = $characters[$userUuidFromClient];
+            $state = !empty($character['state']) ? $character['state'] : 1;
 
-            $exits       = 'ю';
-            $stateString = "<span style='color:darkgreen'>{$character->HP}H {$character->VP}V 1999X {$character->coins}C Вых:{$exits}></span>";
+            if ($state == 2) {
+//                $stateString = $this->renderStateString($character, $rooms[$character->room_uuid]['exits']);
+                $stateString = $this->renderStateString($character, $rooms[$character->room_inner_id]['exits']);
+            }
+
 
             switch ($state) {
                 //на 1-це
@@ -226,11 +226,16 @@ STR;
                         case 1:
                             $helloMessage = "<span style='color:goldenrod'>Приветствуем вас на бескрайних просторах мира чудес и приключений!</span>";
 
-                            $characters[$userUuidFromClient]['state']   = 2;
-                            $characters[$userUuidFromClient]->room_uuid = Room::START_ROOM_UUID;
+//                            $characters[$userUuidFromClient]['state'] = 2;
+//                            $characters[$userUuidFromClient]->room_uuid = Room::START_ROOM_UUID;
+                            $character['state'] = 2;
+//                            $character->room_uuid = Room::START_ROOM_UUID;
+                            $character->room_inner_id = Room::START_ROOM_INNER_ID;
 
-                            $stateString = $this->renderStateString($character, $rooms[Room::START_ROOM_UUID]['exits']);
-                            $roomName    = "<span style='color:indigo'>" . $rooms[Room::START_ROOM_UUID]['name'] . "</span>";
+//                            $stateString = $this->renderStateString($character, $rooms[Room::START_ROOM_UUID]['exits']);
+                            $stateString = $this->renderStateString($character, $rooms[Room::START_ROOM_INNER_ID]['exits']);
+//                            $roomName = "<span style='color:indigo'>" . $rooms[Room::START_ROOM_UUID]['name'] . "</span>";
+                            $roomName = "<span style='color:indigo'>" . $rooms[Room::START_ROOM_INNER_ID]['name'] . "</span>";
                             $connection->send(json_encode(['for_client' => $stateString . $roomName . $helloMessage]));
 
                             break;
@@ -239,85 +244,80 @@ STR;
                 case 2:
                     switch ($data->message) {
                         case 'см':
-//                            $connection->send(json_encode(['for_client' => $stateString . "<span>Лесная поляна на перекрестке тропинок.</span>"]));
-
-//                            $stateString = $this->renderStateString($character, $rooms[Room::START_ROOM_UUID]['exits']);
-//                            $roomName    = "<span style='color:indigo'>" . $rooms[Room::START_ROOM_UUID]['name'] . "</span>";
-                            $room            = $rooms[$characters[$userUuidFromClient]['room_uuid']];
-                            $stateString     = $this->renderStateString($character, $room['exits']);
-                            $roomName        = "<span style='color:indigo'>" . $room['name'] . "</span>";
+//                            $room = $rooms[$characters[$userUuidFromClient]['room_uuid']];
+                            $room = $rooms[$character->room_inner_id];
+                            $stateString = $this->renderStateString($character, $room['exits']);
+                            $roomName = "<span style='color:indigo'>" . $room['name'] . "</span>";
                             $roomDescription = "<span>" . $room['description'] . "</span>";
                             $connection->send(json_encode(['for_client' => $stateString . $roomDescription . $roomName]));
-
                             break;
                         case 'сч':
                             $message = <<<STR
-Вы {$character->name}, {$character->profession->name} {$character->experience} уровня.<br>
+Вы <span style='color:goldenrod'>{$character->name}</span>, {$character->profession->name} {$character->experience} уровня.<br>
 Ваш E-mail: {$character->user->email}<br>
 Вы набрали {$character->experience} опыта и имеете {$character->coins} монеты.<br>
 STR;
-
-//                            $connection->send(json_encode(['for_client' => '<span style="color:darkgreen">' . "\r\n{$message}{$stateString}" . '</span>']));
-//                            $connection->send(json_encode(['for_client' => "<br>{$message}{$stateString}"]));
-//                            $connection->send(json_encode(['for_client' => '<text style="color:darkgreen">' . "<br>{$message}{$stateString}" . '</text>']));
-//                            $connection->send(json_encode(['for_client' => "<br>{$message}"]));
                             $connection->send(json_encode(['for_client' => '<span>' . "{$message}{$stateString}" . '</span>']));
                             break;
-                        case 'east':
 
-                            //Бред
-//                            $nextRoomUuid = !empty($characters[$userUuidFromClient]['room_uuid']['exits']['e']) ? $characters[$userUuidFromClient]['room_uuid']['exits']['e'] : null;
-
-                            $nextRoomUuid = !empty($rooms[$characters[$userUuidFromClient]['room_uuid']]['exits']['e']) ? $rooms[$characters[$userUuidFromClient]['room_uuid']]['exits']['e'] : null;
-
-                            /**/
-//                            Debugger::PrintToFile('-onMessage-$this-characters-$userUuidFromClient', $characters);
-                            /**/
-                            /**/
-//                            Debugger::PrintToFile('-onMessage-$this-$nextRoomUuid', $nextRoomUuid);
-                            /**/
-
-                            if ($nextRoomUuid) {
-//                                $characters[$userUuidFromClient]['room_uuid'] = $nextRoomUuid;
-                                $characters[$userUuidFromClient]->room_uuid = $nextRoomUuid;
-                                $stateString                                = $this->renderStateString($character, $rooms[$nextRoomUuid]['exits']);
-                                $roomName                                   = "<span style='color:indigo'>" . $rooms[$nextRoomUuid]['name'] . "</span>";
+                        case 'north':
+                            $nextRoomInnerId = !empty($rooms[$character->room_inner_id]['exits']['n']) ? $rooms[$character->room_inner_id]['exits']['n'] : null;
+                            if ($nextRoomInnerId) {
+                                $character->room_inner_id = $nextRoomInnerId;
+                                $stateString = $this->renderStateString($character, $rooms[$nextRoomInnerId]['exits']);
+                                $roomName = "<span style='color:indigo'>" . $rooms[$nextRoomInnerId]['name'] . "</span>";
                                 $connection->send(json_encode(['for_client' => $stateString . $roomName]));
                             } else {
                                 $connection->send(json_encode(['for_client' => $stateString . "<span>Вы не можете идти в этом направлении...</span>"]));
                             }
                             break;
-                        case 'west':
-                            $nextRoomUuid = !empty($rooms[$characters[$userUuidFromClient]['room_uuid']]['exits']['w']) ? $rooms[$characters[$userUuidFromClient]['room_uuid']]['exits']['w'] : null;
 
-                            if ($nextRoomUuid) {
-//                                $characters[$userUuidFromClient]['room_uuid'] = $nextRoomUuid;
-                                $characters[$userUuidFromClient]->room_uuid = $nextRoomUuid;
-                                $stateString                                = $this->renderStateString($character, $rooms[$nextRoomUuid]['exits']);
-                                $roomName                                   = "<span style='color:indigo'>" . $rooms[$nextRoomUuid]['name'] . "</span>";
+                        case 'east':
+                            $nextRoomInnerId = !empty($rooms[$character->room_inner_id]['exits']['e']) ? $rooms[$character->room_inner_id]['exits']['e'] : null;
+                            if ($nextRoomInnerId) {
+                                $character->room_inner_id = $nextRoomInnerId;
+                                $stateString = $this->renderStateString($character, $rooms[$nextRoomInnerId]['exits']);
+                                $roomName = "<span style='color:indigo'>" . $rooms[$nextRoomInnerId]['name'] . "</span>";
                                 $connection->send(json_encode(['for_client' => $stateString . $roomName]));
                             } else {
                                 $connection->send(json_encode(['for_client' => $stateString . "<span>Вы не можете идти в этом направлении...</span>"]));
                             }
+                            break;
+                        case 'south':
+                            $nextRoomInnerId = !empty($rooms[$character->room_inner_id]['exits']['s']) ? $rooms[$character->room_inner_id]['exits']['s'] : null;
+                            if ($nextRoomInnerId) {
+                                $character->room_inner_id = $nextRoomInnerId;
+                                $stateString = $this->renderStateString($character, $rooms[$nextRoomInnerId]['exits']);
+                                $roomName = "<span style='color:indigo'>" . $rooms[$nextRoomInnerId]['name'] . "</span>";
+                                $connection->send(json_encode(['for_client' => $stateString . $roomName]));
+                            } else {
+                                $connection->send(json_encode(['for_client' => $stateString . "<span>Вы не можете идти в этом направлении...</span>"]));
+                            }
+                            break;
+
+                        case 'west':
+                            $nextRoomInnerId = !empty($rooms[$character->room_inner_id]['exits']['w']) ? $rooms[$character->room_inner_id]['exits']['w'] : null;
+                            if ($nextRoomInnerId) {
+                                $character->room_inner_id = $nextRoomInnerId;
+                                $stateString = $this->renderStateString($character, $rooms[$nextRoomInnerId]['exits']);
+                                $roomName = "<span style='color:indigo'>" . $rooms[$nextRoomInnerId]['name'] . "</span>";
+                                $connection->send(json_encode(['for_client' => $stateString . $roomName]));
+                            } else {
+                                $connection->send(json_encode(['for_client' => $stateString . "<span>Вы не можете идти в этом направлении...</span>"]));
+                            }
+                            break;
                     }
                     break;
             }
 
             //отправить конкретному пользователю
-            $connection->send(json_encode(['current_user' => time()]));
+//            $connection->send(json_encode(['current_user' => time()]));
 
             //рассылка всем
             foreach ($this->connections as $value) {
-
                 /**/
-//                $debugFile = 'storage\debug1111111-$data.txt';
-//                file_exists($debugFile) ? $current = file_get_contents($debugFile) : $current = null;
-//                $results = print_r($data, true);
-//                !empty($current) ? $current .= "\r\n" . $results : $current .= "\n" . $results;
-//                file_put_contents($debugFile, $current);
+//                Debugger::PrintToFile('--$data', $data);
                 /**/
-
-
                 $value->send(json_encode($data));
             }
         };
@@ -340,11 +340,11 @@ STR;
     public function renderStateString($character, $exitsArray)
     {
         $north = !empty($exitsArray['n']) ? 'С' : '';
-        $east  = !empty($exitsArray['e']) ? 'В' : '';
+        $east = !empty($exitsArray['e']) ? 'В' : '';
         $south = !empty($exitsArray['s']) ? 'Ю' : '';
-        $west  = !empty($exitsArray['w']) ? 'З' : '';
-        $up    = !empty($exitsArray['u']) ? '^' : '';
-        $down  = !empty($exitsArray['d']) ? 'v' : '';
+        $west = !empty($exitsArray['w']) ? 'З' : '';
+        $up = !empty($exitsArray['u']) ? '^' : '';
+        $down = !empty($exitsArray['d']) ? 'v' : '';
 
         $exits = $north . $east . $south . $west . $up . $down;
 

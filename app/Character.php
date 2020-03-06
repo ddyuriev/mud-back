@@ -19,4 +19,12 @@ class Character extends Model
     {
         return $this->hasOne('App\Profession', 'id', 'profession_id');
     }
+
+
+    public function getNameAttribute($value)
+    {
+        return ucfirst($value);
+        return unserialize($value);
+//        return 1;
+    }
 }
