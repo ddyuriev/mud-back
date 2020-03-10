@@ -292,13 +292,13 @@ STR;
                                         Debugger::PrintToFile('--$room---------осм+++++++++', $room);
                                         /**/
                                         /**/
-                                        Debugger::PrintToFile('--$room-555555555555555555', mb_strtolower(trim(mb_substr($pseudonym, 0, mb_strlen($argument) ))));
+                                        Debugger::PrintToFile('--$room-555555555555555555', mb_strtolower(trim(mb_substr($pseudonym, 0, mb_strlen($argument)))));
                                         /**/
                                         /**/
                                         Debugger::PrintToFile('--$room-555555555555555556', $argument);
                                         /**/
 
-                                        if(mb_strtolower(trim(mb_substr($pseudonym, 0, mb_strlen($argument) ))) == $argument){
+                                        if (mb_strtolower(trim(mb_substr($pseudonym, 0, mb_strlen($argument)))) == $argument) {
 
                                             $description = "<span>" . $mobile['description'] . "</span>";
                                             break;
@@ -311,10 +311,29 @@ STR;
                             $connection->send(json_encode(['for_client' => $stateString . $description]));
                             break;
 
+
+                        case 'ум':
+                            $skills = 'Ваши умения:<br>';
+                            if (!empty($character->skills)) {
+                                foreach ($character->skills as $skill) {
+                                    //!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!исправить!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+//                                    if((int)$skill->learning_level->$character->profession_id >= $character->user_id){
+//                                        $skills .= $skill->name . '  ' . $skill->pivot->value . "<br>";
+//                                    }
+
+                                    if((int)$skill->where() >= $character->user_id){
+                                        $skills .= $skill->name . '  ' . $skill->pivot->value . "<br>";
+                                    }
+                                }
+                            }
+
+                            $connection->send(json_encode(['for_client' => $stateString . $skills]));
+                            break;
+
                         case 'уд':
 
                             $time_interval = $this->config['intervalPing'];
-                            $timer_id = Timer::add(0.7, function () use ($connection, $stateString){
+                            $timer_id = Timer::add(0.7, function () use ($connection, $stateString) {
 
 //                                $result = 'пинг...';
 //                                $this->logger->save(date("H:i:s"), 'Service', $result);

@@ -36,27 +36,61 @@ class CharacterController extends Controller
     public function userInput(Request $request)
     {
 
+        $character = Character::with('skills')->first();
+//        $character = Character::with('skills')->get();
+
+//        return $character;
+
+        //bad
+//        return $character->skills->learning_level;
+
+        //ok
+//        return $character->skills->first();
+//        return $character->skills;
+//        return $character->skills->pluck('learning_level')->flatten();
+
+        $learning_levelSomeThing = $character->skills->pluck('learning_level');
+
+//        dd($learning_levelSomeThing);
+        dd($learning_levelSomeThing->toArray());
+
+        return $learning_levelSomeThing->toArray();
+
+        return array_shift($learning_levelSomeThing);
+        return $character->skills->pluck('learning_level')->first()['1'];
+        return $character->skills->pluck('learning_level')->toArray();
+
+        $keyed = $character->skills/*->pluck('learning_level')*/
+        ->mapWithKeys(function ($item) {
+//            Debugger::PrintToFile('$item', $item);
+
+            return [key($item) => array_shift($item)];
+        });
+
+        return $keyed->all();
+
+
         /*-----------------------------------*/
-        $arr = array('x', 'y', 'z');
-//        To insert this into a database field you can use serialize function like this
-        $serializedArr = serialize($arr);
-
-//        print_r($serializedArr);
-//        dd($serializedArr);
-//        dd($arr);
-
-        $character = Character::find(1);
-
-
-        Debugger::PrintToFile('$character', $character);
-
-        $name = $character->name;
-//        dd($character);
-
-        print_r($name);
-
-//        $character->name = $serializedArr;
-//        $character->save();
+//        $arr = array('x', 'y', 'z');
+////        To insert this into a database field you can use serialize function like this
+//        $serializedArr = serialize($arr);
+//
+////        print_r($serializedArr);
+////        dd($serializedArr);
+////        dd($arr);
+//
+//        $character = Character::find(1);
+//
+//
+//        Debugger::PrintToFile('$character', $character);
+//
+//        $name = $character->name;
+////        dd($character);
+//
+//        print_r($name);
+//
+////        $character->name = $serializedArr;
+////        $character->save();
 
         /*-----------------------------------*/
 

@@ -20,6 +20,11 @@ class Character extends Model
         return $this->hasOne('App\Profession', 'id', 'profession_id');
     }
 
+    public function skills()
+    {
+        return $this->belongsToMany('App\Skill')->withPivot('value');
+    }
+
 
 //    public function getNameAttribute($value)
 //    {

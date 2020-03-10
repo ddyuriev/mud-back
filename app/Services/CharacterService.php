@@ -24,11 +24,14 @@ class CharacterService
 //            $query->where('email', $email);
 //        })->where('is_active', true)->first();
 
+//        $character = Character::with(['user' => function ($query) use ($email) {
+//            $query->where('email', $email);
+//        }, 'profession'])->first();
+
         $character = Character::with(['user' => function ($query) use ($email) {
             $query->where('email', $email);
-        }, 'profession'])->first();
+        }, 'profession', 'skills'])->first();
 
-//        $character->user_uuid = $character->
 
         return $character;
     }
