@@ -13,5 +13,13 @@ class Room extends Model
 
     protected $casts = [
         'exits' => 'json',
+        'mobiles' => 'json',
     ];
+
+    public function mobiles()
+    {
+        return $this->hasMany('App\Mobile', 'room_id', 'id')->orderBy('id', 'desc');
+    }
 }
+
+

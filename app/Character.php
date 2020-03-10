@@ -21,10 +21,10 @@ class Character extends Model
     }
 
 
-    public function getNameAttribute($value)
-    {
-        return ucfirst($value);
-        return unserialize($value);
-//        return 1;
-    }
+//    public function getNameAttribute($value)
+//    {
+//        return ucfirst($value);
+//        return unserialize($value);
+////        return 1;
+//    }
 }

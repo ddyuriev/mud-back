@@ -12,6 +12,7 @@ namespace App\SocketServer;
 
 use App\Helpers\Debugger;
 use App\Http\Controllers\CharacterController;
+use App\Mobile;
 use App\Room;
 use App\Services\CharacterService;
 use App\Services\MessageService;
@@ -69,11 +70,19 @@ class Server
         $characters = [];
 
         //грузим зоны
-        $roomsArray = Room::all()->toArray();
+//        $roomsArray = Room::all()->toArray();
+        $roomsArray = Room::with('mobiles')->get()->toArray();
         foreach ($roomsArray as $roomArray) {
 //            $rooms[$roomArray['uuid']] = $roomArray;
             $rooms[$roomArray['inner_id']] = $roomArray;
         }
+
+        //грузим мобов
+//        $mobiles = Mobile::all()->toArray();
+//        foreach ($mobiles as $mobile) {
+//            $rooms[$mobile['room_inner_id']]['mobiles'][] = $mobile;
+//        }
+
 
         /**/
         Debugger::PrintToFile('$rooms', $rooms);
@@ -225,16 +234,9 @@ STR;
                     switch ($data->message) {
                         case 1:
                             $helloMessage = "<span style='color:goldenrod'>Приветствуем вас на бескрайних просторах мира чудес и приключений!</span>";
-
-//                            $characters[$userUuidFromClient]['state'] = 2;
-//                            $characters[$userUuidFromClient]->room_uuid = Room::START_ROOM_UUID;
                             $character['state'] = 2;
-//                            $character->room_uuid = Room::START_ROOM_UUID;
                             $character->room_inner_id = Room::START_ROOM_INNER_ID;
-
-//                            $stateString = $this->renderStateString($character, $rooms[Room::START_ROOM_UUID]['exits']);
                             $stateString = $this->renderStateString($character, $rooms[Room::START_ROOM_INNER_ID]['exits']);
-//                            $roomName = "<span style='color:indigo'>" . $rooms[Room::START_ROOM_UUID]['name'] . "</span>";
                             $roomName = "<span style='color:indigo'>" . $rooms[Room::START_ROOM_INNER_ID]['name'] . "</span>";
                             $connection->send(json_encode(['for_client' => $stateString . $roomName . $helloMessage]));
 
@@ -243,14 +245,6 @@ STR;
                     break;
                 case 2:
                     switch ($data->message) {
-                        case 'см':
-//                            $room = $rooms[$characters[$userUuidFromClient]['room_uuid']];
-                            $room = $rooms[$character->room_inner_id];
-                            $stateString = $this->renderStateString($character, $room['exits']);
-                            $roomName = "<span style='color:indigo'>" . $room['name'] . "</span>";
-                            $roomDescription = "<span>" . $room['description'] . "</span>";
-                            $connection->send(json_encode(['for_client' => $stateString . $roomDescription . $roomName]));
-                            break;
                         case 'сч':
                             $message = <<<STR
 Вы <span style='color:goldenrod'>{$character->name}</span>, {$character->profession->name} {$character->experience} уровня.<br>
@@ -260,52 +254,90 @@ STR;
                             $connection->send(json_encode(['for_client' => '<span>' . "{$message}{$stateString}" . '</span>']));
                             break;
 
+                        case 'см':
+                            $connection->send(json_encode(['for_client' => $this->renderRequestOnLook($character, $rooms)]));
+                            break;
+
                         case 'north':
-                            $nextRoomInnerId = !empty($rooms[$character->room_inner_id]['exits']['n']) ? $rooms[$character->room_inner_id]['exits']['n'] : null;
-                            if ($nextRoomInnerId) {
-                                $character->room_inner_id = $nextRoomInnerId;
-                                $stateString = $this->renderStateString($character, $rooms[$nextRoomInnerId]['exits']);
-                                $roomName = "<span style='color:indigo'>" . $rooms[$nextRoomInnerId]['name'] . "</span>";
-                                $connection->send(json_encode(['for_client' => $stateString . $roomName]));
-                            } else {
-                                $connection->send(json_encode(['for_client' => $stateString . "<span>Вы не можете идти в этом направлении...</span>"]));
-                            }
+                            $connection->send(json_encode(['for_client' => $this->renderRequestOnMove($character, $rooms, $stateString, 'n')]));
                             break;
 
                         case 'east':
-                            $nextRoomInnerId = !empty($rooms[$character->room_inner_id]['exits']['e']) ? $rooms[$character->room_inner_id]['exits']['e'] : null;
-                            if ($nextRoomInnerId) {
-                                $character->room_inner_id = $nextRoomInnerId;
-                                $stateString = $this->renderStateString($character, $rooms[$nextRoomInnerId]['exits']);
-                                $roomName = "<span style='color:indigo'>" . $rooms[$nextRoomInnerId]['name'] . "</span>";
-                                $connection->send(json_encode(['for_client' => $stateString . $roomName]));
-                            } else {
-                                $connection->send(json_encode(['for_client' => $stateString . "<span>Вы не можете идти в этом направлении...</span>"]));
-                            }
+                            $connection->send(json_encode(['for_client' => $this->renderRequestOnMove($character, $rooms, $stateString, 'e')]));
                             break;
+
                         case 'south':
-                            $nextRoomInnerId = !empty($rooms[$character->room_inner_id]['exits']['s']) ? $rooms[$character->room_inner_id]['exits']['s'] : null;
-                            if ($nextRoomInnerId) {
-                                $character->room_inner_id = $nextRoomInnerId;
-                                $stateString = $this->renderStateString($character, $rooms[$nextRoomInnerId]['exits']);
-                                $roomName = "<span style='color:indigo'>" . $rooms[$nextRoomInnerId]['name'] . "</span>";
-                                $connection->send(json_encode(['for_client' => $stateString . $roomName]));
-                            } else {
-                                $connection->send(json_encode(['for_client' => $stateString . "<span>Вы не можете идти в этом направлении...</span>"]));
-                            }
+                            $connection->send(json_encode(['for_client' => $this->renderRequestOnMove($character, $rooms, $stateString, 's')]));
                             break;
 
                         case 'west':
-                            $nextRoomInnerId = !empty($rooms[$character->room_inner_id]['exits']['w']) ? $rooms[$character->room_inner_id]['exits']['w'] : null;
-                            if ($nextRoomInnerId) {
-                                $character->room_inner_id = $nextRoomInnerId;
-                                $stateString = $this->renderStateString($character, $rooms[$nextRoomInnerId]['exits']);
-                                $roomName = "<span style='color:indigo'>" . $rooms[$nextRoomInnerId]['name'] . "</span>";
-                                $connection->send(json_encode(['for_client' => $stateString . $roomName]));
-                            } else {
-                                $connection->send(json_encode(['for_client' => $stateString . "<span>Вы не можете идти в этом направлении...</span>"]));
-                            }
+                            $connection->send(json_encode(['for_client' => $this->renderRequestOnMove($character, $rooms, $stateString, 'w')]));
                             break;
+
+                        case (preg_match('/^осм.*/', $data->message) ? true : false) :
+//                        case (stripos($data->message, 'осм') ? true : false) :
+//                        case preg_match('#^/oop/page/осм/\d+$#', $data->message):
+
+//                            mb_stripos
+
+                            $dataMessage = $data->message;
+//                            $arg = strripos($dataMessage, ' ');
+                            $argument = mb_strtolower(trim(substr($dataMessage, strpos($dataMessage, ' '))));
+
+
+                            /**/
+//                            Debugger::PrintToFile('--$description', mb_stripos($data->message, 'осм'));
+                            /**/
+
+//                            stripos
+
+
+                            $room = $rooms[$character->room_inner_id];
+
+
+                            /**/
+                            Debugger::PrintToFile('--$room---------осм', $room);
+                            /**/
+
+                            /**/
+                            Debugger::PrintToFile('$argument', $argument);
+                            /**/
+
+                            $description = '';
+
+                            if (!empty($room['mobiles'])) {
+                                foreach ($room['mobiles'] as $mobile) {
+//                                    $mobileTitle .= "<span style='color:#CA5209'>" . $mobiles['title_inside_of_room'] . "</span>";
+
+                                    foreach ($mobile['pseudonyms'] as $pseudonym) {
+                                        /**/
+                                        Debugger::PrintToFile('--$room---------осм+++++++++', $room);
+                                        /**/
+
+                                        /**/
+                                        Debugger::PrintToFile('--$room-555555555555555555', mb_strtolower(trim(mb_substr($pseudonym, 0, mb_strlen($argument) ))));
+                                        /**/
+
+                                        /**/
+                                        Debugger::PrintToFile('--$room-555555555555555556', $argument);
+                                        /**/
+
+                                        if(mb_strtolower(trim(mb_substr($pseudonym, 0, mb_strlen($argument) ))) == $argument){
+
+                                            $description = "<span>" . $mobile['description'] . "</span>";
+                                            break;
+                                        }
+                                    }
+
+
+
+                                }
+                            }
+
+
+                            $connection->send(json_encode(['for_client' => $stateString . $description]));
+                            break;
+
                     }
                     break;
             }
@@ -349,5 +381,44 @@ STR;
         $exits = $north . $east . $south . $west . $up . $down;
 
         return "<span style='color:darkgreen'>{$character->HP}H {$character->VP}V 1999X {$character->coins}C Вых:{$exits}></span>";
+    }
+
+
+    public function renderRequestOnLook($character, $rooms)
+    {
+        $room = $rooms[$character->room_inner_id];
+        $stateString = $this->renderStateString($character, $room['exits']);
+        $roomName = "<span style='color:indigo'>" . $room['name'] . "</span>";
+        $roomDescription = "<span>" . $room['description'] . "</span>";
+
+        $mobileTitle = '';
+        if (!empty($room['mobiles'])) {
+            foreach ($room['mobiles'] as $mobiles) {
+                $mobileTitle .= "<span style='color:#CA5209'>" . $mobiles['title_inside_of_room'] . "</span>";
+            }
+        }
+        return $stateString . $mobileTitle . $roomDescription . $roomName;
+    }
+
+    public function renderRequestOnMove($character, $rooms, $stateString, $direction)
+    {
+        $nextRoomInnerId = !empty($rooms[$character->room_inner_id]['exits'][$direction]) ? $rooms[$character->room_inner_id]['exits'][$direction] : null;
+        if ($nextRoomInnerId) {
+
+            $character->room_inner_id = $nextRoomInnerId;
+            $room = $rooms[$character->room_inner_id];
+            $stateString = $this->renderStateString($character, $rooms[$nextRoomInnerId]['exits']);
+            $roomName = "<span style='color:indigo'>" . $rooms[$nextRoomInnerId]['name'] . "</span>";
+            $mobileTitle = '';
+
+            if (!empty($room['mobiles'])) {
+                foreach ($room['mobiles'] as $mobiles) {
+                    $mobileTitle .= "<span style='color:#CA5209'>" . $mobiles['title_inside_of_room'] . "</span>";
+                }
+            }
+            return $stateString . $mobileTitle . $roomName;
+        } else {
+            return $stateString . "<span>Вы не можете идти в этом направлении...</span>";
+        }
     }
 }

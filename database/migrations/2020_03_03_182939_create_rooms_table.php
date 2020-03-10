@@ -20,8 +20,8 @@ class CreateRoomsTable extends Migration
             $table->integer('zone_id');
             $table->string('name');
             $table->string('description');
-//            $table->smallInteger('exits');
             $table->json('exits');
+//            $table->json('mobiles');
         });
     }
 
