@@ -278,46 +278,22 @@ STR;
 //                        case (stripos($data->message, 'осм') ? true : false) :
 //                        case preg_match('#^/oop/page/осм/\d+$#', $data->message):
 
-//                            mb_stripos
 
                             $dataMessage = $data->message;
-//                            $arg = strripos($dataMessage, ' ');
                             $argument = mb_strtolower(trim(substr($dataMessage, strpos($dataMessage, ' '))));
-
-
-                            /**/
-//                            Debugger::PrintToFile('--$description', mb_stripos($data->message, 'осм'));
-                            /**/
-
-//                            stripos
-
-
                             $room = $rooms[$character->room_inner_id];
-
-
-                            /**/
-                            Debugger::PrintToFile('--$room---------осм', $room);
-                            /**/
-
-                            /**/
-                            Debugger::PrintToFile('$argument', $argument);
-                            /**/
-
                             $description = '';
 
                             if (!empty($room['mobiles'])) {
                                 foreach ($room['mobiles'] as $mobile) {
-//                                    $mobileTitle .= "<span style='color:#CA5209'>" . $mobiles['title_inside_of_room'] . "</span>";
-
                                     foreach ($mobile['pseudonyms'] as $pseudonym) {
+
                                         /**/
                                         Debugger::PrintToFile('--$room---------осм+++++++++', $room);
                                         /**/
-
                                         /**/
                                         Debugger::PrintToFile('--$room-555555555555555555', mb_strtolower(trim(mb_substr($pseudonym, 0, mb_strlen($argument) ))));
                                         /**/
-
                                         /**/
                                         Debugger::PrintToFile('--$room-555555555555555556', $argument);
                                         /**/
@@ -328,14 +304,23 @@ STR;
                                             break;
                                         }
                                     }
-
-
-
                                 }
                             }
 
 
                             $connection->send(json_encode(['for_client' => $stateString . $description]));
+                            break;
+
+                        case 'уд':
+
+                            $time_interval = $this->config['intervalPing'];
+                            $timer_id = Timer::add(0.7, function () use ($connection, $stateString){
+
+//                                $result = 'пинг...';
+//                                $this->logger->save(date("H:i:s"), 'Service', $result);
+
+                                $connection->send(json_encode(['for_client' => $stateString]));
+                            });
                             break;
 
                     }
