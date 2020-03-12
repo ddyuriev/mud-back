@@ -18,8 +18,8 @@ class CreateCharactersTable extends Migration
             $table->integer('user_id');
             $table->string('name');
             $table->smallInteger('profession_id');
+            $table->smallInteger('level')->default(1);
             $table->integer('experience')->default(1);
-//            $table->smallInteger('level')->default(1);
             $table->smallInteger('strength');
             $table->smallInteger('dexterity');
             $table->smallInteger('constitution');

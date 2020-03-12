@@ -16,9 +16,20 @@ class Room extends Model
         'mobiles' => 'json',
     ];
 
+    protected $primaryKey = 'id';
+
     public function mobiles()
     {
         return $this->hasMany('App\Mobile', 'room_id', 'id')->orderBy('id', 'desc');
+    }
+
+//test
+    public function mobilestest()
+    {
+        return $this->hasMany('App\Mobile', 'room_id', 'id')
+//            ->select('learning_level')
+            ->select(['mobile_inner_id'])
+            ;
     }
 }
 

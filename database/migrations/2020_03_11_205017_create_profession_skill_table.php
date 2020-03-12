@@ -4,7 +4,7 @@ use Illuminate\Database\Migrations\Migration;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Support\Facades\Schema;
 
-class CreateSkillsTable extends Migration
+class CreateProfessionSkillTable extends Migration
 {
     /**
      * Run the migrations.
@@ -13,11 +13,10 @@ class CreateSkillsTable extends Migration
      */
     public function up()
     {
-        Schema::create('skills', function (Blueprint $table) {
-//            $table->increments('id');
-            $table->smallInteger('id')->unsigned();
-            $table->string('name');
-//            $table->json('learning_level');
+        Schema::create('profession_skill', function (Blueprint $table) {
+            $table->smallInteger('profession_id')->unsigned();
+            $table->smallInteger('skill_id')->unsigned();
+            $table->smallInteger('learning_level')->unsigned();
         });
     }
 
@@ -28,6 +27,6 @@ class CreateSkillsTable extends Migration
      */
     public function down()
     {
-        Schema::dropIfExists('skills');
+        Schema::dropIfExists('profession_skill');
     }
 }

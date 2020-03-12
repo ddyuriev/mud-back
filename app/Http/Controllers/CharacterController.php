@@ -4,6 +4,9 @@ namespace App\Http\Controllers;
 
 use App\Character;
 use App\Helpers\Debugger;
+use App\Room;
+use App\Skill;
+use App\User;
 use Illuminate\Http\Request;
 
 class CharacterController extends Controller
@@ -35,9 +38,65 @@ class CharacterController extends Controller
 
     public function userInput(Request $request)
     {
+//        $room = Room::with('mobilestest')->get();
 
-        $character = Character::with('skills')->first();
+//        $users = App\Book::with('author:id,name')->get();
+
+        $room = Room::with(['mobiles' => function ($query) {
+//            return  $query->select(['*']);
+            return  $query->select(['id', 'room_id']);
+        }])
+            ->find(5)
+        ;
+
+
+//        \DB::enableQueryLog();
+//        dd(\DB::getQueryLog(Room::with(['mobiles' => function ($query) {
+//            $query->select(['mobile_inner_id']);
+//        }])
+//            ->find(5)));
+
+//        $room = Room::with('mobiles:mobile_inner_id')->find(5);
+//        $room = Room::with('mobiles:pseudonyms')->get();
+//        $room = Room::with('mobiles:id,pseudonyms')->find(5);
+//        dd($room->toArray());
+//
+//        $skills = Skill::with('learning_level_check')->get();
+//        dd($skills->toArray());
+//
+//        \DB::enableQueryLog();
+//        dd(\DB::getQueryLog(Skill::with('learning_level_check')->get()));
+
+        /*--*/
+
+        $character = Character::with('skills3')->first();
+
+
+//        $character = Character::with('skills')->first();
+        //ok
+//        $character = Character::with('skills.professions')->first();
+
+        //ok
+//        $character = Character::with('skills', 'profession_skills')->first();
 //        $character = Character::with('skills')->get();
+//        $character = Character::with('skills2')->get();
+
+        $character = Character::with('skills.learning_level_check')->first();
+//        $character = Character::with(array('skills.learning_level_check' => function ($query) {
+//            $query->select(['profession_id']);
+//        }))->first();
+
+//        dd($character->toSql());
+        dd($character->toArray());
+
+
+//        \DB::enableQueryLog();
+//        dd(\DB::getQueryLog(Character::with('skills', 'profession_skills')->first()));
+
+//        \DB::enableQueryLog();
+//        dd(\DB::getQueryLog(Character::with(array('skills.learning_level_check' => function ($query) {
+//            $query->select('profession_id');
+//        }))->first()));
 
 //        return $character;
 
@@ -51,21 +110,25 @@ class CharacterController extends Controller
 
         $learning_levelSomeThing = $character->skills->pluck('learning_level');
 
-//        dd($learning_levelSomeThing);
-        dd($learning_levelSomeThing->toArray());
+        //OK!
+        dd($learning_levelSomeThing);
+//        dd($learning_levelSomeThing->toArray());
+//        return $learning_levelSomeThing->toArray();
 
-        return $learning_levelSomeThing->toArray();
+//        return array_shift($learning_levelSomeThing);
 
-        return array_shift($learning_levelSomeThing);
-        return $character->skills->pluck('learning_level')->first()['1'];
-        return $character->skills->pluck('learning_level')->toArray();
+//        return $character->skills->pluck('learning_level')->first()['1'];
+//        return $character->skills->pluck('learning_level')->toArray();
 
-        $keyed = $character->skills/*->pluck('learning_level')*/
-        ->mapWithKeys(function ($item) {
-//            Debugger::PrintToFile('$item', $item);
+        $keyed = $character->skills->pluck('learning_level')
+            ->mapWithKeys(function ($item) {
+                Debugger::PrintToFile('$item', $item);
 
-            return [key($item) => array_shift($item)];
-        });
+                return [key($item) => array_shift($item)];
+//            return [key($item) => 1];
+            });
+
+        dd($keyed->all());
 
         return $keyed->all();
 

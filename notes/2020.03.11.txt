@@ -1,0 +1,206 @@
+Так... решил хранить уровень.
+каждый раз когда меняется опыт - пересчитывать уровень.
+
+--------
+
+Бля не нравиться мне
+
+json learning_level в skills
+
+варик делать
+
+profs:skills
+N:N
+
+
+php artisan make:migration create_profession_skill_table
+
+
+----------------------------------------
+
+
+
+^ array:20 [
+  "id" => 1
+  "user_id" => 1
+  "name" => "Тэрион"
+  "profession_id" => 1
+  "level" => 1
+  "experience" => 1
+  "strength" => 14
+  "dexterity" => 12
+  "constitution" => 12
+  "intellect" => 11
+  "wisdom" => 11
+  "HP" => 20
+  "VP" => 70
+  "coins" => 0
+  "delevels_count" => 0
+  "is_active" => 1
+  "created_at" => "2020-03-11 21:04:24"
+  "updated_at" => "2020-03-11 21:04:24"
+  "skills" => array:2 [
+    0 => array:4 [
+      "id" => 101
+      "name" => "одноручные мечи"
+      "learning_level" => array:1 [
+        1 => "1"
+      ]
+      "pivot" => array:3 [
+        "character_id" => 1
+        "skill_id" => 101
+        "value" => "1.00"
+      ]
+    ]
+    1 => array:4 [
+      "id" => 201
+      "name" => "сбить противника"
+      "learning_level" => array:1 [
+        1 => "5"
+      ]
+      "pivot" => array:3 [
+        "character_id" => 1
+        "skill_id" => 201
+        "value" => "1.00"
+      ]
+    ]
+  ]
+  "profession_skills" => array:2 [
+    0 => array:3 [
+      "profession_id" => 1
+      "skill_id" => 101
+      "learning_level" => 1
+    ]
+    1 => array:3 [
+      "profession_id" => 1
+      "skill_id" => 201
+      "learning_level" => 1
+    ]
+  ]
+]
+
+php artisan make:seeder ProfessionSkillTableSeeder
+
+----------------------------------------------------------------------------------
+
+^ array:20 [
+  "id" => 1
+  "user_id" => 1
+  "name" => "Тэрион"
+  "profession_id" => 1
+  "level" => 1
+  "experience" => 1
+  "strength" => 14
+  "dexterity" => 12
+  "constitution" => 12
+  "intellect" => 11
+  "wisdom" => 11
+  "HP" => 20
+  "VP" => 70
+  "coins" => 0
+  "delevels_count" => 0
+  "is_active" => 1
+  "created_at" => "2020-03-11 22:25:45"
+  "updated_at" => "2020-03-11 22:25:45"
+  "skills" => array:2 [
+    0 => array:3 [
+      "id" => 101
+      "name" => "одноручные мечи"
+      "pivot" => array:3 [
+        "character_id" => 1
+        "skill_id" => 101
+        "value" => "1.00"
+      ]
+    ]
+    1 => array:3 [
+      "id" => 201
+      "name" => "сбить противника"
+      "pivot" => array:3 [
+        "character_id" => 1
+        "skill_id" => 201
+        "value" => "1.00"
+      ]
+    ]
+  ]
+  "profession_skills" => array:3 [
+    0 => array:3 [
+      "profession_id" => 1
+      "skill_id" => 101
+      "learning_level" => 1
+    ]
+    1 => array:3 [
+      "profession_id" => 1
+      "skill_id" => 104
+      "learning_level" => 1
+    ]
+    2 => array:3 [
+      "profession_id" => 1
+      "skill_id" => 201
+      "learning_level" => 5
+    ]
+  ]
+]
+
+так уже лучше, но надо бы в skills profession_skills засунуть...
+
+
+
+----
+user->character->character_skill
+OK:
+\App\User
+    public function posts()
+    {
+        return $this->hasManyThrough('App\CharacterSkill', 'App\Character');
+    }
+
+   0 => array:7 [
+     "id" => 1
+     "email" => "therion@mail.ru"
+     "uuid" => "a4aef1c3-815b-4ee5-8a85-f7e189a49af0"
+     "name" => "Dmitri"
+     "created_at" => null
+     "updated_at" => null
+     "posts" => array:2 [
+       0 => array:4 [
+         "character_id" => 1
+         "skill_id" => 101
+         "value" => "1.00"
+         "laravel_through_key" => 1
+       ]
+       1 => array:4 [
+         "character_id" => 1
+         "skill_id" => 201
+         "value" => "1.00"
+         "laravel_through_key" => 1
+       ]
+     ]
+   ]
+
+---------
+Это не то походу...
+попробовать нативный запрос чтоли...
+
+---------------------------
+
+constraining eager loads select
+
+$users = App\Book::with('author:id,name')->get();
+When using this feature, you should always include the id column in the list of columns you wish to retrieve.
+
+бля....
+чо за нах
+
+
+!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+https://laracasts.com/discuss/channels/eloquent/eloquent-eager-loading-specific-columns
+
+@OzanKurt
+There is one thing to have in mind when selecting only particular columns on the related table:
+You must always select the foreign key and primary key of the relation.
+
+So in your case you need to select the id of Subject (and obviously subject_id on the Ticket model):
+!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+
+
+

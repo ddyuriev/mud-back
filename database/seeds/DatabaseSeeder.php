@@ -17,5 +17,6 @@ class DatabaseSeeder extends Seeder
         $this->call('RoomsTableSeeder');
         $this->call('MobilesTableSeeder');
         $this->call('SkillsTableSeeder');
+        $this->call('ProfessionSkillTableSeeder');
     }
 }

@@ -11,4 +11,9 @@ class Profession extends Model
     const CLERIC_ID = 3;
 
     public $timestamps = false;
+
+    public function skills()
+    {
+        return $this->belongsToMany('App\Skill')->withPivot('learning_level');
+    }
 }
