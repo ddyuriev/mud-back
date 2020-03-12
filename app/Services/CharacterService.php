@@ -12,6 +12,10 @@ class CharacterService
         return Character::where('user_id', $userId)->where('is_active', 1)->first();
     }
 
+    /**
+     * @param $email
+     * @return \Illuminate\Database\Eloquent\Builder|\Illuminate\Database\Eloquent\Model|null|object
+     */
     public function getActiveCharacterByUserEmail($email)
     {
 //        return Character::with('user')->where('user.email', $email)->first();
@@ -24,13 +28,14 @@ class CharacterService
 //            $query->where('email', $email);
 //        })->where('is_active', true)->first();
 
+
 //        $character = Character::with(['user' => function ($query) use ($email) {
 //            $query->where('email', $email);
-//        }, 'profession'])->first();
+//        }, 'profession', 'skills'])->where('is_active', true)->first();
 
         $character = Character::with(['user' => function ($query) use ($email) {
             $query->where('email', $email);
-        }, 'profession', 'skills'])->first();
+        }, 'profession', 'skills.learning_level_check'])->where('is_active', true)->first();
 
 
         return $character;

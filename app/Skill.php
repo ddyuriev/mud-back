@@ -2,6 +2,7 @@
 
 namespace App;
 
+use App\Helpers\Debugger;
 use Illuminate\Database\Eloquent\Model;
 
 class Skill extends Model
@@ -13,9 +14,6 @@ class Skill extends Model
 
     const KNOCK_DOWN_ID = 201;
 
-    protected $casts = [
-        'learning_level' => 'json',
-    ];
 
 //    public function characters()
 //    {
@@ -28,11 +26,13 @@ class Skill extends Model
             ;
     }
 
-    public function /*profession_skill*/
-    learning_level_check()
+    public function learning_level_check()
     {
+        /**/
+        Debugger::PrintToFile('learning_level_check' . time(), '');
+        /**/
+
         return $this->hasMany('App\ProfessionSkill', 'skill_id', 'id')
-//            ->select('learning_level')
             ->select(['skill_id', 'learning_level']);
     }
 }
