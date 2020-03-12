@@ -87,7 +87,8 @@ class CharacterController extends Controller
 //        }))->first();
 
 //        dd($character->toSql());
-        dd($character->toArray());
+        dd($character);
+//        dd($character->toArray());
 
 
 //        \DB::enableQueryLog();

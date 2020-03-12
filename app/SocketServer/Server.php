@@ -54,19 +54,19 @@ class Server
 //        $this->ws_worker = new Worker("websocket://192.168.215.29:$config[port]");
 
 //        $this->db = $db;
-        $this->logger = $logger;
+        $this->logger           = $logger;
         $this->ws_worker->count = $config['countWorkers'];
-        $this->config = $config;
+        $this->config           = $config;
 
-        $this->userService = $userService;
+        $this->userService      = $userService;
         $this->characterService = $characterService;
-        $this->messageService = $messageService;
+        $this->messageService   = $messageService;
     }
 
 
     public function serverStart()
     {
-        $rooms = [];
+        $rooms      = [];
         $characters = [];
 
         //грузим зоны
@@ -125,7 +125,7 @@ class Server
             $connection->onWebSocketConnect = function ($connection) use (&$users, &$characters) {
 
                 $userEmailFromClient = $_GET['user'];
-                $activeCharacter = $this->characterService->getActiveCharacterByUserEmail($userEmailFromClient);
+                $activeCharacter     = $this->characterService->getActiveCharacterByUserEmail($userEmailFromClient);
 
                 $characters[$activeCharacter->user->uuid] = $activeCharacter;
 
@@ -201,7 +201,7 @@ STR;
 //            Debugger::PrintToFile('-onMessage-$data', $data);
             /**/
 
-            $time = date("H:i:s");
+            $time       = date("H:i:s");
             $data->time = $time;
             /**/
 //            Debugger::PrintToFile('-onMessage-$this-connections', $this->connections);
@@ -233,11 +233,11 @@ STR;
                 case 1:
                     switch ($data->message) {
                         case 1:
-                            $helloMessage = "<span style='color:goldenrod'>Приветствуем вас на бескрайних просторах мира чудес и приключений!</span>";
-                            $character['state'] = 2;
+                            $helloMessage             = "<span style='color:goldenrod'>Приветствуем вас на бескрайних просторах мира чудес и приключений!</span>";
+                            $character['state']       = 2;
                             $character->room_inner_id = Room::START_ROOM_INNER_ID;
-                            $stateString = $this->renderStateString($character, $rooms[Room::START_ROOM_INNER_ID]['exits']);
-                            $roomName = "<span style='color:indigo'>" . $rooms[Room::START_ROOM_INNER_ID]['name'] . "</span>";
+                            $stateString              = $this->renderStateString($character, $rooms[Room::START_ROOM_INNER_ID]['exits']);
+                            $roomName                 = "<span style='color:indigo'>" . $rooms[Room::START_ROOM_INNER_ID]['name'] . "</span>";
                             $connection->send(json_encode(['for_client' => $stateString . $roomName . $helloMessage]));
 
                             break;
@@ -280,8 +280,8 @@ STR;
 
 
                             $dataMessage = $data->message;
-                            $argument = mb_strtolower(trim(substr($dataMessage, strpos($dataMessage, ' '))));
-                            $room = $rooms[$character->room_inner_id];
+                            $argument    = mb_strtolower(trim(substr($dataMessage, strpos($dataMessage, ' '))));
+                            $room        = $rooms[$character->room_inner_id];
                             $description = '';
 
                             if (!empty($room['mobiles'])) {
@@ -313,7 +313,8 @@ STR;
 
 
                         case 'ум':
-                            $skills = 'Ваши умения:<br>';
+//                            $skills = 'Ваши умения:<br>';
+                            $skills = '';
                             if (!empty($character->skills)) {
                                 foreach ($character->skills as $skill) {
                                     //!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!исправить!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
@@ -321,19 +322,61 @@ STR;
 //                                        $skills .= $skill->name . '  ' . $skill->pivot->value . "<br>";
 //                                    }
 
-                                    if((int)$skill->where() >= $character->user_id){
-                                        $skills .= $skill->name . '  ' . $skill->pivot->value . "<br>";
+
+                                    /**/
+//                                    Debugger::PrintToFile('learning_level_check', $skill->learning_level_check->first()->learning_level);
+                                    /**/
+
+                                    if ($character->level >= (int)$skill->learning_level_check->first()->learning_level) {
+                                        $skills .= "<div>"."<span style='margin-left:10%'>" . $skill->name . "</span>". "<span style='margin-left:20%'>" . $skill->pivot->value . "</span>" . "</div>";
                                     }
                                 }
                             }
+                            $skills .= 'Ваши умения:';
 
-                            $connection->send(json_encode(['for_client' => $stateString . $skills]));
+
+                            $table = <<<STR
+
+<table class="table">
+  <thead>
+    <tr>
+      <th scope="col">#</th>
+      <th scope="col">First</th>
+      <th scope="col">Last</th>
+      <th scope="col">Handle</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <th scope="row">1</th>
+      <td>Mark</td>
+      <td>Otto</td>
+      <td>@mdo</td>
+    </tr>
+    <tr>
+      <th scope="row">2</th>
+      <td>Jacob</td>
+      <td>Thornton</td>
+      <td>@fat</td>
+    </tr>
+    <tr>
+      <th scope="row">3</th>
+      <td>Larry</td>
+      <td>the Bird</td>
+      <td>@twitter</td>
+    </tr>
+  </tbody>
+</table>
+STR;
+
+
+                            $connection->send(json_encode(['for_client' => $stateString . $skills. $table]));
                             break;
 
                         case 'уд':
 
                             $time_interval = $this->config['intervalPing'];
-                            $timer_id = Timer::add(0.7, function () use ($connection, $stateString) {
+                            $timer_id      = Timer::add(0.7, function () use ($connection, $stateString) {
 
 //                                $result = 'пинг...';
 //                                $this->logger->save(date("H:i:s"), 'Service', $result);
@@ -376,11 +419,11 @@ STR;
     public function renderStateString($character, $exitsArray)
     {
         $north = !empty($exitsArray['n']) ? 'С' : '';
-        $east = !empty($exitsArray['e']) ? 'В' : '';
+        $east  = !empty($exitsArray['e']) ? 'В' : '';
         $south = !empty($exitsArray['s']) ? 'Ю' : '';
-        $west = !empty($exitsArray['w']) ? 'З' : '';
-        $up = !empty($exitsArray['u']) ? '^' : '';
-        $down = !empty($exitsArray['d']) ? 'v' : '';
+        $west  = !empty($exitsArray['w']) ? 'З' : '';
+        $up    = !empty($exitsArray['u']) ? '^' : '';
+        $down  = !empty($exitsArray['d']) ? 'v' : '';
 
         $exits = $north . $east . $south . $west . $up . $down;
 
@@ -390,9 +433,9 @@ STR;
 
     public function renderRequestOnLook($character, $rooms)
     {
-        $room = $rooms[$character->room_inner_id];
-        $stateString = $this->renderStateString($character, $room['exits']);
-        $roomName = "<span style='color:indigo'>" . $room['name'] . "</span>";
+        $room            = $rooms[$character->room_inner_id];
+        $stateString     = $this->renderStateString($character, $room['exits']);
+        $roomName        = "<span style='color:indigo'>" . $room['name'] . "</span>";
         $roomDescription = "<span>" . $room['description'] . "</span>";
 
         $mobileTitle = '';
@@ -401,6 +444,7 @@ STR;
                 $mobileTitle .= "<span style='color:#CA5209'>" . $mobiles['title_inside_of_room'] . "</span>";
             }
         }
+
         return $stateString . $mobileTitle . $roomDescription . $roomName;
     }
 
@@ -410,16 +454,17 @@ STR;
         if ($nextRoomInnerId) {
 
             $character->room_inner_id = $nextRoomInnerId;
-            $room = $rooms[$character->room_inner_id];
-            $stateString = $this->renderStateString($character, $rooms[$nextRoomInnerId]['exits']);
-            $roomName = "<span style='color:indigo'>" . $rooms[$nextRoomInnerId]['name'] . "</span>";
-            $mobileTitle = '';
+            $room                     = $rooms[$character->room_inner_id];
+            $stateString              = $this->renderStateString($character, $rooms[$nextRoomInnerId]['exits']);
+            $roomName                 = "<span style='color:indigo'>" . $rooms[$nextRoomInnerId]['name'] . "</span>";
+            $mobileTitle              = '';
 
             if (!empty($room['mobiles'])) {
                 foreach ($room['mobiles'] as $mobiles) {
                     $mobileTitle .= "<span style='color:#CA5209'>" . $mobiles['title_inside_of_room'] . "</span>";
                 }
             }
+
             return $stateString . $mobileTitle . $roomName;
         } else {
             return $stateString . "<span>Вы не можете идти в этом направлении...</span>";
