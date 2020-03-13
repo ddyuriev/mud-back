@@ -1,0 +1,51 @@
+Полюбому певодить объекты и массивы
+Создать таблицу оружия и доспехов
+
+Прикол в том,  что есть справочник предметов а есть сами предметы
+у них таймер идет, и тд
+
+
+--------/////////////////////////////////
+
+376H 131V 1685631X 307C Вых:СВ>
+ #variable stand
+{stand}={bash}
+
+#action {Вы полетели на землю} {look}
+#nop {ударил вас.} {look}
+#nop {рубанул вас.} {look}
+
+#nop ok {••••••• ВЫ <<<BASH>>>} {рад я}
+#nop {^••••••• ВЫ <<<BASH>>>} {рад я}
+
+#variable {bash} {bash}
+#action {^••••••• ВЫ на Жоппе от} {#variable {bash} {stand;bash}}
+#action {>>>FAIL_BASH<<<} {#variable {bash} {stand;bash}}
+#action {^••••••• ВЫ >>>FAIL_BASH<<<} {#variable {bash} {stand;bash}}
+#action {^ВЫ ВСТАЛИ!} {#variable {bash} {bash}}
+
+#action {^Эх, жизнь...} {#variable {bash} {stand;bash}}
+
+#hot {F9} {$bash}
+
+--------/////////////////////////////////
+
+
+так. ну вроде идея есть
+
+
+действительно делать character:stuff
+ N:N
+
+
+php artisan make:migration create_stuff_table
+php artisan make:migration create_stuff_types_table
+??php artisan make:migration create_slots_table
+php artisan make:seeder StuffTableSeeder
+
+хм
+stuff не исчислимое...
+похуй.
+
+
+в таблице character_stuff все объекте, + whereoncharacter
