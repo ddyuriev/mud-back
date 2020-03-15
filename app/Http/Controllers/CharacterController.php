@@ -5,20 +5,22 @@ namespace App\Http\Controllers;
 use App\Character;
 use App\Helpers\Debugger;
 use App\Room;
-use App\Skill;
-use App\User;
+use App\Services\CharacterService;
+use App\Stuff;
 use Illuminate\Http\Request;
 
 class CharacterController extends Controller
 {
+
+    protected $characterService;
+
     /**
-     * Create a new controller instance.
-     *
-     * @return void
+     * CharacterController constructor.
+     * @param CharacterService $characterService
      */
-    public function __construct()
+    public function __construct(CharacterService $characterService)
     {
-        //
+        $this->characterService = $characterService;
     }
 
 
@@ -38,16 +40,47 @@ class CharacterController extends Controller
 
     public function userInput(Request $request)
     {
+
+        $character = $this->characterService->getActiveCharacterByUserEmail('therion@mail.ru');
+//        $characterArray = $this->characterService->getActiveCharacterByUserEmail('therion@mail.ru')->toArray();
+        dd($character);
+
+        /*-----------------------------------*/
+
+//        $character = $this->characterService->getActiveCharacterByUserEmail('therion@mail.ru');
+//        $characterArray = $this->characterService->getActiveCharacterByUserEmail('therion@mail.ru')->toArray();
+//        $start_memory = memory_get_usage();
+////        $test = $character;
+////        $test2 = $characterArray;
+////        $testArray = [1,2,3,4,5,6,7,8,9,11,11,11,11,11,11];
+//        $testArray = ['taylor', 'abigail', null];
+//        $testArray[]='abigail2';
+////        $testArray = array_fill(5, 6, 'banana');
+////        $testArray = [];
+////        for($i = 0; $i<= 1; $i++){
+////            $testArray[]=$i;
+////        }
+////        $collection = collect(['taylor', 'abigail', null]);
+////        echo memory_get_usage() - $start_memory;
+//        dd(memory_get_usage() - $start_memory);
+//        dd($character);
+
+        /*-----------------------------------*/
+
+//        $staff = Stuff::all();
+//        dd($staff);
+
+        /*-----------------------------------*/
+
 //        $room = Room::with('mobilestest')->get();
 
 //        $users = App\Book::with('author:id,name')->get();
 
         $room = Room::with(['mobiles' => function ($query) {
 //            return  $query->select(['*']);
-            return  $query->select(['id', 'room_id']);
+            return $query->select(['id', 'room_id']);
         }])
-            ->find(5)
-        ;
+            ->find(5);
 
 
 //        \DB::enableQueryLog();

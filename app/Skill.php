@@ -29,7 +29,7 @@ class Skill extends Model
     public function learning_level_check()
     {
         /**/
-        Debugger::PrintToFile('learning_level_check' . time(), '');
+//        Debugger::PrintToFile('learning_level_check' . time(), '');
         /**/
 
         return $this->hasMany('App\ProfessionSkill', 'skill_id', 'id')

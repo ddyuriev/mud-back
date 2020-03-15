@@ -19,6 +19,7 @@ use App\Services\MessageService;
 use App\Services\UserService;
 use App\SocketServer\Contracts\DataInterface;
 use App\SocketServer\Contracts\LoggerInterface;
+use Faker\Factory;
 use Workerman\Worker;
 
 //use Server\Mysql;
@@ -73,7 +74,6 @@ class Server
 //        $roomsArray = Room::all()->toArray();
         $roomsArray = Room::with('mobiles')->get()->toArray();
         foreach ($roomsArray as $roomArray) {
-//            $rooms[$roomArray['uuid']] = $roomArray;
             $rooms[$roomArray['inner_id']] = $roomArray;
         }
 
@@ -127,7 +127,8 @@ class Server
                 $userEmailFromClient = $_GET['user'];
                 $activeCharacter = $this->characterService->getActiveCharacterByUserEmail($userEmailFromClient);
 
-                $characters[$activeCharacter->user->uuid] = $activeCharacter;
+//                $characters[$activeCharacter->user->uuid] = $activeCharacter;
+                $characters[$activeCharacter['user']['uuid']] = $activeCharacter;
 
                 /**/
                 Debugger::PrintToFile('--------------++++$character', $activeCharacter);
@@ -144,7 +145,8 @@ class Server
 
                 /**/
                 // а это сообщение будет отправлено клиенту
-                $charName = !empty($activeCharacter) ? $activeCharacter->name : "Не выбран";
+//                $charName = !empty($activeCharacter) ? $activeCharacter->name : "Не выбран";
+                $charName = !empty($activeCharacter) ? $activeCharacter['name'] : "Не выбран";
 
                 $selectCharacterDialog = <<<STR
 <span>
@@ -224,7 +226,7 @@ STR;
 
             if ($state == 2) {
 //                $stateString = $this->renderStateString($character, $rooms[$character->room_uuid]['exits']);
-                $stateString = $this->renderStateString($character, $rooms[$character->room_inner_id]['exits']);
+                $stateString = $this->renderStateString($character, $rooms[$character['room_inner_id']]['exits']);
             }
 
 
@@ -235,7 +237,8 @@ STR;
                         case 1:
                             $helloMessage = "<span style='color:goldenrod'>Приветствуем вас на бескрайних просторах мира чудес и приключений!</span>";
                             $character['state'] = 2;
-                            $character->room_inner_id = Room::START_ROOM_INNER_ID;
+//                            $character->room_inner_id = Room::START_ROOM_INNER_ID;
+                            $character['room_inner_id'] = Room::START_ROOM_INNER_ID;
                             $stateString = $this->renderStateString($character, $rooms[Room::START_ROOM_INNER_ID]['exits']);
                             $roomName = "<span style='color:indigo'>" . $rooms[Room::START_ROOM_INNER_ID]['name'] . "</span>";
                             $connection->send(json_encode(['for_client' => $stateString . $roomName . $helloMessage]));
@@ -246,10 +249,12 @@ STR;
                 case 2:
                     switch ($data->message) {
                         case 'сч':
+                        case 'сче':
+                        case 'счет':
                             $message = <<<STR
-Вы <span style='color:goldenrod'>{$character->name}</span>, {$character->profession->name} {$character->experience} уровня.<br>
-Ваш E-mail: {$character->user->email}<br>
-Вы набрали {$character->experience} опыта и имеете {$character->coins} монеты.<br>
+Вы <span style='color:goldenrod'>{$character['name']}</span>, {$character['profession']['name']} {$character['experience']} уровня.<br>
+Ваш E-mail: {$character['user']['email']}<br>
+Вы набрали {$character['experience']} опыта и имеете {$character['coins']} монеты.<br>
 STR;
                             $connection->send(json_encode(['for_client' => '<span>' . "{$message}{$stateString}" . '</span>']));
                             break;
@@ -281,7 +286,7 @@ STR;
 
                             $dataMessage = $data->message;
                             $argument = mb_strtolower(trim(substr($dataMessage, strpos($dataMessage, ' '))));
-                            $room = $rooms[$character->room_inner_id];
+                            $room = $rooms[$character['room_inner_id']];
                             $description = '';
 
                             if (!empty($room['mobiles'])) {
@@ -289,13 +294,9 @@ STR;
                                     foreach ($mobile['pseudonyms'] as $pseudonym) {
 
                                         /**/
-                                        Debugger::PrintToFile('--$room---------осм+++++++++', $room);
-                                        /**/
-                                        /**/
-                                        Debugger::PrintToFile('--$room-555555555555555555', mb_strtolower(trim(mb_substr($pseudonym, 0, mb_strlen($argument)))));
-                                        /**/
-                                        /**/
-                                        Debugger::PrintToFile('--$room-555555555555555556', $argument);
+//                                        Debugger::PrintToFile('--$room---------осм+++++++++', $room);
+//                                        Debugger::PrintToFile('--$room-555555555555555555', mb_strtolower(trim(mb_substr($pseudonym, 0, mb_strlen($argument)))));
+//                                        Debugger::PrintToFile('--$room-555555555555555556', $argument);
                                         /**/
 
                                         if (mb_strtolower(trim(mb_substr($pseudonym, 0, mb_strlen($argument)))) == $argument) {
@@ -318,19 +319,19 @@ STR;
                             Debugger::PrintToFile('ум', $character);
                             /**/
 
-                            if (!empty($character->skills)) {
-                                foreach ($character->skills as $skill) {
+                            if (!empty($character['skills'])) {
+                                foreach ($character['skills'] as $skill) {
                                     /**/
 //                                    Debugger::PrintToFile('learning_level_check', $skill->learning_level_check->first()->learning_level);
                                     /**/
 
-                                    if ($character->level >= (int)$skill->learning_level_check->first()->learning_level) {
+                                    if ($character['level'] >= (int)$skill['learning_level_check'][0]['learning_level']) {
 //                                        $skills .= "<div>" . "<span style='margin-left:10%'>" . $skill->name . "</span>" . "<span style='margin-left:20%'>" . $skill->pivot->value . "</span>" . "</div>";
                                         $tableRows .= <<<STR
 <tr>
   <th></th>
-  <td width="30%">{$skill->name}</td>
-  <td>{$skill->pivot->value}</td>
+  <td width="30%">{$skill['name']}</td>
+  <td>{$skill['pivot']['value']}</td>
   <td></td>
 </tr>
 STR;
@@ -353,7 +354,7 @@ STR;
   {$tableRows}
   </tbody>
 </table>
-                            Ваши умения:
+Ваши умения:
 STR;
 
                             $connection->send(json_encode(['for_client' => $stateString . $skillsTable]));
@@ -361,23 +362,70 @@ STR;
 
                         case 'у':
                         case 'уд':
+                            $faker = Factory::create();
 
                             $time_interval = $this->config['intervalPing'];
-                            $timerId = Timer::add(0.7, function () use ($connection, $stateString) {
+                            $timerId = Timer::add(1.1, function () use ($connection, $stateString, $character, $faker) {
 
 //                                $result = 'пинг...';
 //                                $this->logger->save(date("H:i:s"), 'Service', $result);
 
-                                $connection->send(json_encode(['for_client' => $stateString]));
+                                $damage = $faker->numberBetween($character['first_damage_min'], $character['first_damage_max']);
+
+                                $connection->send(json_encode(['for_client' => $stateString . $damage]));
                             });
 
-                            $character->timer_id = $timerId;
+                            $character['timer_id'] = $timerId;
                             break;
 
                         case 'стоп':
-                            Timer::del($character->timer_id);
+                            Timer::del($character['timer_id']);
+                            break;
+                        case 'э':
+                        case 'эк':
+                        case 'эки':
+                        case 'экип':
+                        case 'экипи':
+                        case 'экипир':
+                        case 'экипиро':
+                        case 'экипиров':
+                        case 'экипировк':
+                        case 'экипировка':
+                            $tableRows = '';
+                            foreach ($character['stuff'] as $item) {
+                                //если слот вещи соответствует слоту чара
+                                if ($item['slot_id'] == $item['pivot']['slot_id']) {
+
+                                    $itemName = mb_strtolower($item['name']);
+                                    $tableRows .= <<<STR
+<tr>
+  <td width="30%">{$item['slot']['name']}</td>
+  <td>{$itemName}</td>
+  <td></td>
+</tr>
+STR;
+                                }
+                            }
+
+                            $equipmentTable = <<<STR
+<table>
+  <thead>
+    <tr>
+      <th width="30%"></th>
+      <th></th>
+      <th></th>
+    </tr>
+  </thead>
+  <tbody>
+  {$tableRows}
+  </tbody>
+</table>
+Вы используете:
+STR;
+                            $connection->send(json_encode(['for_client' => $stateString . $equipmentTable]));
                             break;
                     }
+
                     break;
             }
 
@@ -419,13 +467,13 @@ STR;
 
         $exits = $north . $east . $south . $west . $up . $down;
 
-        return "<span style='color:darkgreen'>{$character->HP}H {$character->VP}V 1999X {$character->coins}C Вых:{$exits}></span>";
+        return "<span style='color:darkgreen'>{$character['HP']}H {$character['VP']}V 1999X {$character['coins']}C Вых:{$exits}></span>";
     }
 
 
     public function renderRequestOnLook($character, $rooms)
     {
-        $room = $rooms[$character->room_inner_id];
+        $room = $rooms[$character['room_inner_id']];
         $stateString = $this->renderStateString($character, $room['exits']);
         $roomName = "<span style='color:indigo'>" . $room['name'] . "</span>";
         $roomDescription = "<span>" . $room['description'] . "</span>";
@@ -440,13 +488,13 @@ STR;
         return $stateString . $mobileTitle . $roomDescription . $roomName;
     }
 
-    public function renderRequestOnMove($character, $rooms, $stateString, $direction)
+    public function renderRequestOnMove(&$character, $rooms, $stateString, $direction)
     {
-        $nextRoomInnerId = !empty($rooms[$character->room_inner_id]['exits'][$direction]) ? $rooms[$character->room_inner_id]['exits'][$direction] : null;
+        $nextRoomInnerId = !empty($rooms[$character['room_inner_id']]['exits'][$direction]) ? $rooms[$character['room_inner_id']]['exits'][$direction] : null;
         if ($nextRoomInnerId) {
 
-            $character->room_inner_id = $nextRoomInnerId;
-            $room = $rooms[$character->room_inner_id];
+            $character['room_inner_id'] = $nextRoomInnerId;
+            $room = $rooms[$character['room_inner_id']];
             $stateString = $this->renderStateString($character, $rooms[$nextRoomInnerId]['exits']);
             $roomName = "<span style='color:indigo'>" . $rooms[$nextRoomInnerId]['name'] . "</span>";
             $mobileTitle = '';

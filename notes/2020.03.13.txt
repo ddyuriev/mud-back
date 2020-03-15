@@ -39,9 +39,16 @@
 
 
 php artisan make:migration create_stuff_table
+//доспех/оружие/еда/квестовый
 php artisan make:migration create_stuff_types_table
+//правая рука, тело, ноги и тд. Пока сделаю stuff:slot = N:1
 ??php artisan make:migration create_slots_table
+php artisan make:migration create_character_stuff_table
+
 php artisan make:seeder StuffTableSeeder
+php artisan make:seeder StuffTypesTableSeeder
+php artisan make:seeder SlotsTableSeeder
+php artisan make:seeder CharacterStuffTableSeeder
 
 хм
 stuff не исчислимое...
@@ -49,3 +56,27 @@ stuff не исчислимое...
 
 
 в таблице character_stuff все объекте, + whereoncharacter
+
+php artisan db:seed --class=StuffTableSeeder
+
+
+---------------
+
+Дохера таблиц...
+
+
+---------------------------------------------
+
+
+Пробую померить переменную
+
+$start_memory = memory_get_usage();
+$foo = "Some variable";
+echo memory_get_usage() - $start_memory;
+
+
+2117528
+2067kbite
+
+4287840
+
