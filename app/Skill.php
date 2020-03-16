@@ -5,6 +5,10 @@ namespace App;
 use App\Helpers\Debugger;
 use Illuminate\Database\Eloquent\Model;
 
+/**
+ * Class Skill
+ * @package App
+ */
 class Skill extends Model
 {
     const LONG_SWORDS_ID = 101;
@@ -22,6 +26,14 @@ class Skill extends Model
 
     public function professions()
     {
+
+        /**/
+//        Debugger::PrintToFile('$this', $this);
+        /**/
+
+//        dd($this->first());
+
+
         return $this->belongsToMany('App\Profession')->withPivot('learning_level')/*->where('profession_id', 1)*/
             ;
     }
@@ -35,4 +47,13 @@ class Skill extends Model
         return $this->hasMany('App\ProfessionSkill', 'skill_id', 'id')
             ->select(['skill_id', 'learning_level']);
     }
+
+    /**/
+
+    public function characterSkill()
+    {
+        return $this->hasOne('App\CharacterSkill');
+    }
+
+    /**/
 }

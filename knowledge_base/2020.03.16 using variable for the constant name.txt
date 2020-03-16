@@ -1,0 +1,18 @@
+
+https://stackoverflow.com/questions/11717593/can-i-access-a-php-class-constant-using-a-variable-for-the-constant-name
+
+
+$variable = $classname.'::'.$constant;
+
+constant($variable);
+See the docs: http://php.net/constant
+
+----
+
+
+        switch ($professionId) {
+            case Profession::WARRIOR_ID:
+                $nextLevelExp = constant("SELF::WARRIOR_LEVEL_{$nextLevel}_EXP");
+                break;
+        }
+

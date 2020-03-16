@@ -45,9 +45,29 @@ class CharacterService
 //            $query->where('email', $email);
 //        }, 'profession', 'skills.learning_level_check', 'stuff'])->where('is_active', true)->first();
 
-        $character = Character::with(['user' => function ($query) use ($email) {
-            $query->where('email', $email);
-        }, 'profession', 'skills.learning_level_check', 'stuff.slot'])->where('is_active', true)->first()->toArray();
+        /*-----------OK - текущий...*/
+//        $character = Character::with(['user' => function ($query) use ($email) {
+//            $query->where('email', $email);
+//        }, 'profession', 'skills.learning_level_check', 'stuff.slot'])->where('is_active', true)->first()->toArray();
+
+//        $character = Character::with([
+//            'user' => function ($query) use ($email) {
+//                $query->where('email', $email);
+//            },
+//            'profession',
+//            'skills.professions',
+//            'stuff.slot'
+//        ])->where('is_active', true)->first()->toArray();
+
+        $character = Character::with([
+            'user' => function ($query) use ($email) {
+                $query->where('email', $email);
+            },
+            'profession.professionSkills',
+//            'skills',
+//            'skills.professions',
+            'stuff.slot'
+        ])->where('is_active', true)->first()->toArray();
 
 
 //        $character['level'] = Formulas::calculateLevel($character['profession_id'], $character['experience']);

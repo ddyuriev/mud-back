@@ -1,0 +1,136 @@
+Освежить в памяти, зачем создал модели
+ CharacterSkill
+ ProfessionSkill
+ для таблиц-связок
+
+-------
+
+ CharacterSkill походу не нужна.
+
+ProfessionSkill:
+
+Без нее так:
+
+  "skills" => array:3 [
+    0 => array:4 [
+      "id" => 101
+      "name" => "одноручные мечи"
+      "pivot" => array:3 [
+        "character_id" => 1
+        "skill_id" => 101
+        "value" => "7.00"
+      ]
+      "professions" => array:1 [
+        0 => array:3 [
+          "id" => 1
+          "name" => "Воин"
+          "pivot" => array:3 [
+            "skill_id" => 101
+            "profession_id" => 1
+            "learning_level" => 1
+          ]
+        ]
+      ]
+    ]
+    1 => array:4 [
+      "id" => 104
+      "name" => "короткие лезвия"
+      "pivot" => array:3 [
+        "character_id" => 1
+        "skill_id" => 104
+        "value" => "2.00"
+      ]
+      "professions" => array:2 [
+        0 => array:3 [
+          "id" => 1
+          "name" => "Воин"
+          "pivot" => array:3 [
+            "skill_id" => 104
+            "profession_id" => 1
+            "learning_level" => 1
+          ]
+        ]
+        1 => array:3 [
+          "id" => 2
+          "name" => "Маг"
+          "pivot" => array:3 [
+            "skill_id" => 104
+            "profession_id" => 2
+            "learning_level" => 7
+          ]
+        ]
+      ]
+    ]
+    2 => array:4 [
+      "id" => 201
+      "name" => "сбить противника"
+      "pivot" => array:3 [
+        "character_id" => 1
+        "skill_id" => 201
+        "value" => "1.00"
+      ]
+      "professions" => array:1 [
+        0 => array:3 [
+          "id" => 1
+          "name" => "Воин"
+          "pivot" => array:3 [
+            "skill_id" => 201
+            "profession_id" => 1
+            "learning_level" => 5
+          ]
+        ]
+      ]
+    ]
+  ]
+
+ТЕ цепляются все профессии
+      "professions" => array:2 [
+        0 => array:3 [
+          "id" => 1
+          "name" => "Воин"
+          "pivot" => array:3 [
+            "skill_id" => 104
+            "profession_id" => 1
+            "learning_level" => 1
+          ]
+        ]
+        1 => array:3 [
+          "id" => 2
+          "name" => "Маг"
+          "pivot" => array:3 [
+            "skill_id" => 104
+            "profession_id" => 2
+            "learning_level" => 7
+          ]
+        ]
+      ]
+      потом это надо фильтровать...
+
+
+Бля... тут ошибка:
+Server
+if ($character['level'] >= (int)$skill['learning_level_check'][0]['learning_level']) {
+тащит только первый объект связи...
+мб попробовать
+profession.skills
+Да!
+так походу то что нужно.
+Это была лажа)
+
+Так. Вроде получилось:
+
+\App\Skill::characterSkill
+
+    public function characterSkill()
+    {
+        return $this->hasOne('App\CharacterSkill');
+    }
+
+\App\Profession::professionSkills
+
+    public function professionSkills()
+    {
+        return $this->belongsToMany('App\Skill')->withPivot('learning_level')
+            ->with('characterSkill')
+            ;
+    }

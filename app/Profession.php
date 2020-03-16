@@ -12,8 +12,12 @@ class Profession extends Model
 
     public $timestamps = false;
 
-    public function skills()
+    public function professionSkills()
     {
-        return $this->belongsToMany('App\Skill')->withPivot('learning_level');
+//        return $this->belongsToMany('App\Skill')->withPivot('learning_level');
+        return $this->belongsToMany('App\Skill')->withPivot('learning_level')
+//            ->join('character_skill', 'character_skill.skill_id', '=', 'profession_skill.skill_id')
+            ->with('characterSkill')
+            ;
     }
 }

@@ -46,8 +46,8 @@ class CharacterController extends Controller
 //        dd($level);
 //
 //        $level = Formulas::calculateLevel(1, 55383333);
-        $level = Formulas::calculateLevel(1, 2000);
-        dd($level);
+//        $level = Formulas::calculateLevel(1, 2000);
+//        dd($level);
         /*-----------------------------------*/
 
 //        $damageMessage = Formulas::damageMessage(88);

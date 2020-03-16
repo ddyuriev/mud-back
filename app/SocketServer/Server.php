@@ -330,14 +330,27 @@ STR;
                             Debugger::PrintToFile('ум', $character);
                             /**/
 
-                            if (!empty($character['skills'])) {
-                                foreach ($character['skills'] as $skill) {
+//                            if (!empty($character['skills'])) {
+//                                foreach ($character['skills'] as $skill) {
+                            if (!empty($character['profession']['skills'])) {
+                                foreach ($character['profession']['skills'] as $skill) {
+
                                     /**/
 //                                    Debugger::PrintToFile('learning_level_check', $skill->learning_level_check->first()->learning_level);
                                     /**/
 
-                                    if ($character['level'] >= (int)$skill['learning_level_check'][0]['learning_level']) {
-//                                        $skills .= "<div>" . "<span style='margin-left:10%'>" . $skill->name . "</span>" . "<span style='margin-left:20%'>" . $skill->pivot->value . "</span>" . "</div>";
+//                                    if ($character['level'] >= (int)$skill['learning_level_check'][0]['learning_level']) {
+//                                        $tableRows .= <<<STR
+//<tr>
+//  <th></th>
+//  <td width="30%">{$skill['name']}</td>
+//  <td>{$skill['pivot']['value']}</td>
+//  <td></td>
+//</tr>
+//STR;
+//                                    }
+
+                                    if ($character['level'] >= $skill['pivot']['learning_level']) {
                                         $tableRows .= <<<STR
 <tr>
   <th></th>
@@ -346,8 +359,8 @@ STR;
   <td></td>
 </tr>
 STR;
-
                                     }
+
                                 }
                             }
 
@@ -384,8 +397,9 @@ STR;
                                 foreach ($room['mobiles'] as $mobile) {
                                     foreach ($mobile['pseudonyms'] as $pseudonym) {
                                         if (mb_strtolower(trim(mb_substr($pseudonym, 0, mb_strlen($argument)))) == $argument) {
-//                                        $description = "<span>" . $mobile['description'] . "</span>";
                                             $character['opponent'] = $mobile;
+                                            //режим "в бою"
+                                            $character['state'] = 3;
                                             break;
                                         }
                                     }

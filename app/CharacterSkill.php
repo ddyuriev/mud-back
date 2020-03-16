@@ -8,9 +8,6 @@ class CharacterSkill extends Model
 {
     protected $table = 'character_skill';
 
-//    public $incrementing = false;
-//    protected $primaryKey = null;
-
     public $timestamps = false;
-
 }
+
