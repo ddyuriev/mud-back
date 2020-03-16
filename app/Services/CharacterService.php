@@ -5,6 +5,7 @@ namespace App\Services;
 
 use App\Character;
 use App\Helpers\Debugger;
+use App\Helpers\Formulas;
 use App\Slot;
 
 class CharacterService
@@ -48,6 +49,11 @@ class CharacterService
             $query->where('email', $email);
         }, 'profession', 'skills.learning_level_check', 'stuff.slot'])->where('is_active', true)->first()->toArray();
 
+
+//        $character['level'] = Formulas::calculateLevel($character['profession_id'], $character['experience']);
+
+        $character['level'] = Formulas::calculateLevel($character['profession_id'], $character['experience']);
+        $character['to_next_level'] = Formulas::toNextLevel($character['profession_id'], $character['experience'], $character['level']);
 
         foreach ($character['stuff'] as $item) {
 

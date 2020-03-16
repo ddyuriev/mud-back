@@ -1,0 +1,29 @@
+не мог въехать:
+        switch ($exp) {
+            case ($exp >= 0 && $exp < self::WARRIOR_LEVEL_2_EXP):
+                $level = 1;
+                break;
+            case $exp >= self::WARRIOR_LEVEL_2_EXP && $exp < self::WARRIOR_LEVEL_3_EXP:
+                $level = 2;
+                break;
+        }
+
+        return $level;
+
+        при $exp = 0 всегда возвращает $level = 2.
+
+        Тут получается, что $exp сравнивается с bool, поэтому так правильно:
+                switch (true) {
+                    case $exp >= 0 && $exp < self::WARRIOR_LEVEL_2_EXP:
+                        dd('тут1');
+                        $level = 1;
+                        break;
+                    case $exp >= self::WARRIOR_LEVEL_2_EXP && $exp < self::WARRIOR_LEVEL_3_EXP:
+                        $level = 2;
+                        break;
+                }
+
+                return $level;
+
+
+https://stackoverflow.com/questions/1800798/php-case-statement-not-working-with-zero-values

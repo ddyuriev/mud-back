@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Character;
 use App\Helpers\Debugger;
+use App\Helpers\Formulas;
 use App\Room;
 use App\Services\CharacterService;
 use App\Stuff;
@@ -40,6 +41,19 @@ class CharacterController extends Controller
 
     public function userInput(Request $request)
     {
+
+//        $level = Formulas::toNextLevel(1,10000,4);
+//        dd($level);
+//
+//        $level = Formulas::calculateLevel(1, 55383333);
+        $level = Formulas::calculateLevel(1, 2000);
+        dd($level);
+        /*-----------------------------------*/
+
+//        $damageMessage = Formulas::damageMessage(88);
+//        dd($damageMessage);
+        /*-----------------------------------*/
+
 
         $character = $this->characterService->getActiveCharacterByUserEmail('therion@mail.ru');
 //        $characterArray = $this->characterService->getActiveCharacterByUserEmail('therion@mail.ru')->toArray();

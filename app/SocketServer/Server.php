@@ -11,6 +11,7 @@ namespace App\SocketServer;
 //use Logger;
 
 use App\Helpers\Debugger;
+use App\Helpers\Formulas;
 use App\Http\Controllers\CharacterController;
 use App\Mobile;
 use App\Room;
@@ -42,6 +43,8 @@ class Server
 
     private $messageService;
 
+    private $roundOfBattle;
+
 
     public function __construct(
         UserService $userService,
@@ -62,6 +65,8 @@ class Server
         $this->userService = $userService;
         $this->characterService = $characterService;
         $this->messageService = $messageService;
+
+        $this->roundOfBattle = env("ROUND_OF_BATTLE");
     }
 
 
@@ -280,6 +285,12 @@ STR;
                             break;
 
                         case (preg_match('/^осм.*/', $data->message) ? true : false) :
+                        case (preg_match('/^осмо.*/', $data->message) ? true : false) :
+                        case (preg_match('/^осмот.*/', $data->message) ? true : false) :
+                        case (preg_match('/^осмотр.*/', $data->message) ? true : false) :
+                        case (preg_match('/^осмотре.*/', $data->message) ? true : false) :
+                        case (preg_match('/^осмотрет.*/', $data->message) ? true : false) :
+                        case (preg_match('/^осмотреть.*/', $data->message) ? true : false) :
 //                        case (stripos($data->message, 'осм') ? true : false) :
 //                        case preg_match('#^/oop/page/осм/\d+$#', $data->message):
 
@@ -360,19 +371,46 @@ STR;
                             $connection->send(json_encode(['for_client' => $stateString . $skillsTable]));
                             break;
 
-                        case 'у':
-                        case 'уд':
+//                        case 'у':
+//                        case 'уд':
+                        case (preg_match('/^у.*/', $data->message) ? true : false) :
+                        case (preg_match('/^уд.*/', $data->message) ? true : false) :
+
+                            $dataMessage = $data->message;
+                            $argument = mb_strtolower(trim(substr($dataMessage, strpos($dataMessage, ' '))));
+                            $room = $rooms[$character['room_inner_id']];
+
+                            if (!empty($room['mobiles'])) {
+                                foreach ($room['mobiles'] as $mobile) {
+                                    foreach ($mobile['pseudonyms'] as $pseudonym) {
+                                        if (mb_strtolower(trim(mb_substr($pseudonym, 0, mb_strlen($argument)))) == $argument) {
+//                                        $description = "<span>" . $mobile['description'] . "</span>";
+                                            $character['opponent'] = $mobile;
+                                            break;
+                                        }
+                                    }
+                                }
+                            }
+
+                            /**/
+                            Debugger::PrintToFile('--Бой-$character', $character);
+                            /**/
+
                             $faker = Factory::create();
 
-                            $time_interval = $this->config['intervalPing'];
-                            $timerId = Timer::add(1.1, function () use ($connection, $stateString, $character, $faker) {
+                            $damage = $faker->numberBetween($character['first_damage_min'], $character['first_damage_max']);
+                            $damageMessage = Formulas::damageMessage($damage);
+                            $opponentName = $character['opponent']['name'];
+                            $actorMessage = "<span  style='color:#CA5209'>Вы $damageMessage рубанули $opponentName. ($damage)</span>";
+                            $connection->send(json_encode(['for_client' => $stateString . $actorMessage]));
 
-//                                $result = 'пинг...';
-//                                $this->logger->save(date("H:i:s"), 'Service', $result);
-
+                            $timerId = Timer::add($this->roundOfBattle, function () use ($connection, $stateString, $character, $faker) {
                                 $damage = $faker->numberBetween($character['first_damage_min'], $character['first_damage_max']);
-
-                                $connection->send(json_encode(['for_client' => $stateString . $damage]));
+                                $damageMessage = Formulas::damageMessage($damage);
+                                $opponentName = $character['opponent']['name'];
+                                $actorMessage = "<span  style='color:#23CD18'>Вы $damageMessage рубанули $opponentName. ($damage)</span>";
+                                $opponentMessage = "<span  style='color:#CA5209'>$opponentName попытался огреть вас, но не смог этого сделать</span>";
+                                $connection->send(json_encode(['for_client' => $stateString . $opponentMessage . $actorMessage]));
                             });
 
                             $character['timer_id'] = $timerId;
@@ -380,6 +418,7 @@ STR;
 
                         case 'стоп':
                             Timer::del($character['timer_id']);
+                            $connection->send(json_encode(['for_client' => $stateString . "Вы решили остановить кровопролитие..."]));
                             break;
                         case 'э':
                         case 'эк':
@@ -467,7 +506,7 @@ STR;
 
         $exits = $north . $east . $south . $west . $up . $down;
 
-        return "<span style='color:darkgreen'>{$character['HP']}H {$character['VP']}V 1999X {$character['coins']}C Вых:{$exits}></span>";
+        return "<span style='color:darkgreen'>{$character['HP']}H {$character['VP']}V {$character['to_next_level']}X {$character['coins']}C Вых:{$exits}></span>";
     }
 
 

@@ -1,0 +1,120 @@
+Сделать режим боя
+
+
+Так. заметил, что стрелочки тоже ходят. Это не порядок.
+
+
+
+---------------------------
+
+
+    легонько                 1..2
+    слегка                   3..4
+    легко                    5..6
+    сильно                   7..10
+    очень сильно             11..14
+    чрезвычайно сильно       15..28
+    смертельно               29..46
+    БОЛЬНО                   47..66
+    ОЧЕНЬ БОЛЬНО             67..99
+    НЕВЫНОСИМО БОЛЬНО        >=100
+
+раньше было (по памяти)
+    легонько                 1..2
+    слегка                   3..4
+    легко                    5..6
+    сильно                   7..10
+    очень сильно             11..14
+    чрезвычайно сильно       15..19
+    смертельно               20..23
+    БОЛЬНО                   24..35
+    ОЧЕНЬ БОЛЬНО             36..49
+    НЕВЫНОСИМО БОЛЬНО        >=50
+
+
+    -----------
+
+    55 секунд 20 раундов
+    ~2.3 секунды
+
+Надо наверное мобам динамический uuid вводить...
+
+
+
+------------------------------------------------------
+
+Сделать таблицу опыта/уровня
+
+воин:
+
+403H 131V 2060791X 195C Вых:З> уровни
+[ 1]        0-999
+[ 2]     1000-3999
+[ 3]     4000-7999
+[ 4]     8000-15999
+[ 5]    16000-31999
+[ 6]    32000-63999
+[ 7]    64000-139999
+[ 8]   140000-219999
+[ 9]   220000-319999
+[10]   320000-439999
+[11]   440000-579999
+[12]   580000-739999
+[13]   740000-949999
+[14]   950000-1149999
+[15]  1150000-1399999
+[16]  1400000-1699999
+[17]  1700000-2049999
+[18]  2050000-2449999
+[19]  2450000-2949999
+[20]  2950000-3949999
+[21]  3950000-5249999
+[22]  5250000-6749999
+[23]  6750000-8449999
+[24]  8450000-10349999
+[25] 10350000-13999999
+[26] 14000000-20999999
+[27] 21000000-30999999
+[28] 31000000-43999999
+[29] 44000000-59999999
+[30] 60000000-78999999
+
+
+------------------------------------------------------
+
+mysql -u USERNAME -h HOSTNAMEORIP DATABASENAME -p
+
+C:\OSPanel\modules\database\MySQL-5.7-x64\bin\mysql -u USERNAME -h HOSTNAMEORIP DATABASENAME -p
+
+C:\OSPanel\modules\database\MySQL-5.7-x64\bin\mysql -u root -h mud-back mud-back -p
+
+C:\OSPanel\modules\database\MySQL-5.7-x64\bin\mysql -u root -h localhost mud-back -p
+
+//на серваке kosmos2, OK:
+C:\OSPanel\modules\database\MySQL-5.7-x64\bin\mysql -u root -h localhost carenda -p
+//не ок
+mysql -u root -h localhost carenda -p
+
+C:\temp.20\adaneditors20100409\server\run.bat
+
+cd C:\temp.20\adaneditors20100409\server
+run.bat
+
+
+C:\OSPanel\modules\database\MySQL-5.7-x64\bin\mysql -u root
+CREATE USER 'root_old'@'localhost';
+
+
+
+Mar 16 00:40:11 2020 :: Using lib as data directory.
+Mar 16 00:40:11 2020 :: SYSERR: Cannot connect to MySQL server. (Access denied for user 'root_old'@'localhost' (using pa
+ssword: YES))
+Mar 16 00:40:11 2020 :: SYSERR: log: Write to mysql
+
+-----------------
+
+https://stackoverflow.com/questions/11717593/can-i-access-a-php-class-constant-using-a-variable-for-the-constant-name
+
+-----------------
+
+
