@@ -14,13 +14,8 @@ class Cors {
      */
     public function handle($request, Closure $next) {
 
-
         /**/
-//        $debugFile = 'debug/debug1111111-Cors.txt';
-//        file_exists($debugFile) ? $current = file_get_contents($debugFile) : $current = NULL;
-//        $results = print_r($request->all(), true);
-//        !empty($current) ? $current .= "\r\n" . $results : $current .= "\n" . $results;
-//        file_put_contents($debugFile, $current);
+//        Debugger::PrintToFile('Cors', $request->all()');
         /**/
 
         return $next($request)

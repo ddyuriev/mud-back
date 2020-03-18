@@ -28,12 +28,7 @@ class CharacterController extends Controller
     public function index()
     {
         /**/
-        $debugFile = 'debug1111111-index.txt';
-        file_exists($debugFile) ? $current = file_get_contents($debugFile) : $current = null;
-        $results = print_r('index', true);
-        !empty($current) ? $current .= "\r\n" . $results : $current .= "\n" . $results;
-        file_put_contents($debugFile, $current);
-
+        Debugger::PrintToFile('index', 'index');
         /**/
 
         return Character::find(1);
@@ -41,6 +36,14 @@ class CharacterController extends Controller
 
     public function userInput(Request $request)
     {
+
+        /*-----------------------------------*/
+//        return \Illuminate\Support\Str::uuid()->toString();
+
+        /**/
+//        Debugger::PrintToFile('userInput', 'userInput');
+        /**/
+        /*-----------------------------------*/
 
 //        $level = Formulas::toNextLevel(1,10000,4);
 //        dd($level);
