@@ -19,6 +19,7 @@ class CreateUsersTable extends Migration
             $table->uuid('uuid');
             $table->string('name');
             $table->string('password');
+            $table->tinyInteger('color_scheme')->default(1);;
             $table->timestamps();
         });
     }

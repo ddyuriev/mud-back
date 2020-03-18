@@ -1,0 +1,29 @@
+Думаю, надо:
+перевести цвет шрифта и фона на css
+добавить  возможность выбора цветовой схемы
+
+----------------------------------------------------------------------------------------
+
+
+                            $roomName = "<span style='color:indigo'>" . $rooms[Room::START_ROOM_INNER_ID]['name'] . "</span>";
+
+
+----------
+main5.js:13 Uncaught ReferenceError: Cannot access 'colorScheme' before initialization
+    at main5.js:13
+
+Влад: как вариант сделать прелоадер
+
+еще вар правило на nginx прописать
+
+------------
+
+
+height:
+main5.js:330 905
+main5.js:339 window.height()
+main5.js:340 969
+
+
+------------
+
