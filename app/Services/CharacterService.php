@@ -17,6 +17,7 @@ class CharacterService
 
     /**
      * @param $email
+     *
      * @return array
      */
     public function getActiveCharacterByUserEmail($email)
@@ -72,7 +73,9 @@ class CharacterService
 
 //        $character['level'] = Formulas::calculateLevel($character['profession_id'], $character['experience']);
 
-        $character['level'] = Formulas::calculateLevel($character['profession_id'], $character['experience']);
+        $character['state'] = 1;
+
+        $character['level']         = Formulas::calculateLevel($character['profession_id'], $character['experience']);
         $character['to_next_level'] = Formulas::toNextLevel($character['profession_id'], $character['experience'], $character['level']);
 
         foreach ($character['stuff'] as $item) {
