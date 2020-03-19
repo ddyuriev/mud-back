@@ -36,7 +36,48 @@ class CharacterController extends Controller
 
     public function userInput(Request $request)
     {
+//        $userInput = 'счеe';
+//        $hiSTACK = 'счет';
+//        var_dump(mb_stripos($hiSTACK, $userInput));
+//        exit();
+//        dd(mb_stripos('счет', 'сч'));
 
+
+//        $text = 'Email you sent was ololo@example.com. Is it correct?';
+//        $regexp = '/(?<mail>[^\s]+)@(?<domain>[^\s\.]+\.[a-z]+)/';
+//        $result = preg_match_all($regexp, $text, $match);
+//        var_dump(
+//            $result,
+//            $match
+//        );
+
+//        $URL = "https://hello.world.ru/uri/starts/here?get_params=here#anchor";
+//        $regexp = "/(?<scheme>http[s]?):\/\/(?<domain>[\w\.-]+)(?<path>[^?$]+)?(?<query>[^#$]+)?[#]?(?<fragment>[^$]+)?/";
+//        $result = preg_match($regexp, $URL, $match);
+//        var_dump(
+//            $result,
+//            $match
+//        );
+
+        $userInput = 'сч';
+//        $userInput = 'счет';
+        //ok
+//        dd(preg_match("/^сч/", $userInput));
+//        dd(preg_match("/^сч(е)(т)/", $userInput));
+//        var_dump(preg_match("/^сч[е]{0,1}[т]{0,1}/i", $userInput));
+//        dd(preg_match("/^сч?е{1}?т{1}/i", $userInput));
+
+//        var_dump(preg_match("/сче?т?/", $userInput));
+
+//        var_dump(preg_match("/сч[е]?[т]?/", $userInput));
+//        var_dump(preg_match("/сч[е]?[т]?$/", $userInput));
+        var_dump(preg_match("/^сч(е)?(т)?$/", $userInput));
+
+        var_dump(preg_match("/сче?т?$/", $userInput));
+
+//        var_dump(preg_match("/сч|сче|счет/", $userInput));
+
+        exit();
         /*-----------------------------------*/
 //        return \Illuminate\Support\Str::uuid()->toString();
 

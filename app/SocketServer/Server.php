@@ -2,14 +2,6 @@
 
 namespace App\SocketServer;
 
-//require_once __DIR__ . '../../vendor/autoload.php';
-//require_once __DIR__ . '/config.php';
-
-//require_once __DIR__ . '/config.php';
-//require_once __DIR__ . '/../vendor/autoload.php';
-
-//use Logger;
-
 use App\Helpers\Debugger;
 use App\Helpers\Formulas;
 use App\Http\Controllers\CharacterController;
@@ -57,14 +49,13 @@ class Server
         $this->ws_worker = new Worker("websocket://$config[host]:$config[port]");
 //        $this->ws_worker = new Worker("websocket://192.168.215.29:$config[port]");
 
-//        $this->db = $db;
-        $this->logger           = $logger;
+        $this->logger = $logger;
         $this->ws_worker->count = $config['countWorkers'];
-        $this->config           = $config;
+        $this->config = $config;
 
-        $this->userService      = $userService;
+        $this->userService = $userService;
         $this->characterService = $characterService;
-        $this->messageService   = $messageService;
+        $this->messageService = $messageService;
 
         $this->roundOfBattle = env("ROUND_OF_BATTLE");
     }
@@ -72,7 +63,7 @@ class Server
 
     public function serverStart()
     {
-        $rooms      = [];
+        $rooms = [];
         $characters = [];
 
         //грузим зоны
@@ -130,7 +121,7 @@ class Server
             $connection->onWebSocketConnect = function ($connection) use (&$users, &$characters) {
 
                 $userEmailFromClient = $_GET['user'];
-                $activeCharacter     = $this->characterService->getActiveCharacterByUserEmail($userEmailFromClient);
+                $activeCharacter = $this->characterService->getActiveCharacterByUserEmail($userEmailFromClient);
 
 //                $characters[$activeCharacter->user->uuid] = $activeCharacter;
                 $characters[$activeCharacter['user']['uuid']] = $activeCharacter;
@@ -208,14 +199,13 @@ STR;
 //            Debugger::PrintToFile('-onMessage-$data', $data);
             /**/
 
-            $time       = date("H:i:s");
+            $time = date("H:i:s");
             $data->time = $time;
             /**/
 //            Debugger::PrintToFile('-onMessage-$this-connections', $this->connections);
             /**/
 
 
-//            $dataUserUuid = $data->uuid;
             //тут наверное нужно сделать проверку что uuid принадлежит авторизовавшемуся.
             //Как варик передавать токен в каждом запросе и парсить его
             //наверное так и надо сделать
@@ -235,37 +225,57 @@ STR;
             Debugger::PrintToFile('-++++++++++++++++++++++++++++$character', $character);
             /**/
 
-
-            switch ($character['state']) {
+            switch (true) {
                 //на 1-це
-                case 1:
-                    switch ($data->message) {
-                        case 1:
-//                            $helloMessage       = "<span style='color:goldenrod'>Приветствуем вас на бескрайних просторах мира чудес и приключений!</span>";
-                            $helloMessage = "<span class='basic-color'>Приветствуем вас на бескрайних просторах мира чудес и приключений!</span>";
+                case $character['state'] == 1 && $data->message == 1:
+                    $helloMessage = "<span class='basic-color'>Приветствуем вас на бескрайних просторах мира чудес и приключений!</span>";
+                    $character['state'] = 2;
+                    $character['room_inner_id'] = Room::START_ROOM_INNER_ID;
+                    $stateString = $this->renderStateString($character, $rooms[Room::START_ROOM_INNER_ID]['exits']);
+                    $roomName = "<span class='room-name'>" . $rooms[Room::START_ROOM_INNER_ID]['name'] . "</span>";
+                    $connection->send(json_encode(['for_client' => $stateString . $roomName . $helloMessage]));
 
-                            $character['state']         = 2;
-                            $character['room_inner_id'] = Room::START_ROOM_INNER_ID;
-                            $stateString                = $this->renderStateString($character, $rooms[Room::START_ROOM_INNER_ID]['exits']);
-//                            $roomName = "<span style='color:indigo'>" . $rooms[Room::START_ROOM_INNER_ID]['name'] . "</span>";
-                            $roomName = "<span class='room-name'>" . $rooms[Room::START_ROOM_INNER_ID]['name'] . "</span>";
-                            $connection->send(json_encode(['for_client' => $stateString . $roomName . $helloMessage]));
-
-                            break;
-                    }
                     break;
-                case 2:
-                    switch ($data->message) {
-                        case 'сч':
-                        case 'сче':
-                        case 'счет':
-                            $message = <<<STR
+
+                case $character['state'] == 2 && preg_match("/^сч(е)?(т)?$/", $data->message):
+                    $message = <<<STR
 <span class='basic-color'>Вы </span><span style='color:goldenrod'>{$character['name']}</span><span class='basic-color'>, {$character['profession']['name']} {$character['level']} уровня.</span><br>
 <span class='basic-color'>Ваш E-mail: {$character['user']['email']}</span><br>
 <span class='basic-color'>Вы набрали {$character['experience']} опыта и имеете </span><span style='color:gold'>{$character['coins']}</span><span class='basic-color'> монет.</span><br>
 STR;
-                            $connection->send(json_encode(['for_client' => '<span>' . "{$message}{$stateString}" . '</span>']));
-                            break;
+                    $connection->send(json_encode(['for_client' => '<span>' . "{$message}{$stateString}" . '</span>']));
+                    break;
+            }
+
+            switch ($character['state']) {
+                //на 1-це
+//                case 1:
+//                    switch ($data->message) {
+//                        case 1:
+//                            $helloMessage = "<span class='basic-color'>Приветствуем вас на бескрайних просторах мира чудес и приключений!</span>";
+//                            $character['state'] = 2;
+//                            $character['room_inner_id'] = Room::START_ROOM_INNER_ID;
+//                            $stateString = $this->renderStateString($character, $rooms[Room::START_ROOM_INNER_ID]['exits']);
+//                            $roomName = "<span class='room-name'>" . $rooms[Room::START_ROOM_INNER_ID]['name'] . "</span>";
+//                            $connection->send(json_encode(['for_client' => $stateString . $roomName . $helloMessage]));
+//
+//                            break;
+//                    }
+//                    break;
+
+                //в игре но не в бою
+                case 2:
+                    switch ($data->message) {
+//                        case 'сч':
+//                        case 'сче':
+//                        case 'счет':
+//                            $message = <<<STR
+//<span class='basic-color'>Вы </span><span style='color:goldenrod'>{$character['name']}</span><span class='basic-color'>, {$character['profession']['name']} {$character['level']} уровня.</span><br>
+//<span class='basic-color'>Ваш E-mail: {$character['user']['email']}</span><br>
+//<span class='basic-color'>Вы набрали {$character['experience']} опыта и имеете </span><span style='color:gold'>{$character['coins']}</span><span class='basic-color'> монет.</span><br>
+//STR;
+//                            $connection->send(json_encode(['for_client' => '<span>' . "{$message}{$stateString}" . '</span>']));
+//                            break;
 
                         case 'см':
                             $connection->send(json_encode(['for_client' => $this->renderRequestOnLook($character, $rooms)]));
@@ -299,8 +309,8 @@ STR;
 
 
                             $dataMessage = $data->message;
-                            $argument    = mb_strtolower(trim(substr($dataMessage, strpos($dataMessage, ' '))));
-                            $room        = $rooms[$character['room_inner_id']];
+                            $argument = mb_strtolower(trim(substr($dataMessage, strpos($dataMessage, ' '))));
+                            $room = $rooms[$character['room_inner_id']];
                             $description = '';
 
                             if (!empty($room['mobiles'])) {
@@ -329,46 +339,23 @@ STR;
 
                         case 'ум':
                             $tableRows = '';
-                            /**/
-                            Debugger::PrintToFile('ум', $character);
-                            /**/
-
-//                            if (!empty($character['skills'])) {
-//                                foreach ($character['skills'] as $skill) {
-                            if (!empty($character['profession']['skills'])) {
-                                foreach ($character['profession']['skills'] as $skill) {
-
-                                    /**/
-//                                    Debugger::PrintToFile('learning_level_check', $skill->learning_level_check->first()->learning_level);
-                                    /**/
-
-//                                    if ($character['level'] >= (int)$skill['learning_level_check'][0]['learning_level']) {
-//                                        $tableRows .= <<<STR
-//<tr>
-//  <th></th>
-//  <td width="30%">{$skill['name']}</td>
-//  <td>{$skill['pivot']['value']}</td>
-//  <td></td>
-//</tr>
-//STR;
-//                                    }
-
+                            if (!empty($character['profession']['profession_skills'])) {
+                                foreach ($character['profession']['profession_skills'] as $skill) {
                                     if ($character['level'] >= $skill['pivot']['learning_level']) {
                                         $tableRows .= <<<STR
 <tr>
   <th></th>
   <td width="30%">{$skill['name']}</td>
-  <td>{$skill['pivot']['value']}</td>
+  <td>{$skill['character_skill']['value']}</td>
   <td></td>
 </tr>
 STR;
                                     }
-
                                 }
                             }
 
                             $skillsTable = <<<STR
-<table>
+<table class="equipment">
   <thead>
     <tr>
       <th></th>
@@ -381,20 +368,22 @@ STR;
   {$tableRows}
   </tbody>
 </table>
-Ваши умения:
+<span style='color:gold'>Ваши умения:</span>
 STR;
-
                             $connection->send(json_encode(['for_client' => $stateString . $skillsTable]));
                             break;
 
-//                        case 'у':
-//                        case 'уд':
                         case (preg_match('/^у.*/', $data->message) ? true : false) :
                         case (preg_match('/^уд.*/', $data->message) ? true : false) :
+                        case (preg_match('/^уда.*/', $data->message) ? true : false) :
+                        case (preg_match('/^удар.*/', $data->message) ? true : false) :
+                        case (preg_match('/^удари.*/', $data->message) ? true : false) :
+                        case (preg_match('/^ударит.*/', $data->message) ? true : false) :
+                        case (preg_match('/^ударить.*/', $data->message) ? true : false) :
 
                             $dataMessage = $data->message;
-                            $argument    = mb_strtolower(trim(substr($dataMessage, strpos($dataMessage, ' '))));
-                            $room        = $rooms[$character['room_inner_id']];
+                            $argument = mb_strtolower(trim(substr($dataMessage, strpos($dataMessage, ' '))));
+                            $room = $rooms[$character['room_inner_id']];
 
                             if (!empty($room['mobiles'])) {
                                 foreach ($room['mobiles'] as $mobile) {
@@ -425,7 +414,7 @@ STR;
 
                             $faker = Factory::create();
 
-                            $damage        = $faker->numberBetween($character['first_damage_min'], $character['first_damage_max']);
+                            $damage = $faker->numberBetween($character['first_damage_min'], $character['first_damage_max']);
                             $damageMessage = Formulas::damageMessage($damage);
 
                             $opponentName = $character['opponent']['name'];
@@ -433,11 +422,11 @@ STR;
                             $connection->send(json_encode(['for_client' => $stateString . $actorMessage]));
 
                             $timerId = Timer::add($this->roundOfBattle, function () use ($connection, $stateString, $character, $faker) {
-                                $damage        = $faker->numberBetween($character['first_damage_min'], $character['first_damage_max']);
+                                $damage = $faker->numberBetween($character['first_damage_min'], $character['first_damage_max']);
                                 $damageMessage = Formulas::damageMessage($damage);
-                                $opponentName  = $character['opponent']['name'];
+                                $opponentName = $character['opponent']['name'];
 //                                $actorMessage    = "<span  style='color:#23CD18'>Вы $damageMessage рубанули $opponentName. ($damage)</span>";
-                                $actorMessage    = "<span class='actor-attack'>Вы $damageMessage рубанули $opponentName. ($damage)</span>";
+                                $actorMessage = "<span class='actor-attack'>Вы $damageMessage рубанули $opponentName. ($damage)</span>";
                                 $opponentMessage = "<span class='enemy-attack'>$opponentName попытался огреть вас, но не смог этого сделать</span>";
                                 $connection->send(json_encode(['for_client' => $stateString . $opponentMessage . $actorMessage]));
                             });
@@ -463,7 +452,7 @@ STR;
                                 //если слот вещи соответствует слоту чара
                                 if ($item['slot_id'] == $item['pivot']['slot_id']) {
 
-                                    $itemName  = mb_strtolower($item['name']);
+                                    $itemName = mb_strtolower($item['name']);
                                     $tableRows .= <<<STR
 <tr>
   <td width="30%">{$item['slot']['name']}</td>
@@ -500,7 +489,7 @@ STR;
                     switch ($data->message) {
                         case 'стоп':
                             Timer::del($character['timer_id']);
-                            $stateString        = $this->renderStateString($character, $rooms[$character['room_inner_id']]['exits']);
+                            $stateString = $this->renderStateString($character, $rooms[$character['room_inner_id']]['exits']);
                             $character['state'] = 2;
                             $connection->send(json_encode(['for_client' => $stateString . "<span class='white-color'>Вы решили остановить кровопролитие...</span>"]));
                             break;
@@ -538,11 +527,11 @@ STR;
     public function renderStateString($character, $exitsArray)
     {
         $north = !empty($exitsArray['n']) ? 'С' : '';
-        $east  = !empty($exitsArray['e']) ? 'В' : '';
+        $east = !empty($exitsArray['e']) ? 'В' : '';
         $south = !empty($exitsArray['s']) ? 'Ю' : '';
-        $west  = !empty($exitsArray['w']) ? 'З' : '';
-        $up    = !empty($exitsArray['u']) ? '^' : '';
-        $down  = !empty($exitsArray['d']) ? 'v' : '';
+        $west = !empty($exitsArray['w']) ? 'З' : '';
+        $up = !empty($exitsArray['u']) ? '^' : '';
+        $down = !empty($exitsArray['d']) ? 'v' : '';
 
         $exits = $north . $east . $south . $west . $up . $down;
 
@@ -552,9 +541,9 @@ STR;
 
     public function renderRequestOnLook($character, $rooms)
     {
-        $room            = $rooms[$character['room_inner_id']];
-        $stateString     = $this->renderStateString($character, $room['exits']);
-        $roomName        = "<span class='room-name'>" . $room['name'] . "</span>";
+        $room = $rooms[$character['room_inner_id']];
+        $stateString = $this->renderStateString($character, $room['exits']);
+        $roomName = "<span class='room-name'>" . $room['name'] . "</span>";
         $roomDescription = "<span class='basic-color'>" . $room['description'] . "</span>";
 
         $mobileTitle = '';
@@ -573,10 +562,10 @@ STR;
         if ($nextRoomInnerId) {
 
             $character['room_inner_id'] = $nextRoomInnerId;
-            $room                       = $rooms[$character['room_inner_id']];
-            $stateString                = $this->renderStateString($character, $rooms[$nextRoomInnerId]['exits']);
-            $roomName                   = "<span class='room-name'>" . $rooms[$nextRoomInnerId]['name'] . "</span>";
-            $mobileTitle                = '';
+            $room = $rooms[$character['room_inner_id']];
+            $stateString = $this->renderStateString($character, $rooms[$nextRoomInnerId]['exits']);
+            $roomName = "<span class='room-name'>" . $rooms[$nextRoomInnerId]['name'] . "</span>";
+            $mobileTitle = '';
 
             if (!empty($room['mobiles'])) {
                 foreach ($room['mobiles'] as $mobiles) {
