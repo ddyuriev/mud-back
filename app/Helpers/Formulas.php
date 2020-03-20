@@ -44,6 +44,11 @@ class Formulas
     CONST WARRIOR_LEVEL_31_EXP = 79000000;
 
 
+    /**
+     * @param $strength
+     *
+     * @return int
+     */
     public static function strengthDamageBonus($strength)
     {
 
@@ -311,6 +316,23 @@ class Formulas
                 $nextLevelExp = constant("SELF::WARRIOR_LEVEL_{$nextLevel}_EXP");
                 break;
         }
+
         return $nextLevelExp - $exp;
     }
+
+    public static function getMaxHP($character)
+    {
+        $basePoints = 20;
+
+        $levelBonus = 0;
+
+        switch ($character['profession_id']) {
+            case Profession::WARRIOR_ID:
+                $levelBonus = intdiv( $character['constitution'] * $character['level'], 2);
+                break;
+        }
+
+        return $basePoints + $levelBonus;
+    }
+
 }
