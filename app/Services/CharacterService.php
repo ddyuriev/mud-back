@@ -76,6 +76,8 @@ class CharacterService
         $character['state'] = 1;
 
         $character['level']         = Formulas::calculateLevel($character['profession_id'], $character['experience']);
+        $character['maxHP']         = Formulas::getMaxHP($character);
+
         $character['to_next_level'] = Formulas::toNextLevel($character['profession_id'], $character['experience'], $character['level']);
 
         foreach ($character['stuff'] as $item) {

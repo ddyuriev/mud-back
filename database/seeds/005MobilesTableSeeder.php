@@ -36,9 +36,11 @@ STR
             'intellect' => '12',
             'wisdom' => '13',
             'size' => 20,
-            'HP' => 500,
+            'HP' => 50,
+            'maxHP' => 50,
 //            'VP' => 70,
             'coins' => 0,
+            'exp_reward' => 100000,
         ]);
 
         \DB::table('mobiles')->insert([
@@ -54,7 +56,6 @@ STR
 }
 STR
             ,
-
             'title_inside_of_room' => 'Деревянный манекен для новичков стоит тут',
             'description' => 'Бревно, палки, проволока... Врядли он сможет дать сдачи',
             'profession_id' => 1,
@@ -66,7 +67,9 @@ STR
             'wisdom' => '13',
             'size' => 20,
             'HP' => 70,
+            'maxHP' => 70,
             'coins' => 0,
+            'exp_reward' => 10000,
         ]);
 
         \DB::table('mobiles')->insert([
@@ -93,7 +96,9 @@ STR
             'wisdom' => '13',
             'size' => 20,
             'HP' => 200,
+            'maxHP' => 200,
             'coins' => 0,
+            'exp_reward' => 20000,
         ]);
 
 //        \DB::table('mobiles')->insert([

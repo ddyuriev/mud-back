@@ -36,6 +36,31 @@ class CharacterController extends Controller
 
     public function userInput(Request $request)
     {
+        /*-----------------------------------*/
+
+        $a = [
+            'a' => 123,
+            'b' => 234
+        ];
+
+        $b = [
+            '1' => 2,
+            '2' => 3,
+            'a' => &$a
+        ];
+
+        print_r($b);
+
+        $a['adf'] = 123;
+
+        print_r($b);
+
+        exit();
+
+
+        /*-----------------------------------*/
+
+
 //        $userInput = 'счеe';
 //        $hiSTACK = 'счет';
 //        var_dump(mb_stripos($hiSTACK, $userInput));

@@ -328,11 +328,62 @@ class Formulas
 
         switch ($character['profession_id']) {
             case Profession::WARRIOR_ID:
-                $levelBonus = intdiv( $character['constitution'] * $character['level'], 2);
+                $levelBonus = intdiv($character['constitution'] * $character['level'], 2);
                 break;
         }
 
+        /**/
+//        Debugger::PrintToFile('----$levelBonus', $levelBonus);
+        /**/
+
         return $basePoints + $levelBonus;
     }
+
+    public static function getConditionEstimate($HP, $maxHP)
+    {
+        $relativeCondition = $HP / $maxHP;
+
+        $conditionEstimate = '';
+        $colorLevel = 0;
+        switch (true) {
+            case $relativeCondition > 1:
+                $conditionEstimate = "Божественное";
+                $colorLevel = 0;
+                break;
+            case $relativeCondition == 1:
+                $conditionEstimate = "Великолепное";
+                $colorLevel = 1;
+                break;
+            case $relativeCondition >= 0.83 && $relativeCondition < 1 :
+                $conditionEstimate = "О.Хорошее";
+                $colorLevel = 1;
+                break;
+            case $relativeCondition >= 0.64 && $relativeCondition < 0.83 :
+                $conditionEstimate = "Хорошее";
+                $colorLevel = 1;
+                break;
+            case $relativeCondition >= 0.47 && $relativeCondition < 0.64 :
+                $conditionEstimate = "Среднее";
+                $colorLevel = 2;
+                break;
+            case $relativeCondition >= 0.30 && $relativeCondition < 0.47 :
+                $conditionEstimate = "Плохое";
+                $colorLevel = 2;
+                break;
+            case $relativeCondition >= 0.13 && $relativeCondition < 0.30 :
+                $conditionEstimate = "О.Плохое";
+                $colorLevel = 3;
+                break;
+            case $relativeCondition < 0.13 :
+                $conditionEstimate = "Ужасное";
+                $colorLevel = 3;
+                break;
+        }
+        return [
+            'condition_estimate' => $conditionEstimate,
+            'color_level' => $colorLevel
+        ];
+    }
+
 
 }
