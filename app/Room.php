@@ -20,7 +20,8 @@ class Room extends Model
 
     public function mobiles()
     {
-        return $this->hasMany('App\Mobile', 'room_id', 'id')->orderBy('id', 'desc');
+//        return $this->hasMany('App\Mobile', 'room_id', 'id')->orderBy('id', 'desc');
+        return $this->hasMany('App\Mobile', 'room_id', 'id')->orderBy('id', 'asc');
     }
 
 //test

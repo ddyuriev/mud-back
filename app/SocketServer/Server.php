@@ -70,6 +70,11 @@ class Server
         //грузим зоны
 //        $roomsArray = Room::all()->toArray();
         $roomsArray = Room::with('mobiles')->get()->toArray();
+
+        /**/
+//        Debugger::PrintToFile('$roomsArray', $roomsArray);
+        /**/
+
         foreach ($roomsArray as $roomArray) {
             $rooms[$roomArray['inner_id']] = $roomArray;
         }
@@ -171,7 +176,7 @@ STR;
         * При получении сообщения записываем его в БД и рассылаем пользователям
         *
         */
-        $this->ws_worker->onMessage = function ($connection, $data) use (&$users, $rooms, &$characters) {
+        $this->ws_worker->onMessage = function ($connection, $data) use (&$users, &$rooms, &$characters) {
             $data = json_decode($data);
             /**/
 //            Debugger::PrintToFile('-onMessage-$data', $data);
@@ -200,7 +205,7 @@ STR;
             }
 
             /**/
-            Debugger::PrintToFile('-+++++++onMessage++$character', $character);
+//            Debugger::PrintToFile('-+++++++onMessage++$character', $character);
             /**/
 
             switch (true) {
@@ -244,6 +249,7 @@ STR;
                     $connection->send(json_encode(['for_client' => $this->renderRequestOnMove($character, $rooms, $stateString, 'w')]));
                     break;
 
+                //счет
                 case in_array($character['state'], [
                         Constants::STATE_IN_GAME,
                         Constants::STATE_IN_BATTLE
@@ -268,6 +274,7 @@ STR;
                     $connection->send(json_encode(['for_client' => $this->renderRequestOnLook($character, $rooms)]));
                     break;
 
+                //осмотреть
                 case in_array($character['state'], [
                         Constants::STATE_IN_GAME,
                         Constants::STATE_IN_BATTLE
@@ -278,10 +285,12 @@ STR;
                     $description = '';
                     if (!empty($room['mobiles'])) {
                         foreach ($room['mobiles'] as $mobile) {
-                            foreach ($mobile['pseudonyms'] as $pseudonym) {
-                                if (mb_strtolower(trim(mb_substr($pseudonym, 0, mb_strlen($argument)))) == $argument) {
-                                    $description = "<span class='basic-color'>" . $mobile['description'] . "</span>";
-                                    break;
+                            if (!empty($mobile)) {
+                                foreach ($mobile['pseudonyms'] as $pseudonym) {
+                                    if (mb_strtolower(trim(mb_substr($pseudonym, 0, mb_strlen($argument)))) == $argument) {
+                                        $description = "<span class='basic-color'>" . $mobile['description'] . "</span>";
+                                        break;
+                                    }
                                 }
                             }
                         }
@@ -370,6 +379,7 @@ STR;
                     break;
 
 
+                //ударить
                 case in_array($character['state'], [
                         Constants::STATE_IN_GAME,
                         Constants::STATE_IN_BATTLE
@@ -378,16 +388,20 @@ STR;
                     $argument = mb_strtolower(trim(substr($dataMessage, strpos($dataMessage, ' '))));
                     $room = $rooms[$character['room_inner_id']];
 
+                    /**/
+                    Debugger::PrintToFile('--Бой-$room', $room);
+                    /**/
+
                     if (!empty($room['mobiles'])) {
-                        foreach ($room['mobiles'] as $mobile) {
-                            foreach ($mobile['pseudonyms'] as $pseudonym) {
-                                if (mb_strtolower(trim(mb_substr($pseudonym, 0, mb_strlen($argument)))) == $argument) {
-//                                    $character['opponent'] = $mobile;
-                                    /**/
-                                    //todo тут косяк
-                                    $character['opponent'] = &$mobile;
-                                    /**/
-                                    break;
+                        for ($i = 0; $i <= count($room['mobiles']); $i++) {
+                            if (!empty($room['mobiles'][$i])) {
+                                foreach ($room['mobiles'][$i]['pseudonyms'] as $pseudonym) {
+                                    if (mb_strtolower(trim(mb_substr($pseudonym, 0, mb_strlen($argument)))) == $argument) {
+//                                    $character['opponent'] = &$mobile;
+//                                    $character['opponent'] = &$room['mobiles'][$i];
+                                        $character['opponent'] = &$rooms[$character['room_inner_id']]['mobiles'][$i];
+                                        break 2;
+                                    }
                                 }
                             }
                         }
@@ -426,12 +440,27 @@ STR;
                                 /**/
                                 $opponentMessage = "<span class='enemy-attack'>{$character['opponent']['name']} попытался огреть вас, но не смог этого сделать</span>";
                                 $connection->send(json_encode(['for_client' => $this->renderStateString($character, $rooms[$character['room_inner_id']]['exits']) . $opponentMessage . $actorMessage]));
-                            } else{
+                            } else {
                                 Timer::del($character['timer_id']);
                                 $character['state'] = 2;
-                                $message = "<span class='actor-attack'>Вы аккуратно разрезали {$character['opponent']['name']} на две части ($damage)</span>";
-                                unset($character['opponent']);
-                                $connection->send(json_encode(['for_client' => $this->renderStateString($character, $rooms[$character['room_inner_id']]['exits']) . $message]));
+//                                $message = "<span class='actor-attack'>Вы аккуратно разрезали {$character['opponent']['name']} на две части ($damage)</span>";
+//                                $message .= "<span class='basic-color'>{$character['opponent']['name']} мертв! R.I.P.</span>";
+
+                                $message = <<<STR
+<span class='actor-attack'>Вы аккуратно разрезали ${!${''} = mb_strtolower($character['opponent']['name'])} на две части ($damage)</span>
+<span class='basic-color'>{$character['opponent']['name']} мертв! R.I.P.</span>
+STR;
+
+//                                mb_strtolower()
+
+                                /**/
+                                //удалить моба
+//                                unset($character['opponent']);
+                                //СРАБОТАЛО!!!
+//                                $character['opponent'] = [];
+                                $character['opponent'] = null;
+                                /**/
+                                $connection->send(json_encode(['for_client' => '<span>' . $this->renderStateString($character, $rooms[$character['room_inner_id']]['exits']) . $message . '</span>']));
                             }
 
                         });
@@ -439,8 +468,13 @@ STR;
                         $character['timer_id'] = $timerId;
                     } else {
                         $character['state'] = 2;
-                        $message = "<span class='actor-attack'>Вы аккуратно разрезали {$character['opponent']['name']} на две части ($damage)</span>";
-                        unset($character['opponent']);
+//                        $message = "<span class='actor-attack'>Вы аккуратно разрезали {$character['opponent']['name']} на две части ($damage)</span>";
+//                        $message .= "<span class='basic-color'>{$character['opponent']['name']} мертв! R.I.P.</span>";
+                        $message = <<<STR
+<span class='actor-attack'>Вы аккуратно разрезали {$character['opponent']['name']} на две22 части ($damage)</span>
+<span class='basic-color'>{$character['opponent']['name']} мертв! R.I.P.</span>
+STR;
+                        $character['opponent'] = null;
                         Timer::del($character['timer_id']);
                         $connection->send(json_encode(['for_client' => $stateString . $message]));
                     }
@@ -550,13 +584,22 @@ STR;
     public function renderRequestOnLook($character, $rooms)
     {
         $room = $rooms[$character['room_inner_id']];
+
+        /**/
+        Debugger::PrintToFile('--renderRequestOnLook--$room', $room);
+        /**/
+
         $stateString = $this->renderStateString($character, $room['exits']);
         $roomName = "<span class='room-name'>" . $room['name'] . "</span>";
         $roomDescription = "<span class='basic-color'>" . $room['description'] . "</span>";
 
         $mobileTitle = '';
         if (!empty($room['mobiles'])) {
-            foreach ($room['mobiles'] as $mobiles) {
+//            foreach ($room['mobiles'] as $mobiles) {
+//                $mobileTitle .= "<span class='mobile-title'>" . $mobiles['title_inside_of_room'] . "</span>";
+//            }
+            //чтобы отображение на клетке соответствовало порядку в массиве
+            foreach (array_reverse($room['mobiles']) as $mobiles) {
                 $mobileTitle .= "<span class='mobile-title'>" . $mobiles['title_inside_of_room'] . "</span>";
             }
         }
@@ -576,7 +619,11 @@ STR;
             $mobileTitle = '';
 
             if (!empty($room['mobiles'])) {
-                foreach ($room['mobiles'] as $mobiles) {
+//                foreach ($room['mobiles'] as $mobiles) {
+//                    $mobileTitle .= "<span class='mobile-title'>" . $mobiles['title_inside_of_room'] . "</span>";
+//                }
+                //чтобы отображение на клетке соответствовало порядку в массиве
+                foreach (array_reverse($room['mobiles']) as $mobiles) {
                     $mobileTitle .= "<span class='mobile-title'>" . $mobiles['title_inside_of_room'] . "</span>";
                 }
             }

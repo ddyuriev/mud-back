@@ -1,0 +1,43 @@
+          $a = 1;
+        $b =&$a;
+        unset($b);
+
+        print_r($a);
+
+        exit();
+
+        $a = [
+            'a' => 123,
+            'b' => 234
+        ];
+
+        $b = [
+            '1' => 2,
+            '2' => 3,
+            'a' => &$a
+        ];
+
+        print_r($b);
+
+        $a['adf'] = 123;
+
+        print_r($b);
+
+        $c = &$b['2'];
+        print_r($b);
+//        unset($c);
+
+        $c = [];
+
+        print_r($b);
+
+        exit();
+
+
+https://www.php.net/manual/ru/language.references.unset.php
+
+
+Тут присваивание [] или null может помочь. unset не работает.
+
+
+

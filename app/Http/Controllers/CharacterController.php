@@ -36,7 +36,22 @@ class CharacterController extends Controller
 
     public function userInput(Request $request)
     {
+
+//        echo <<<EOT
+//One month ago was ${!${''} = date('Y-m-d H:i:s', strtotime('-1 month'))}.
+//EOT;
+        exit();
+
         /*-----------------------------------*/
+
+
+        $a = 1;
+        $b =&$a;
+        unset($b);
+
+        print_r($a);
+
+        exit();
 
         $a = [
             'a' => 123,
@@ -52,6 +67,14 @@ class CharacterController extends Controller
         print_r($b);
 
         $a['adf'] = 123;
+
+        print_r($b);
+
+        $c = &$b['2'];
+        print_r($b);
+//        unset($c);
+
+        $c = [];
 
         print_r($b);
 
