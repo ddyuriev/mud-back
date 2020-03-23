@@ -37,7 +37,7 @@
 https://www.php.net/manual/ru/language.references.unset.php
 
 
-Тут присваивание [] или null может помочь. unset не работает.
+РўСѓС‚ РїСЂРёСЃРІР°РёРІР°РЅРёРµ [] РёР»Рё null РјРѕР¶РµС‚ РїРѕРјРѕС‡СЊ. unset РЅРµ СЂР°Р±РѕС‚Р°РµС‚.
 
 
 

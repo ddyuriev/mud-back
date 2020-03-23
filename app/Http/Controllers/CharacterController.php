@@ -37,10 +37,40 @@ class CharacterController extends Controller
     public function userInput(Request $request)
     {
 
+        $foo = function() { return 'value'; };
+        echo <<<SOMEHEREDOC
+{$foo()}
+SOMEHEREDOC;
+// Is the same as
+        echo "{$foo()}";
+// Is the ssame as
+        $foo = 'strtoupper';
+//        echo "{$foo('hello world')}";
+
+        $character['opponent']['name'] = "АААААААААААмммм";
+
+        $message = <<<STR
+<span class='actor-attack'>Вы аккуратно разрезали {mb_strtolower({$character[`opponent`][`name'`]})}} на две части </span>
+<span class='basic-color'>{$character['opponent']['name']} мертв! R.I.P.</span>
+STR;
+
+        dd($message);
+
+
+        function fn($data) {
+            return $data;
+        }
+        $fn = 'fn';
+
+        $my_string = <<<EOT
+Number of seconds since the Unix Epoch: {$fn(time())}
+EOT;
+        dd($my_string);
+        exit();
+
 //        echo <<<EOT
 //One month ago was ${!${''} = date('Y-m-d H:i:s', strtotime('-1 month'))}.
 //EOT;
-        exit();
 
         /*-----------------------------------*/
 

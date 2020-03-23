@@ -1,0 +1,13 @@
+1.
+Это переделать:
+                                $message = <<<STR
+<span class='actor-attack'>Вы аккуратно разрезали ${!${''} = mb_strtolower($character['opponent']['name'])} на две части ($damage)</span>
+<span class='basic-color'>{$character['opponent']['name']} мертв! R.I.P.</span>
+STR;
+
+
+heredoc
+
+-----------------------
+
+Call to undefined method App\SocketServer\Server::strToLower()

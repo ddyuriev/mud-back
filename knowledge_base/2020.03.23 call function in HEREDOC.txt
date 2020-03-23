@@ -1,0 +1,20 @@
+Хак:
+                                $message = <<<STR
+<span class='actor-attack'>Вы аккуратно разрезали ${!${''} = mb_strtolower($character['opponent']['name'])} на две части ($damage)</span>
+<span class='basic-color'>{$character['opponent']['name']} мертв! R.I.P.</span>
+STR;
+
+Нормально:
+
+    public function __call($name, $arguments)
+    {
+        if ($name == 'strToLower') {
+            return mb_strtolower($arguments[0]);
+        }
+    }
+                                $actorMessage = <<<STR
+<span>
+<span class='actor-attack'>Вы аккуратно разрезали {$this->strToLower($character['opponent']['name'])} на две части ($damage)</span><br>
+<span class='basic-color'>{$character['opponent']['name']} мертв! R.I.P.</span>
+</span>
+STR;
