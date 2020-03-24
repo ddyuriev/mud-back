@@ -5,10 +5,13 @@ namespace App\Http\Controllers;
 use App\Character;
 use App\Helpers\Debugger;
 use App\Helpers\Formulas;
+use App\Jobs\ExampleJob;
+use App\Jobs\SaveCharacter;
 use App\Room;
 use App\Services\CharacterService;
 use App\Stuff;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Queue;
 
 class CharacterController extends Controller
 {
@@ -36,6 +39,24 @@ class CharacterController extends Controller
 
     public function userInput(Request $request)
     {
+
+        //null
+//        dd(app()->configure('app'));
+
+//        dispatch(new ExampleJob());
+
+        dispatch(new SaveCharacter());
+        //тоже самое
+//        Queue::push(new SaveCharacter);
+
+        /**/
+        Debugger::PrintToFile('----userInput---' . time(), 'userInput');
+        /**/
+
+        exit();
+
+        /*-----------------------------------*/
+
 
         $foo = function() { return 'value'; };
         echo <<<SOMEHEREDOC

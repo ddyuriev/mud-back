@@ -344,45 +344,81 @@ class Formulas
         $relativeCondition = $HP / $maxHP;
 
         $conditionEstimate = '';
-        $colorLevel = 0;
+        $colorLevel        = 0;
         switch (true) {
             case $relativeCondition > 1:
                 $conditionEstimate = "Божественное";
-                $colorLevel = 0;
+                $colorLevel        = 0;
                 break;
             case $relativeCondition == 1:
                 $conditionEstimate = "Великолепное";
-                $colorLevel = 1;
+                $colorLevel        = 1;
                 break;
             case $relativeCondition >= 0.83 && $relativeCondition < 1 :
                 $conditionEstimate = "О.Хорошее";
-                $colorLevel = 1;
+                $colorLevel        = 1;
                 break;
             case $relativeCondition >= 0.64 && $relativeCondition < 0.83 :
                 $conditionEstimate = "Хорошее";
-                $colorLevel = 1;
+                $colorLevel        = 1;
                 break;
             case $relativeCondition >= 0.47 && $relativeCondition < 0.64 :
                 $conditionEstimate = "Среднее";
-                $colorLevel = 2;
+                $colorLevel        = 2;
                 break;
             case $relativeCondition >= 0.30 && $relativeCondition < 0.47 :
                 $conditionEstimate = "Плохое";
-                $colorLevel = 2;
+                $colorLevel        = 2;
                 break;
             case $relativeCondition >= 0.13 && $relativeCondition < 0.30 :
                 $conditionEstimate = "О.Плохое";
-                $colorLevel = 3;
+                $colorLevel        = 3;
                 break;
             case $relativeCondition < 0.13 :
                 $conditionEstimate = "Ужасное";
-                $colorLevel = 3;
+                $colorLevel        = 3;
                 break;
         }
+
         return [
             'condition_estimate' => $conditionEstimate,
-            'color_level' => $colorLevel
+            'color_level'        => $colorLevel
         ];
+    }
+
+    public static function addingExperience(&$character, $experienceReward)
+    {
+        $level    = self::calculateLevel($character['profession_id'], $character['experience']);
+        $nexLevel = $level + 1;
+
+//        $nextLevelExpValue = constant("SELF::WARRIOR_LEVEL_{$nexLevel}_EXP");
+        $maxExpForCurrentLevel = (constant("SELF::WARRIOR_LEVEL_{$nexLevel}_EXP") - constant("SELF::WARRIOR_LEVEL_{$level}_EXP")) / 2;
+
+        if ($experienceReward > $maxExpForCurrentLevel) {
+            $experienceReward = $maxExpForCurrentLevel;
+        }
+
+        $character['experience'] += $experienceReward;
+
+        $newLevel = self::calculateLevel($character['profession_id'], $character['experience']);
+
+        $gotNewLevel = $newLevel - $level > 0 ? true : false;
+
+        if ($gotNewLevel) {
+            $character['maxHP']         = self::getMaxHP($character);
+            $character['level']         = $nexLevel;
+            $character['to_next_level'] = self::toNextLevel($character['profession_id'], $character['experience'], $newLevel);
+        } else {
+            $character['to_next_level'] -= $experienceReward;
+        }
+
+
+        return [
+            'experienceReward' => $experienceReward,
+            'got_new_level'    => $gotNewLevel
+        ];
+
+
     }
 
 

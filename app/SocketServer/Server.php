@@ -467,10 +467,13 @@ STR;
 //<span class='actor-attack'>Вы аккуратно разрезали ${!${''} = mb_strtolower($character['opponent']['name'])} на две части ($damage)</span>
 //<span class='basic-color'>{$character['opponent']['name']} мертв! R.I.P.</span>
 //STR;
+
+$addingExperience = Formulas::addingExperience($character, $character['opponent']['exp_reward']);
                                 $actorMessage = <<<STR
 <span>                                
 <span class='actor-attack'>Вы аккуратно разрезали {$this->strToLower($character['opponent']['name'])} на две части ($damage)</span><br>
 <span class='basic-color'>{$character['opponent']['name']} мертв! R.I.P.</span>
+<span class='basic-color'>Вы получили {$addingExperience['experienceReward']} единиц опыта.</span>
 </span>
 STR;
 //                                $strToLower

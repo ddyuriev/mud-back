@@ -1,0 +1,45 @@
+todo
+сделать:
+создание персонажа
+сохранение персонажа
+настройка цвета
+починить регулярки
+начислять опыт
+
+
+
+----------------------
+вроде начисление опыта работает
+
+------------------------------------------------------------------
+Надо сделать сохранение персонажа.
+
+
+
+php artisan make:migration create_jobs_table
+php artisan make:migration create_failed_jobs_table
+
+php artisan migrate
+
+
+??
+php artisan queue:listen
+
+
+хм... что то мои очереди пока выполняются синхронно с основным кодом...
+
+Ура!!!
+получилось
+
+просто добавил в .env
+QUEUE_CONNECTION=database
+
+
+php artisan queue:listen
+
+https://www.fortisfio.com/work-with-jobs-queues-with-lumen-5-7/
+
+ура!!!
+------------------------------------------------------------------
+
+
