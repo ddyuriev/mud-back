@@ -1,10 +1,10 @@
 todo
 сделать:
 создание персонажа
-сохранение персонажа
++сохранение персонажа
 настройка цвета
 починить регулярки
-начислять опыт
++начислять опыт
 
 
 
@@ -42,4 +42,19 @@ https://www.fortisfio.com/work-with-jobs-queues-with-lumen-5-7/
 ура!!!
 ------------------------------------------------------------------
 
+
+хм а дома в .env было:
+CACHE_DRIVER=file
+QUEUE_CONNECTION=sync
+
+ShouldQueue хз зачем, пока убираю:
+class SaveCharacter extends Job/* implements ShouldQueue*/
+
+
+
+SaveCharacter
+=>
+SaveCharacterJob
+
+Так!!! ну сохранение основной модели есть!!!
 

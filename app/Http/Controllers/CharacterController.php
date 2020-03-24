@@ -6,7 +6,7 @@ use App\Character;
 use App\Helpers\Debugger;
 use App\Helpers\Formulas;
 use App\Jobs\ExampleJob;
-use App\Jobs\SaveCharacter;
+use App\Jobs\SaveCharacterJob;
 use App\Room;
 use App\Services\CharacterService;
 use App\Stuff;
@@ -40,14 +40,21 @@ class CharacterController extends Controller
     public function userInput(Request $request)
     {
 
+//        $character = Character::with('user')->where('id' ,'=', 1)->first();
+//        dd($character);
+//        exit();
+
+        /*-----------------------------------*/
+
         //null
 //        dd(app()->configure('app'));
 
 //        dispatch(new ExampleJob());
 
-        dispatch(new SaveCharacter());
+        $character = Character::with('user')->where('id' ,'=', 1)->first()->toArray();
+        dispatch(new SaveCharacterJob($character));
         //тоже самое
-//        Queue::push(new SaveCharacter);
+//        Queue::push(new SaveCharacterJob);
 
         /**/
         Debugger::PrintToFile('----userInput---' . time(), 'userInput');

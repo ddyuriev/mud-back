@@ -75,8 +75,8 @@ class CharacterService
 
         $character['state'] = 1;
 
-        $character['level']         = Formulas::calculateLevel($character['profession_id'], $character['experience']);
-        $character['maxHP']         = Formulas::getMaxHP($character);
+        $character['level'] = Formulas::calculateLevel($character['profession_id'], $character['experience']);
+        $character['maxHP'] = Formulas::getMaxHP($character);
 
         $character['to_next_level'] = Formulas::toNextLevel($character['profession_id'], $character['experience'], $character['level']);
 
@@ -96,5 +96,22 @@ class CharacterService
         }
 
         return $character;
+    }
+
+    /**
+     * @param array $characterArray
+     */
+    public function updateCharacter(array $characterArray)
+    {
+        $character = Character::with('skills')->where('id', $characterArray['id'])->first();
+
+        $data['experience'] = $characterArray['experience'];
+        $data['HP'] = $characterArray['HP'];
+
+        foreach ($data as $key => $parameter) {
+            $character->$key = $parameter;
+        }
+
+        $character->save();
     }
 }
