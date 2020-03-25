@@ -51,50 +51,50 @@ class CharacterController extends Controller
 
 //        dispatch(new ExampleJob());
 
-        $character = Character::with('user')->where('id' ,'=', 1)->first()->toArray();
-        dispatch(new SaveCharacterJob($character));
+//        $character = Character::with('user')->where('id' ,'=', 1)->first()->toArray();
+//        dispatch(new SaveCharacterJob($character));
         //тоже самое
 //        Queue::push(new SaveCharacterJob);
 
         /**/
-        Debugger::PrintToFile('----userInput---' . time(), 'userInput');
+//        Debugger::PrintToFile('----userInput---' . time(), 'userInput');
         /**/
 
-        exit();
+//        exit();
 
         /*-----------------------------------*/
 
 
-        $foo = function() { return 'value'; };
-        echo <<<SOMEHEREDOC
-{$foo()}
-SOMEHEREDOC;
-// Is the same as
-        echo "{$foo()}";
-// Is the ssame as
-        $foo = 'strtoupper';
-//        echo "{$foo('hello world')}";
-
-        $character['opponent']['name'] = "АААААААААААмммм";
-
-        $message = <<<STR
-<span class='actor-attack'>Вы аккуратно разрезали {mb_strtolower({$character[`opponent`][`name'`]})}} на две части </span>
-<span class='basic-color'>{$character['opponent']['name']} мертв! R.I.P.</span>
-STR;
-
-        dd($message);
-
-
-        function fn($data) {
-            return $data;
-        }
-        $fn = 'fn';
-
-        $my_string = <<<EOT
-Number of seconds since the Unix Epoch: {$fn(time())}
-EOT;
-        dd($my_string);
-        exit();
+//        $foo = function() { return 'value'; };
+//        echo <<<SOMEHEREDOC
+//{$foo()}
+//SOMEHEREDOC;
+//// Is the same as
+//        echo "{$foo()}";
+//// Is the ssame as
+//        $foo = 'strtoupper';
+////        echo "{$foo('hello world')}";
+//
+//        $character['opponent']['name'] = "АААААААААААмммм";
+//
+//        $message = <<<STR
+//<span class='actor-attack'>Вы аккуратно разрезали {mb_strtolower({$character[`opponent`][`name'`]})}} на две части </span>
+//<span class='basic-color'>{$character['opponent']['name']} мертв! R.I.P.</span>
+//STR;
+//
+//        dd($message);
+//
+//
+//        function fn($data) {
+//            return $data;
+//        }
+//        $fn = 'fn';
+//
+//        $my_string = <<<EOT
+//Number of seconds since the Unix Epoch: {$fn(time())}
+//EOT;
+//        dd($my_string);
+//        exit();
 
 //        echo <<<EOT
 //One month ago was ${!${''} = date('Y-m-d H:i:s', strtotime('-1 month'))}.
@@ -103,40 +103,40 @@ EOT;
         /*-----------------------------------*/
 
 
-        $a = 1;
-        $b =&$a;
-        unset($b);
-
-        print_r($a);
-
-        exit();
-
-        $a = [
-            'a' => 123,
-            'b' => 234
-        ];
-
-        $b = [
-            '1' => 2,
-            '2' => 3,
-            'a' => &$a
-        ];
-
-        print_r($b);
-
-        $a['adf'] = 123;
-
-        print_r($b);
-
-        $c = &$b['2'];
-        print_r($b);
-//        unset($c);
-
-        $c = [];
-
-        print_r($b);
-
-        exit();
+//        $a = 1;
+//        $b =&$a;
+//        unset($b);
+//
+//        print_r($a);
+//
+//        exit();
+//
+//        $a = [
+//            'a' => 123,
+//            'b' => 234
+//        ];
+//
+//        $b = [
+//            '1' => 2,
+//            '2' => 3,
+//            'a' => &$a
+//        ];
+//
+//        print_r($b);
+//
+//        $a['adf'] = 123;
+//
+//        print_r($b);
+//
+//        $c = &$b['2'];
+//        print_r($b);
+////        unset($c);
+//
+//        $c = [];
+//
+//        print_r($b);
+//
+//        exit();
 
 
         /*-----------------------------------*/
@@ -165,7 +165,8 @@ EOT;
 //            $match
 //        );
 
-        $userInput = 'сч';
+//        $userInput = 'ув манек';
+        $userInput = 'ударитьманек';
 //        $userInput = 'счет';
         //ok
 //        dd(preg_match("/^сч/", $userInput));
@@ -177,11 +178,18 @@ EOT;
 
 //        var_dump(preg_match("/сч[е]?[т]?/", $userInput));
 //        var_dump(preg_match("/сч[е]?[т]?$/", $userInput));
-        var_dump(preg_match("/^сч(е)?(т)?$/", $userInput));
+//        var_dump(preg_match("/^сч(е)?(т)?$/", $userInput));
+//        var_dump(preg_match("/сче?т?$/", $userInput));
 
-        var_dump(preg_match("/сче?т?$/", $userInput));
+        var_dump(preg_match("/^у(д)?(а)?(р)?(и)?(т)?(ь)?\b( )?.*/", $userInput));
+
+        var_dump(preg_match("/^(у|уд|уда|удар|удари|ударит|ударить)\s.*/", $userInput));
 
 //        var_dump(preg_match("/сч|сче|счет/", $userInput));
+
+//        [^A-Fa-f0-9]
+//        [^у(д)?(а)?(р)?(и)?(т)?(ь)]
+
 
         exit();
         /*-----------------------------------*/
