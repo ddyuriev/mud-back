@@ -26,7 +26,7 @@ class SaveCharacterJob extends Job/* implements ShouldQueue*/
     public function handle(CharacterService $characterService)
     {
         /**/
-        Debugger::PrintToFile('----SaveCharacterJob--' . time(), $this->character);
+//        Debugger::PrintToFile('----SaveCharacterJob--' . time(), $this->character);
         /**/
 
         $characterService->updateCharacter($this->character);

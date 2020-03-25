@@ -38,7 +38,9 @@ STR
             'size' => 20,
             'HP' => 50,
             'maxHP' => 50,
-//            'VP' => 70,
+            'damage_min' => 15,
+            'damage_max' => 30,
+            'attacks_number' => 3,
             'coins' => 0,
             'exp_reward' => 100000,
         ]);
@@ -68,6 +70,9 @@ STR
             'size' => 20,
             'HP' => 70,
             'maxHP' => 70,
+            'damage_min' => 1,
+            'damage_max' => 3,
+            'attacks_number' => 1,
             'coins' => 0,
             'exp_reward' => 10000,
         ]);
@@ -97,6 +102,9 @@ STR
             'size' => 20,
             'HP' => 200,
             'maxHP' => 200,
+            'damage_min' => 5,
+            'damage_max' => 15,
+            'attacks_number' => 2,
             'coins' => 0,
             'exp_reward' => 20000,
         ]);

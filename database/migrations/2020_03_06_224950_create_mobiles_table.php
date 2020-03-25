@@ -32,7 +32,9 @@ class CreateMobilesTable extends Migration
             $table->smallInteger('size');
             $table->smallInteger('HP');
             $table->smallInteger('maxHP');
-//            $table->smallInteger('VP');
+            $table->smallInteger('damage_min');
+            $table->smallInteger('damage_max');
+            $table->smallInteger('attacks_number');
             $table->integer('coins')->default(0);
             $table->integer('exp_reward')->default(0);
             $table->tinyInteger('is_travel')->default(0);
