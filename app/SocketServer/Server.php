@@ -285,6 +285,20 @@ STR;
                     $connection->send(json_encode(['for_client' => $this->renderRequestOnMove($character, $rooms, $stateString, 'w')]));
                     break;
 
+                case  in_array($character['state'], [
+                        Constants::STATE_IN_GAME,
+                        Constants::STATE_IN_BATTLE
+                    ]) && preg_match("/^up$/", $data->message):
+                    $connection->send(json_encode(['for_client' => $this->renderRequestOnMove($character, $rooms, $stateString, 'u')]));
+                    break;
+
+                case  in_array($character['state'], [
+                        Constants::STATE_IN_GAME,
+                        Constants::STATE_IN_BATTLE
+                    ]) && preg_match("/^down$/", $data->message):
+                    $connection->send(json_encode(['for_client' => $this->renderRequestOnMove($character, $rooms, $stateString, 'd')]));
+                    break;
+
                 //счет
                 case in_array($character['state'], [
                         Constants::STATE_IN_GAME,

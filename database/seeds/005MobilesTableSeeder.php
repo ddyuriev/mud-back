@@ -109,39 +109,40 @@ STR
             'exp_reward' => 20000,
         ]);
 
-//        \DB::table('mobiles')->insert([
-//            'room_inner_id' => '1_301',
-//            'name' => 'Воин2',
-//            'title_inside_of_room' => 'Седой воин2 неспеша прогуливается по лужайке',
-//            'description' => 'Этот человек побывал во многих переделках. Лицо и руки его обильно украшены разнообразными шрамами. Не понятно, почему он выбрал уединение,но возможно вы сможете у него кое-чему научиться',
-//            'profession_id' => 1,
-//            'level' => 25,
-//            'strength' => '20',
-//            'dexterity' => '20',
-//            'constitution' => '20',
-//            'intellect' => '12',
-//            'wisdom' => '13',
-//            'size' => 20,
-//            'HP' => 500,
-//            'coins' => 0,
-//        ]);
-//
-//        \DB::table('mobiles')->insert([
-//            'room_inner_id' => '1_301',
-//            'name' => 'Воин3',
-//            'title_inside_of_room' => 'Седой воин3 неспеша прогуливается по лужайке',
-//            'description' => 'Этот человек побывал во многих переделках. Лицо и руки его обильно украшены разнообразными шрамами. Не понятно, почему он выбрал уединение,но возможно вы сможете у него кое-чему научиться',
-//            'profession_id' => 1,
-//            'level' => 25,
-//            'strength' => '20',
-//            'dexterity' => '20',
-//            'constitution' => '20',
-//            'intellect' => '12',
-//            'wisdom' => '13',
-//            'size' => 20,
-//            'HP' => 500,
-//            'coins' => 0,
-//        ]);
+
+        /*Зона дерево*/
+
+        \DB::table('mobiles')->insert([
+            'room_id' => $this->getRoomIdByRoomInnerId('2_130'),
+            'mobile_inner_id' => '2_130_001',
+            'name' => 'Маленький комарик',
+            'pseudonyms' => <<<STR
+{
+    "0": "Маленький",
+    "1": "комарик"
+}
+STR
+            ,
+            'title_inside_of_room' => 'Маленький комарик жужжит над ухом в ожидании мощного удара меча.',
+            'description' => 'Этот комар достойный соперник. ',
+            'profession_id' => 1,
+            'level' => 1,
+            'strength' => '1',
+            'dexterity' => '1',
+            'constitution' => '1',
+            'intellect' => '1',
+            'wisdom' => '1',
+            'size' => 1,
+            'HP' => 10,
+            'maxHP' => 10,
+            'damage_min' => 1,
+            'damage_max' => 1,
+            'attacks_number' => 1,
+            'coins' => 0,
+            'exp_reward' => 20000,
+        ]);
+
+
     }
 
     protected function getRoomIdByRoomInnerId($roomInnerId)
