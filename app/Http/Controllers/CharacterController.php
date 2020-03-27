@@ -40,6 +40,15 @@ class CharacterController extends Controller
     public function userInput(Request $request)
     {
 
+        $nexLevel = 5;
+        $ccc = 'WARRIOR_LEVEL_5_EXP';
+//        $const = constant("Formulas::WARRIOR_LEVEL_{$nexLevel}_EXP");
+//        $const = constant("Formulas::WARRIOR_LEVEL_{$nexLevel}_EXP");
+        $const = constant("App\Helpers\Formulas::$ccc");
+        dd($const);
+        exit();
+
+        /*-----------------------------------*/
 //        $character = Character::with('user')->where('id' ,'=', 1)->first();
 //        dd($character);
 //        exit();

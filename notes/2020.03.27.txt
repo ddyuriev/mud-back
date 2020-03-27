@@ -1,0 +1,8 @@
+Починить перемещение в бою.
+
+addingExperience перенести в character
+
+
+
+
+https://stackoverflow.com/questions/6147102/get-value-of-dynamically-chosen-class-constant-in-php

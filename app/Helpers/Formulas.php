@@ -386,40 +386,38 @@ class Formulas
         ];
     }
 
-    public static function addingExperience(&$character, $experienceReward)
-    {
-        $level    = self::calculateLevel($character['profession_id'], $character['experience']);
-        $nexLevel = $level + 1;
-
-//        $nextLevelExpValue = constant("SELF::WARRIOR_LEVEL_{$nexLevel}_EXP");
-        $maxExpForCurrentLevel = (constant("SELF::WARRIOR_LEVEL_{$nexLevel}_EXP") - constant("SELF::WARRIOR_LEVEL_{$level}_EXP")) / 2;
-
-        if ($experienceReward > $maxExpForCurrentLevel) {
-            $experienceReward = $maxExpForCurrentLevel;
-        }
-
-        $character['experience'] += $experienceReward;
-
-        $newLevel = self::calculateLevel($character['profession_id'], $character['experience']);
-
-        $gotNewLevel = $newLevel - $level > 0 ? true : false;
-
-        if ($gotNewLevel) {
-            $character['maxHP']         = self::getMaxHP($character);
-            $character['level']         = $nexLevel;
-            $character['to_next_level'] = self::toNextLevel($character['profession_id'], $character['experience'], $newLevel);
-        } else {
-            $character['to_next_level'] -= $experienceReward;
-        }
-
-
-        return [
-            'experienceReward' => $experienceReward,
-            'got_new_level'    => $gotNewLevel
-        ];
-
-
-    }
+//    public static function addingExperience(&$character, $experienceReward)
+//    {
+//        $level    = self::calculateLevel($character['profession_id'], $character['experience']);
+//        $nexLevel = $level + 1;
+//
+//        $maxExpForCurrentLevel = (constant("SELF::WARRIOR_LEVEL_{$nexLevel}_EXP") - constant("SELF::WARRIOR_LEVEL_{$level}_EXP")) / 2;
+//
+//        if ($experienceReward > $maxExpForCurrentLevel) {
+//            $experienceReward = $maxExpForCurrentLevel;
+//        }
+//
+//        $character['experience'] += $experienceReward;
+//
+//        $newLevel = self::calculateLevel($character['profession_id'], $character['experience']);
+//
+//        $gotNewLevel = $newLevel - $level > 0 ? true : false;
+//
+//        if ($gotNewLevel) {
+//            $character['maxHP']         = self::getMaxHP($character);
+//            $character['level']         = $nexLevel;
+//            $character['to_next_level'] = self::toNextLevel($character['profession_id'], $character['experience'], $newLevel);
+//        } else {
+//            $character['to_next_level'] -= $experienceReward;
+//        }
+//
+//
+//        return [
+//            'experienceReward' => $experienceReward,
+//            'got_new_level'    => $gotNewLevel
+//        ];
+//
+//    }
 
 
 }
