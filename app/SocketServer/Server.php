@@ -142,13 +142,13 @@ class Server
 
                 /**/
                 Debugger::PrintToFile('--------------++++$character', $activeCharacter);
-                /**/
-                /**/
+
                 Debugger::PrintToFile('--------------++++onConnect-$users', $users);
                 /**/
 
 
-                // а это сообщение будет отправлено клиенту
+                //это сообщение будет отправлено клиенту
+                /*---на 1-це---*/
                 $charName = !empty($activeCharacter) ? $activeCharacter['name'] : "Не выбран";
                 $selectCharacterDialog = $this->renderSelectCharacterDialog($userEmailFromClient, $charName);
 
@@ -211,7 +211,7 @@ class Server
             /**/
 
             switch (true) {
-                /*---на 1-це---*/
+                /*---зашел в игру---*/
                 case $character['state'] == Constants::STATE_MENU && $data->message == 1:
                     $helloMessage = "<span class='basic-color'>Приветствуем вас на бескрайних просторах мира чудес и приключений!</span>";
                     $character['state'] = Constants::STATE_IN_GAME;
@@ -223,14 +223,24 @@ class Server
                     /**/
                     //тут мб таймер на восстановление хитов
                     if (empty($character['regeneration_HP_timer'])) {
+
+                        /**/
+                        Debugger::PrintToFile('---на зашел в игру---000', $character);
+                        /**/
+
+                        //не удаляется сразу, когда на 7 жмакаешь. 1 раз отрабатывает скот
                         $timerId = Timer::add($this->roundOfBattle, function () use ($connection, $rooms, &$character) {
                             /**/
-//                        Debugger::PrintToFile('---на 1-це---', $character['HP']);
-//                        Debugger::PrintToFile('---на 1-це---maxHP', $character['maxHP']);
+//                        Debugger::PrintToFile('---на зашел в игру---', $character['HP']);
+//                        Debugger::PrintToFile('---на зашел в игру---maxHP', $character['maxHP']);
+                            Debugger::PrintToFile('---на зашел в игру---', $character);
                             /**/
-                            if ($character['HP'] < $character['maxHP']) {
-                                $character['HP']++;
+                            if (in_array($character['state'], [Constants::STATE_IN_GAME, Constants::STATE_IN_BATTLE])) {
+                                if ($character['HP'] < $character['maxHP']) {
+                                    $character['HP']++;
+                                }
                             }
+
                         });
                         $character['regeneration_HP_timer'] = $timerId;
                     }
@@ -378,6 +388,7 @@ STR;
                     $connection->send(json_encode(['for_client' => $stateString . $skillsTable]));
                     break;
 
+                //todo это очень криво
                 //экипировка
                 case in_array($character['state'], [
                         Constants::STATE_IN_GAME,
@@ -417,6 +428,27 @@ STR;
                     $connection->send(json_encode(['for_client' => $stateString . $equipmentTable]));
                     break;
 
+                //инвентарь
+                case in_array($character['state'], [
+                        Constants::STATE_IN_GAME,
+                        Constants::STATE_IN_BATTLE
+                    ]) && preg_match("/^и(н)?(в)?(е)?(н)?(т)?(а)?(р)?(ь)?$/", $data->message):
+
+                    $inventoryItems = $this->characterService->getInventoryItems($character);
+
+                    $inventoryItemsStr = '';
+                    foreach ($inventoryItems as $inventoryItem) {
+                        $inventoryItemsStr .= "<span class='basic-color'>{$this->strToLower($inventoryItem['name'])}</span><br>";
+                    }
+                    $message = <<<STR
+<span>
+    <span class='basic-color'>Вы несете:</span><br>
+    {$inventoryItemsStr}
+</span>
+STR;
+                    $connection->send(json_encode(['for_client' => $this->renderStateString($character, $rooms[$character['room_inner_id']]['exits']) . $message]));
+                    break;
+
 
                 //ударить
                 case in_array($character['state'], [
@@ -428,10 +460,10 @@ STR;
 
 
                     /**/
-                    if(!empty($character['opponent'] )) {
+                    if (!empty($character['opponent'])) {
                         $opponentMessage = "<span class='basic-color'>Невозможно! вы уже сражаетесь с {$character['opponent']['name']}.</span>";
                         $connection->send(json_encode(['for_client' => $stateString . $opponentMessage]));
-                        break ;
+                        break;
                     }
                     /**/
 
@@ -455,8 +487,8 @@ STR;
 //                                    $character['opponent'] = &$mobile;
 //                                    $character['opponent'] = &$room['mobiles'][$i];
 //                                        if(empty($character['opponent'] )){
-                                            $character['opponent'] = &$rooms[$character['room_inner_id']]['mobiles'][$i];
-                                            break 2;
+                                        $character['opponent'] = &$rooms[$character['room_inner_id']]['mobiles'][$i];
+                                        break 2;
 //                                        } else {
 //                                            $opponentMessage = "<span class='basic-color'>Невозможно! вы уже сражаетесь с {$character['opponent']['name']}.</span>";
 //                                            $connection->send(json_encode(['for_client' => $stateString . $opponentMessage]));
@@ -617,6 +649,7 @@ STR;
                     break;
                 /**/
 
+                //создание нового персонажа
                 case $character['state'] == Constants::STATE_MENU && $data->message == Constants::USER_INPUT_CREATE_NEW_CHARACTER:
                     //если есть таймеры текущего персонажа - удаляем их
                     if (!empty($character['fight_timer'])) {
@@ -700,7 +733,7 @@ STR;
                 case $character['state'] == Constants::ENTER_NEW_CHARACTER_PROFESSION && in_array($data->message, [Constants::USER_INPUT_CREATE_PROFESSION_WARRIOR]):
 
                     $character['profession_id'] = 0;
-                    switch (true){
+                    switch (true) {
                         case $data->message == Constants::USER_INPUT_CREATE_PROFESSION_WARRIOR:
                             $character['profession_id'] = Profession::WARRIOR_ID;
                             break;

@@ -1,0 +1,35 @@
+так... поправить это для случая отсутствия пушек
+
+
+
+        foreach ($character['stuff'] as $item) {
+
+            if ($item['slot_id'] == $item['pivot']['slot_id'] && $item['slot_id'] == Slot::IN_BOTH_HANDS) {
+                $character['first_damage_min'] = $item['damage_min'];
+                $character['first_damage_max'] = $item['damage_max'];
+            } else if ($item['slot_id'] == $item['pivot']['slot_id'] && $item['slot_id'] == Slot::IN_RIGHT_HAND) {
+                $character['first_damage_min'] = $item['damage_min'];
+                $character['first_damage_max'] = $item['damage_max'];
+            } else if ($item['slot_id'] == $item['pivot']['slot_id'] && $item['slot_id'] == Slot::IN_LEFT_HAND) {
+                $character['second_damage_min'] = $item['damage_min'];
+                $character['second_damage_max'] = $item['damage_max'];
+            }
+
+        }
+
+вообще это как то не айс..
+
+---------------
+
+делаю комманду инвентарь
+
+
+https://dreamland.rocks/mudjs/
+
+????
+Думаю разделить
+
+stuff->slot_id
+=>
+stuff->dest_slot_id
+stuff->dest_slot

@@ -1,0 +1,17 @@
+
+!!!!
+        return array_filter($character['stuff'], function($v) {
+            return $v['pivot']['slot_id'] == Slot::IN_INVENTORY;
+        });
+!!!!
+
+
+        $filter = array_filter($stuff, function($v, $k) {
+
+//            print_r($v);
+//            print_r($k);
+
+//            print_r($v['pivot']['slot_id']);
+
+            return $v['pivot']['slot_id'] == 4;
+        }, ARRAY_FILTER_USE_BOTH);

@@ -39,11 +39,43 @@ class CharacterController extends Controller
 
     public function userInput(Request $request)
     {
-//        $str = mb_strpos('у манек', ' ');
-        $str = strpos('у манек', ' ');
 
-        dd($str);
+        $character = $this->characterService->getActiveCharacterByUserEmail('therion@mail.ru');
+//        dd($character);
+        $stuff = $this->characterService->getInventoryItems($character);
+
+        dd($stuff);
+
+//        dd(array_column($stuff, 'slot'));
+
+//        $key = array_search('100', array_column($stuff, 'slot'));
+
+
+//        array_filter($arr, function($v, $k) {
+//            return $k == 'b' || $v == 4;
+//        }, ARRAY_FILTER_USE_BOTH);
+
+        $filter = array_filter($stuff, function($v, $k) {
+
+//            print_r($v);
+//            print_r($k);
+
+//            print_r($v['pivot']['slot_id']);
+
+            return $v['pivot']['slot_id'] == 4;
+        }, ARRAY_FILTER_USE_BOTH);
+
+
+        dd($filter);
+
         exit();
+
+        /*-----------------------------------*/
+
+//        $str = mb_strpos('у манек', ' ');
+//        $str = strpos('у манек', ' ');
+//        dd($str);
+//        exit();
 
         /*-----------------------------------*/
 

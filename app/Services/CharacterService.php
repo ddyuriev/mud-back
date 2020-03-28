@@ -81,6 +81,7 @@ class CharacterService
 
         $character['to_next_level'] = Formulas::toNextLevel($character['profession_id'], $character['experience'], $character['level']);
 
+        //не нравится
         foreach ($character['stuff'] as $item) {
 
             if ($item['slot_id'] == $item['pivot']['slot_id'] && $item['slot_id'] == Slot::IN_BOTH_HANDS) {
@@ -163,6 +164,8 @@ class CharacterService
         $character->user_id = $data['user_id'];
         $character->name = $data['name'];
 
+        Character::where('user_id', $data['user_id'])->where('is_active', true)->update(['is_active' => false]);
+
         $character->profession_id = $data['profession_id'];
         $character->experience = 1;
         $character->strength = 10;
@@ -174,7 +177,7 @@ class CharacterService
         $character->VP = 70;
         $character->coins = 0;
         $character->delevels_count = 0;
-        $character->is_active = 0;
+        $character->is_active = 1;
         $character->save();
 
         $newLevel = Formulas::calculateLevel($character['profession_id'], $character['experience']);
@@ -184,8 +187,16 @@ class CharacterService
         $character['level'] = Formulas::calculateLevel($character['profession_id'], $character['experience']);
         $character['maxHP'] = Formulas::getMaxHP($character);
 
+        $character->load('profession', 'user', 'skills', 'stuff');
 
         return $character;
+    }
+
+    public function getInventoryItems($character)
+    {
+        return array_filter($character['stuff'], function($v) {
+            return $v['pivot']['slot_id'] == Slot::IN_INVENTORY;
+        });
     }
 
 }
