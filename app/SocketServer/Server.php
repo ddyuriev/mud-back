@@ -8,6 +8,7 @@ use App\Helpers\Formulas;
 use App\Http\Controllers\CharacterController;
 use App\Jobs\SaveCharacterJob;
 use App\Mobile;
+use App\Profession;
 use App\Room;
 use App\Services\CharacterService;
 use App\Services\MessageService;
@@ -56,13 +57,13 @@ class Server
         $this->ws_worker = new Worker("websocket://$config[host]:$config[port]");
 //        $this->ws_worker = new Worker("websocket://192.168.215.29:$config[port]");
 
-        $this->logger           = $logger;
+        $this->logger = $logger;
         $this->ws_worker->count = $config['countWorkers'];
-        $this->config           = $config;
+        $this->config = $config;
 
-        $this->userService      = $userService;
+        $this->userService = $userService;
         $this->characterService = $characterService;
-        $this->messageService   = $messageService;
+        $this->messageService = $messageService;
 
         $this->roundOfBattle = env("ROUND_OF_BATTLE");
         /**/
@@ -82,7 +83,7 @@ class Server
 
     public function serverStart()
     {
-        $rooms      = [];
+        $rooms = [];
         $characters = [];
 
         //грузим зоны
@@ -135,7 +136,7 @@ class Server
             $connection->onWebSocketConnect = function ($connection) use (&$users, &$characters) {
 
                 $userEmailFromClient = $_GET['user'];
-                $activeCharacter     = $this->characterService->getActiveCharacterByUserEmail($userEmailFromClient);
+                $activeCharacter = $this->characterService->getActiveCharacterByUserEmail($userEmailFromClient);
 
                 $characters[$activeCharacter['user']['uuid']] = $activeCharacter;
 
@@ -149,24 +150,7 @@ class Server
 
                 // а это сообщение будет отправлено клиенту
                 $charName = !empty($activeCharacter) ? $activeCharacter['name'] : "Не выбран";
-
-                $selectCharacterDialog = <<<STR
-<span class="basic-color">
-Аккaунт [{$userEmailFromClient}] Персонаж [{$charName}]<br>
-Добро пожаловать в MUD!<br>
-0) Выход из MUDа.<br>
-1) Начать игру.<br>
-2) Ввести описание своего персонажа.<br>
-3) Прочитать начальную историю.<br>
-4) Поменять пароль.<br>
-5) Удалить этого персонажа.<br>
---------------------------------<br>
-В этом аккаунте вы также можете:<br>
-6) Выбрать другого персонажа.<br>
-7) Создать нового персонажа.<br>
-8) Другие операции с аккаунтом.
-</span>
-STR;
+                $selectCharacterDialog = $this->renderSelectCharacterDialog($userEmailFromClient, $charName);
 
                 $connection->send(json_encode(['selectCharacterDialog' => $selectCharacterDialog]));
 
@@ -197,10 +181,10 @@ STR;
         $this->ws_worker->onMessage = function ($connection, $data) use (&$users, &$rooms, &$characters) {
             $data = json_decode($data);
             /**/
-//            Debugger::PrintToFile('-onMessage-$data', $data);
+            Debugger::PrintToFile('-onMessage-$data', $data);
             /**/
 
-            $time       = date("H:i:s");
+            $time = date("H:i:s");
             $data->time = $time;
             /**/
 //            Debugger::PrintToFile('-onMessage-$this-connections', $this->connections);
@@ -223,35 +207,34 @@ STR;
             }
 
             /**/
-//            Debugger::PrintToFile('-+++++++onMessage++$character', $character);
+            Debugger::PrintToFile('-+++++++onMessage++$character', $character);
             /**/
 
             switch (true) {
                 /*---на 1-це---*/
                 case $character['state'] == Constants::STATE_MENU && $data->message == 1:
-                    $helloMessage               = "<span class='basic-color'>Приветствуем вас на бескрайних просторах мира чудес и приключений!</span>";
-                    $character['state']         = Constants::STATE_IN_GAME;
+                    $helloMessage = "<span class='basic-color'>Приветствуем вас на бескрайних просторах мира чудес и приключений!</span>";
+                    $character['state'] = Constants::STATE_IN_GAME;
                     $character['room_inner_id'] = Room::START_ROOM_INNER_ID;
-                    $stateString                = $this->renderStateString($character, $rooms[Room::START_ROOM_INNER_ID]['exits']);
-                    $roomName                   = "<span class='room-name'>" . $rooms[Room::START_ROOM_INNER_ID]['name'] . "</span>";
+                    $stateString = $this->renderStateString($character, $rooms[Room::START_ROOM_INNER_ID]['exits']);
+                    $roomName = "<span class='room-name'>" . $rooms[Room::START_ROOM_INNER_ID]['name'] . "</span>";
                     $connection->send(json_encode(['for_client' => $stateString . $roomName . $helloMessage]));
 
                     /**/
                     //тут мб таймер на восстановление хитов
-
-
-                    $timerId = Timer::add($this->roundOfBattle, function () use ($connection, $rooms, &$character) {
-
-                        /**/
+                    if (empty($character['regeneration_HP_timer'])) {
+                        $timerId = Timer::add($this->roundOfBattle, function () use ($connection, $rooms, &$character) {
+                            /**/
 //                        Debugger::PrintToFile('---на 1-це---', $character['HP']);
 //                        Debugger::PrintToFile('---на 1-це---maxHP', $character['maxHP']);
-                        /**/
+                            /**/
+                            if ($character['HP'] < $character['maxHP']) {
+                                $character['HP']++;
+                            }
+                        });
+                        $character['regeneration_HP_timer'] = $timerId;
+                    }
 
-                        if ($character['HP'] < $character['maxHP']) {
-                            $character['HP']++;
-                        }
-
-                    });
                     /**/
 
                     break;
@@ -306,7 +289,7 @@ STR;
                     ]) && preg_match("/^сч(е)?(т)?$/", $data->message):
 
                     $currentHP = $character['HP'];
-                    $maxHP     = Formulas::getMaxHP($character);
+                    $maxHP = Formulas::getMaxHP($character);
 
                     /**/
                     $conditionEstimateArray = Formulas::getConditionEstimate($character['HP'], $character['maxHP']);
@@ -336,8 +319,8 @@ STR;
                         Constants::STATE_IN_BATTLE
                     ]) && preg_match("/^осм(о)?(т)?(р)?(е)?(т)?(ь)?.*/", $data->message):
                     $dataMessage = $data->message;
-                    $argument    = mb_strtolower(trim(substr($dataMessage, strpos($dataMessage, ' '))));
-                    $room        = $rooms[$character['room_inner_id']];
+                    $argument = mb_strtolower(trim(mb_substr($dataMessage, strpos($dataMessage, ' '))));
+                    $room = $rooms[$character['room_inner_id']];
                     $description = '';
                     if (!empty($room['mobiles'])) {
                         foreach ($room['mobiles'] as $mobile) {
@@ -405,7 +388,7 @@ STR;
                     foreach ($character['stuff'] as $item) {
                         //если слот вещи соответствует слоту чара
                         if ($item['slot_id'] == $item['pivot']['slot_id']) {
-                            $itemName  = mb_strtolower($item['name']);
+                            $itemName = mb_strtolower($item['name']);
                             $tableRows .= <<<STR
 <tr>
   <td width="30%">{$item['slot']['name']}</td>
@@ -443,12 +426,25 @@ STR;
 //                    && preg_match("/^у(д)?(а)?(р)?(и)?(т)?(ь)?.*/", $data->message)
                     && preg_match("/^(у|уд|уда|удар|удари|ударит|ударить)\s.*/", $data->message):
 
-                    $dataMessage = $data->message;
-                    $argument    = mb_strtolower(trim(substr($dataMessage, strpos($dataMessage, ' '))));
-                    $room        = $rooms[$character['room_inner_id']];
 
                     /**/
-//                    Debugger::PrintToFile('--Бой-$room', $room);
+                    if(!empty($character['opponent'] )) {
+                        $opponentMessage = "<span class='basic-color'>Невозможно! вы уже сражаетесь с {$character['opponent']['name']}.</span>";
+                        $connection->send(json_encode(['for_client' => $stateString . $opponentMessage]));
+                        break ;
+                    }
+                    /**/
+
+                    $dataMessage = $data->message;
+                    $argument = mb_strtolower(trim(substr($dataMessage, strpos($dataMessage, ' '))));
+                    $room = $rooms[$character['room_inner_id']];
+
+                    /**/
+                    Debugger::PrintToFile('--Бой-$argument', $argument);
+                    /**/
+
+                    /**/
+                    Debugger::PrintToFile('--Бой-$room', $room);
                     /**/
 
                     if (!empty($room['mobiles'])) {
@@ -458,8 +454,14 @@ STR;
                                     if (mb_strtolower(trim(mb_substr($pseudonym, 0, mb_strlen($argument)))) == $argument) {
 //                                    $character['opponent'] = &$mobile;
 //                                    $character['opponent'] = &$room['mobiles'][$i];
-                                        $character['opponent'] = &$rooms[$character['room_inner_id']]['mobiles'][$i];
-                                        break 2;
+//                                        if(empty($character['opponent'] )){
+                                            $character['opponent'] = &$rooms[$character['room_inner_id']]['mobiles'][$i];
+                                            break 2;
+//                                        } else {
+//                                            $opponentMessage = "<span class='basic-color'>Невозможно! вы уже сражаетесь с {$character['opponent']['name']}.</span>";
+//                                            $connection->send(json_encode(['for_client' => $stateString . $opponentMessage]));
+//                                            break 3;
+//                                        }
                                     }
                                 }
                             }
@@ -467,7 +469,7 @@ STR;
                     }
 
                     /**/
-//                    Debugger::PrintToFile('--Бой-$character', $character);
+                    Debugger::PrintToFile('--Бой-$character', $character);
                     /**/
 
                     if (empty($character['opponent'])) {
@@ -475,14 +477,17 @@ STR;
                         $connection->send(json_encode(['for_client' => $stateString . $opponentMessage]));
                         break;
                     }
+                    /**/
+                    Debugger::PrintToFile('--Бой-break', 'break');
+                    /**/
                     //ставим режим "в бою"
                     $character['state'] = Constants::STATE_IN_BATTLE;
-                    $faker              = Factory::create();
+                    $faker = Factory::create();
 
                     $damage = $faker->numberBetween($character['first_damage_min'], $character['first_damage_max']);
                     if ($damage < $character['opponent']['HP']) {
                         $damageMessage = Formulas::damageMessage($damage);
-                        $actorMessage  = "<span class='actor-attack'>Вы $damageMessage рубанули {$character['opponent']['name']}. ($damage)</span>";
+                        $actorMessage = "<span class='actor-attack'>Вы $damageMessage рубанули {$character['opponent']['name']}. ($damage)</span>";
                         $character['opponent']['HP'] -= $damage;
                         $connection->send(json_encode(['for_client' => $this->renderStateString($character, $rooms[$character['room_inner_id']]['exits']) . $actorMessage]));
 
@@ -490,18 +495,18 @@ STR;
                             $actorDamage = $faker->numberBetween($character['first_damage_min'], $character['first_damage_max']);
 
                             if ($actorDamage < $character['opponent']['HP']) {
-                                $damageMessage               = Formulas::damageMessage($actorDamage);
-                                $actorMessage                = "<span class='actor-attack'>Вы $damageMessage рубанули {$character['opponent']['name']}. ($actorDamage)</span>";
+                                $damageMessage = Formulas::damageMessage($actorDamage);
+                                $actorMessage = "<span class='actor-attack'>Вы $damageMessage рубанули {$character['opponent']['name']}. ($actorDamage)</span>";
                                 $character['opponent']['HP'] -= $actorDamage;
-                                $opponentMessage             = '';
-                                $opponentDamage              = 0;
+                                $opponentMessage = '';
+                                $opponentDamage = 0;
                                 for ($i = 1; $i <= $character['opponent']['attacks_number']; $i++) {
-                                    ${"opponentDamage{$i}"}  = $faker->numberBetween($character['opponent']['damage_min'], $character['opponent']['damage_max']);
+                                    ${"opponentDamage{$i}"} = $faker->numberBetween($character['opponent']['damage_min'], $character['opponent']['damage_max']);
                                     ${"opponentMessage{$i}"} = Formulas::damageMessage(${"opponentDamage{$i}"});
                                     /**/
 //                                    Debugger::PrintToFile('--Бой-$opponentMessagei', ${"opponentMessage{$i}"});
                                     /**/
-                                    $opponentDamage  += ${"opponentDamage{$i}"};
+                                    $opponentDamage += ${"opponentDamage{$i}"};
                                     $opponentMessage .= "<span class='enemy-attack'>{$character['opponent']['name']} ${"opponentMessage{$i}"} ударил вас!</span>";
                                 }
 
@@ -512,17 +517,13 @@ STR;
 
                                 $connection->send(json_encode(['for_client' => $this->renderStateString($character, $rooms[$character['room_inner_id']]['exits']) . $opponentMessage . $actorMessage]));
                             } else {
-                                Timer::del($character['timer_id']);
-                                $character['timer_id'] = null;
+                                Timer::del($character['fight_timer']);
+                                $character['fight_timer'] = null;
                                 $character['state'] = Constants::STATE_IN_GAME;
 
-//                                $addingExperience = Formulas::addingExperience($character, $character['opponent']['exp_reward']);
                                 $addingExperience = $this->characterService->addingExperience($character, $character['opponent']['exp_reward']);
-
-//                                $newLevelMessage = !empty($addingExperience['got_new_level']) ? "<br><span class='contrast-color'>Вы поднялись на уровень!</span>" : '';
-
                                 if (!empty($addingExperience['got_new_level'])) {
-                                    $newLevelMessage    = "<br><span class='contrast-color'>Вы поднялись на уровень!</span>";
+                                    $newLevelMessage = "<br><span class='contrast-color'>Вы поднялись на уровень!</span>";
                                     $character['maxHP'] = Formulas::getMaxHP($character);
 
                                 } else {
@@ -540,38 +541,38 @@ STR;
                                 /**/
                                 //удалить моба
                                 $character['opponent'] = null;
+
                                 $connection->send(json_encode(['for_client' => $this->renderStateString($character, $rooms[$character['room_inner_id']]['exits']) . $actorMessage]));
                                 dispatch(new SaveCharacterJob($character));
                             }
 
                         });
 
-                        $character['timer_id'] = $timerId;
+                        $character['fight_timer'] = $timerId;
                     } else {
                         $character['state'] = Constants::STATE_IN_GAME;
-//                        $addingExperience      = Formulas::addingExperience($character, $character['opponent']['exp_reward']);
-                        $addingExperience      = $this->characterService->addingExperience($character, $character['opponent']['exp_reward']);
+                        $addingExperience = $this->characterService->addingExperience($character, $character['opponent']['exp_reward']);
                         if (!empty($addingExperience['got_new_level'])) {
-                            $newLevelMessage    = "<br><span class='contrast-color'>Вы поднялись на уровень!</span>";
+                            $newLevelMessage = "<br><span class='contrast-color'>Вы поднялись на уровень!</span>";
                             $character['maxHP'] = Formulas::getMaxHP($character);
 
                         } else {
                             $newLevelMessage = "";
                         }
-                        $actorMessage               = <<<STR
+                        $actorMessage = <<<STR
 <span>
-    <span class='actor-attack'>Вы аккуратно разрезали {$this->strToLower($character['opponent']['name'])} на две части ($damage)</span><br>
+    <span class='actor-attack'>Одним ударом вы отправили {$this->strToLower($character['opponent']['name'])} в мир иной!!! ($damage)</span><br>
     <span class='basic-color'>{$character['opponent']['name']} мертв! R.I.P.</span><br>
     <span class='basic-color'>Вы получили {$addingExperience['experienceReward']} единиц опыта.</span>
     {$newLevelMessage}
 </span>
 STR;
                         $character['opponent'] = null;
-                        if (!empty($character['timer_id'])) {
-                            Timer::del($character['timer_id']);
-                            $character['timer_id'] = null;
+                        if (!empty($character['fight_timer'])) {
+                            Timer::del($character['fight_timer']);
+                            $character['fight_timer'] = null;
                         }
-                        $connection->send(json_encode(['for_client' => $stateString . $actorMessage]));
+                        $connection->send(json_encode(['for_client' => $this->renderStateString($character, $rooms[$character['room_inner_id']]['exits']) . $actorMessage]));
                         dispatch(new SaveCharacterJob($character));
                     }
 
@@ -593,7 +594,7 @@ STR;
                 /*---чисто в бою---*/
                 case  $character['state'] == Constants::STATE_IN_BATTLE && $data->message == 'стоп':
 
-                    Timer::del($character['timer_id']);
+                    Timer::del($character['fight_timer']);
                     $character['state'] = Constants::STATE_IN_GAME;
                     unset($character['opponent']);
 
@@ -603,6 +604,125 @@ STR;
 
 
                 /**/
+                //todo сделать нормальное сохранение по таймеру
+                case preg_match("/^сохр$/", $data->message):
+                    dispatch(new SaveCharacterJob($character));
+                    $connection->send(json_encode(['for_client' => $this->renderStateString($character, $rooms[$character['room_inner_id']]['exits'])]));
+                    break;
+                //todo перенести в режим бога
+                case preg_match("/^хил$/", $data->message):
+                    $character['HP'] = $character['maxHP'];
+                    dispatch(new SaveCharacterJob($character));
+                    $connection->send(json_encode(['for_client' => $this->renderStateString($character, $rooms[$character['room_inner_id']]['exits'])]));
+                    break;
+                /**/
+
+                case $character['state'] == Constants::STATE_MENU && $data->message == Constants::USER_INPUT_CREATE_NEW_CHARACTER:
+                    //если есть таймеры текущего персонажа - удаляем их
+                    if (!empty($character['fight_timer'])) {
+                        Timer::del($character['fight_timer']);
+                    }
+                    if (!empty($character['regeneration_HP_timer'])) {
+                        Timer::del($character['regeneration_HP_timer']);
+                    }
+
+                    /**/
+//                    Debugger::PrintToFile('--USER_INPUT_CREATE_NEW_CHARACTER-', $characters);
+                    /**/
+//                    unset($character);
+//                    unset($characters[$character['user']['uuid']]);
+                    $characters[$character['user']['uuid']] = null;
+//                    $character = [];
+//                    unset($character);
+                    /**/
+//                    Debugger::PrintToFile('--USER_INPUT_CREATE_NEW_CHARACTER-2', $characters);
+                    /**/
+                    /**/
+//                    Debugger::PrintToFile('--USER_INPUT_CREATE_NEW_CHARACTER-$character', $character);
+                    /**/
+
+                    $message = "<span class='basic-color'>Введите имя персонажа:</span>";
+                    $connection->send(json_encode(['for_client' => $message]));
+                    $character['state'] = Constants::ENTER_NEW_CHARACTER_NAME;
+                    break;
+
+                case $character['state'] == Constants::ENTER_NEW_CHARACTER_NAME:
+                    //todo нормальная функция подстроки до пробела или до конца
+                    $character['name'] = !empty(strpos($data->message, ' ')) ? trim(mb_substr($data->message, 0, strpos($data->message, ' '))) : trim($data->message);
+                    $message = <<<STR
+<span class='basic-color'>Профессия персонажа:</span>
+<br>
+<table class="equipment">
+    <thead>
+    <tr>
+        <th width="1%"></th>
+        <th width="10%"></th>
+        <th></th>
+        <th></th>
+    </tr>
+    </thead>
+    <tbody>
+    <tr>
+        <td width="1%">1)</td>
+        <td width="10%">Воин</td>
+        <td>Специалист в области боя.</td>
+        <td></td>
+    </tr>
+        <tr>
+        <td width="1%">2)</td>
+        <td width="10%">Маг</td>
+        <td>Обладает мощными разрушительными заклинаниями.(В разработке...)</td>
+        <td></td>
+    </tr>
+        <tr>
+        <td width="1%">3)</td>
+        <td width="10%">Лекарь</td>
+        <td>Обладает мощной защитной и исцеляющей магией.(В разработке...)</td>
+        <td></td>
+    </tr>
+        <tr>
+        <td width="1%">4)</td>
+        <td width="10%">Вор</td>
+        <td>Специалист по присвоению чужого имущества.(В разработке...)</td>
+        <td></td>
+    </tr>
+    </tbody>
+</table>
+<span class='basic-color'>Выберите профессию вашего персонажа.</span>
+STR;
+                    /**/
+                    Debugger::PrintToFile('--CREATE_NEW_CHARACTER-name', $character['name']);
+                    /**/
+                    $connection->send(json_encode(['for_client' => $message]));
+                    $character['state'] = Constants::ENTER_NEW_CHARACTER_PROFESSION;
+                    break;
+
+                case $character['state'] == Constants::ENTER_NEW_CHARACTER_PROFESSION && in_array($data->message, [Constants::USER_INPUT_CREATE_PROFESSION_WARRIOR]):
+
+                    $character['profession_id'] = 0;
+                    switch (true){
+                        case $data->message == Constants::USER_INPUT_CREATE_PROFESSION_WARRIOR:
+                            $character['profession_id'] = Profession::WARRIOR_ID;
+                            break;
+                    }
+
+                    /**/
+                    Debugger::PrintToFile('--ENTER_NEW_CHARACTER_PROFESSION-', $character);
+                    /**/
+
+                    //todo сделать нормально
+                    $character['user_id'] = 1;
+
+                    $character = $this->characterService->createCharacter($character)->toArray();
+
+                    //todo сделать нормально
+                    $userEmailFromClient = 'ыыы';
+                    $selectCharacterDialog = $this->renderSelectCharacterDialog($userEmailFromClient, $character['name']);
+
+                    $connection->send(json_encode(['for_client' => $selectCharacterDialog]));
+
+                    break;
+
 
             }
 
@@ -636,15 +756,15 @@ STR;
     public function renderStateString($character, $exitsArray)
     {
         $north = !empty($exitsArray['n']) ? 'С' : '';
-        $east  = !empty($exitsArray['e']) ? 'В' : '';
+        $east = !empty($exitsArray['e']) ? 'В' : '';
         $south = !empty($exitsArray['s']) ? 'Ю' : '';
-        $west  = !empty($exitsArray['w']) ? 'З' : '';
-        $up    = !empty($exitsArray['u']) ? '^' : '';
-        $down  = !empty($exitsArray['d']) ? 'v' : '';
+        $west = !empty($exitsArray['w']) ? 'З' : '';
+        $up = !empty($exitsArray['u']) ? '^' : '';
+        $down = !empty($exitsArray['d']) ? 'v' : '';
 
         $exits = $north . $east . $south . $west . $up . $down;
 
-        $actorCondition    = '';
+        $actorCondition = '';
         $opponentCondition = '';
 
 
@@ -654,13 +774,13 @@ STR;
 
         if (!empty($character['opponent'])) {
             $actorConditionEstimate = "<span class={$actorConditionClass}>{$actorConditionEstimateArray['condition_estimate']}</span>";
-            $actorCondition         = "<span class='basic-color'>[{$character['name']}:</span>{$actorConditionEstimate}<span class='basic-color'>]&nbsp</span>";
+            $actorCondition = "<span class='basic-color'>[{$character['name']}:</span>{$actorConditionEstimate}<span class='basic-color'>]&nbsp</span>";
 
             $opponentConditionEstimateArray = Formulas::getConditionEstimate($character['opponent']['HP'], $character['opponent']['maxHP']);
             //todo нормальный schemeId
-            $opponentConditionClass    = Constants::getConditionEstimateCssClass(1, $opponentConditionEstimateArray['color_level']);
+            $opponentConditionClass = Constants::getConditionEstimateCssClass(1, $opponentConditionEstimateArray['color_level']);
             $opponentConditionEstimate = "<span class={$opponentConditionClass}>{$opponentConditionEstimateArray['condition_estimate']}</span>";
-            $opponentCondition         = "<span class='basic-color'>[{$character['opponent']['name']}:</span>{$opponentConditionEstimate}<span class='basic-color'>]&nbsp</span>";
+            $opponentCondition = "<span class='basic-color'>[{$character['opponent']['name']}:</span>{$opponentConditionEstimate}<span class='basic-color'>]&nbsp</span>";
         }
 
         return <<<STR
@@ -684,8 +804,8 @@ STR;
         Debugger::PrintToFile('--renderRequestOnLook--$room', $room);
         /**/
 
-        $stateString     = $this->renderStateString($character, $room['exits']);
-        $roomName        = "<span class='room-name'>" . $room['name'] . "</span>";
+        $stateString = $this->renderStateString($character, $room['exits']);
+        $roomName = "<span class='room-name'>" . $room['name'] . "</span>";
         $roomDescription = "<span class='basic-color'>" . $room['description'] . "</span>";
 
         $mobileTitle = '';
@@ -714,10 +834,10 @@ STR;
         if ($nextRoomInnerId) {
 
             $character['room_inner_id'] = $nextRoomInnerId;
-            $room                       = $rooms[$character['room_inner_id']];
-            $stateString                = $this->renderStateString($character, $rooms[$nextRoomInnerId]['exits']);
-            $roomName                   = "<span class='room-name'>" . $rooms[$nextRoomInnerId]['name'] . "</span>";
-            $mobileTitle                = '';
+            $room = $rooms[$character['room_inner_id']];
+            $stateString = $this->renderStateString($character, $rooms[$nextRoomInnerId]['exits']);
+            $roomName = "<span class='room-name'>" . $rooms[$nextRoomInnerId]['name'] . "</span>";
+            $mobileTitle = '';
 
             if (!empty($room['mobiles'])) {
 //                foreach ($room['mobiles'] as $mobiles) {
@@ -733,5 +853,27 @@ STR;
         } else {
             return $stateString . "<span class='basic-color'>Вы не можете идти в этом направлении...</span>";
         }
+    }
+
+    public function renderSelectCharacterDialog($userEmailFromClient, $charName)
+    {
+        return <<<STR
+<span class="basic-color">
+Аккaунт [{$userEmailFromClient}] Персонаж [{$charName}]<br>
+Добро пожаловать в MUD!<br>
+0) Выход из MUDа.<br>
+1) Начать игру.<br>
+2) Ввести описание своего персонажа.(В разработке...)<br>
+3) Прочитать начальную историю.(В разработке...)<br>
+4) Поменять пароль.(В разработке...)<br>
+5) Удалить этого персонажа.(В разработке...)<br>
+--------------------------------<br>
+В этом аккаунте вы также можете:<br>
+6) Выбрать другого персонажа.<br>
+7) Создать нового персонажа.<br>
+8) Другие операции с аккаунтом.
+</span>
+STR;
+
     }
 }

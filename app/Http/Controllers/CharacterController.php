@@ -39,6 +39,14 @@ class CharacterController extends Controller
 
     public function userInput(Request $request)
     {
+//        $str = mb_strpos('у манек', ' ');
+        $str = strpos('у манек', ' ');
+
+        dd($str);
+        exit();
+
+        /*-----------------------------------*/
+
 
         $nexLevel = 5;
         $ccc = 'WARRIOR_LEVEL_5_EXP';

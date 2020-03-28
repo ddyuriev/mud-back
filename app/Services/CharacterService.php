@@ -4,6 +4,7 @@
 namespace App\Services;
 
 use App\Character;
+use App\Helpers\Constants;
 use App\Helpers\Debugger;
 use App\Helpers\Formulas;
 use App\Slot;
@@ -73,7 +74,7 @@ class CharacterService
 
 //        $character['level'] = Formulas::calculateLevel($character['profession_id'], $character['experience']);
 
-        $character['state'] = 1;
+        $character['state'] = Constants::STATE_MENU;
 
         $character['level'] = Formulas::calculateLevel($character['profession_id'], $character['experience']);
         $character['maxHP'] = Formulas::getMaxHP($character);
@@ -118,7 +119,7 @@ class CharacterService
 
     public function addingExperience(&$character, $experienceReward)
     {
-        $level    = Formulas::calculateLevel($character['profession_id'], $character['experience']);
+        $level = Formulas::calculateLevel($character['profession_id'], $character['experience']);
         $nexLevel = $level + 1;
 
 //        $maxExpForCurrentLevel = (constant("SELF::WARRIOR_LEVEL_{$nexLevel}_EXP") - constant("SELF::WARRIOR_LEVEL_{$level}_EXP")) / 2;
@@ -137,8 +138,8 @@ class CharacterService
         $gotNewLevel = $newLevel - $level > 0 ? true : false;
 
         if ($gotNewLevel) {
-            $character['maxHP']         = Formulas::getMaxHP($character);
-            $character['level']         = $nexLevel;
+            $character['maxHP'] = Formulas::getMaxHP($character);
+            $character['level'] = $nexLevel;
             $character['to_next_level'] = Formulas::toNextLevel($character['profession_id'], $character['experience'], $newLevel);
         } else {
             $character['to_next_level'] -= $experienceReward;
@@ -146,7 +147,45 @@ class CharacterService
 
         return [
             'experienceReward' => $experienceReward,
-            'got_new_level'    => $gotNewLevel
+            'got_new_level' => $gotNewLevel
         ];
     }
+
+    public function createCharacter($data)
+    {
+
+        /**/
+        Debugger::PrintToFile('CharacterService--createCharacterr', 'createCharacter');
+        /**/
+
+        $character = new Character();
+
+        $character->user_id = $data['user_id'];
+        $character->name = $data['name'];
+
+        $character->profession_id = $data['profession_id'];
+        $character->experience = 1;
+        $character->strength = 10;
+        $character->dexterity = 10;
+        $character->constitution = 10;
+        $character->intellect = 10;
+        $character->wisdom = 10;
+        $character->HP = Formulas::getMaxHP(['profession_id' => 1, 'constitution' => 10, 'level' => 1]);
+        $character->VP = 70;
+        $character->coins = 0;
+        $character->delevels_count = 0;
+        $character->is_active = 0;
+        $character->save();
+
+        $newLevel = Formulas::calculateLevel($character['profession_id'], $character['experience']);
+
+        $character['to_next_level'] = Formulas::toNextLevel($character['profession_id'], $character['experience'], $newLevel);
+        $character['state'] = Constants::STATE_MENU;
+        $character['level'] = Formulas::calculateLevel($character['profession_id'], $character['experience']);
+        $character['maxHP'] = Formulas::getMaxHP($character);
+
+
+        return $character;
+    }
+
 }

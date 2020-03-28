@@ -11,8 +11,13 @@ https://stackoverflow.com/questions/24786628/web-socket-exception-could-not-be-c
 
 
 
-todo
+to-do
 сделать мад школу - дерево у мага
+
+получилась не мад школа, но лоулев зона.
+OK.
+
+
 
 сделать восстановление хитов
 

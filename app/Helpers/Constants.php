@@ -12,9 +12,17 @@ class Constants
     const COLOR_SCHEME_BLACK = 1;
     const COLOR_SCHEME_WHITE = 2;
 
-    const STATE_MENU = 1;
-    const STATE_IN_GAME = 2;
-    const STATE_IN_BATTLE = 3;
+    const STATE_MENU = 100;
+    const STATE_IN_GAME = 200;
+    const STATE_IN_BATTLE = 300;
+    const ENTER_NEW_CHARACTER_NAME = 400;
+    const ENTER_NEW_CHARACTER_PROFESSION = 402;
+
+    const USER_INPUT_CREATE_NEW_CHARACTER = 7;
+
+    const USER_INPUT_CREATE_PROFESSION_WARRIOR = 1;
+
+
 
     /**
      * @param $schemeId
