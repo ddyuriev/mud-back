@@ -33,3 +33,7 @@ stuff->slot_id
 =>
 stuff->dest_slot_id
 stuff->dest_slot
+
+
+onblur="this.focus()" autofocus
+не дает копировать текст..

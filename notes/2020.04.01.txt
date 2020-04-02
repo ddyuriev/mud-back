@@ -1,0 +1,12 @@
+Получилось победить перепрыгивание курсора при листании истории стрелочками
+Проблема была в навешивании на событие keyup
+
+// register the handler
+document.addEventListener('keyup', onEnterKeyUp, false);
+document.addEventListener('keydown', onEnterKeyUp, false);
+
+События keydown и keyup
+Событие keydown происходит при нажатии клавиши, а keyup – при отпускании.
+
+так ок:
+document.addEventListener('keydown', onEnterKeyUp, false);

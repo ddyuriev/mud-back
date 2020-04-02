@@ -1,0 +1,18 @@
+Так. Если чо откатиться на коммит от 28 марта.
+
+----------
+
+
+todo
+определиться c $stateString:
+$connection->send(json_encode(['for_client' => $stateString]));
+              или
+$connection->send(json_encode(['for_client' => $this->renderStateString($character, $rooms[$character['room_inner_id']]['exits'])]));
+
+тут судя по всему, если нет замыканий то  можно передать переменную. иначе вызывать функцию.
+
+----
+
+разделить pageUp, pageDown на миниклаве от нампада
++
+
