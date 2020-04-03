@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Helpers\Debugger;
 use Laravel\Lumen\Routing\Controller as BaseController;
 use Illuminate\Support\Facades\Auth;
 use App\User;
@@ -31,12 +32,15 @@ class UserController extends Controller
 
         $user = Auth::user();
 
+        /**/
+//        Debugger::PrintToFile('--UserController', $user);
+        /**/
+
         $localIp = $request->ip();
 
-        if ($localIp == env("HOME_IP")){
+        if ($localIp == env("HOME_IP")) {
             $user->at_home = true;
         }
-
 
 
 //        return response()->json(['user' => Auth::user()], 200);

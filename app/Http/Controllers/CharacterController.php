@@ -41,7 +41,7 @@ class CharacterController extends Controller
     {
 
         $character = $this->characterService->getActiveCharacterByUserEmail('therion@mail.ru');
-//        dd($character);
+        dd($character);
         $stuff = $this->characterService->getInventoryItems($character);
 
         dd($stuff);

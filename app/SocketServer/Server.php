@@ -42,7 +42,6 @@ class Server
 
     /**/
     private $strToLower;
-
     /**/
 
 
@@ -751,7 +750,7 @@ STR;
                     //todo сделать нормально
                     $character['user_id'] = 1;
 
-                    $character = $this->characterService->createCharacter($character)->toArray();
+                    $character = $this->characterService->createCharacter($character);
 
                     //todo сделать нормально
                     $userEmailFromClient = 'ыыы';

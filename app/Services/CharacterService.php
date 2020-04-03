@@ -61,18 +61,32 @@ class CharacterService
 //            'stuff.slot'
 //        ])->where('is_active', true)->first()->toArray();
 
-        $character = Character::with([
-            'user' => function ($query) use ($email) {
-                $query->where('email', $email);
-            },
+//        $character = Character::with([
+//            'user' => function ($query) use ($email) {
+//                $query->where('email', '=', $email);
+//            },
+//            'profession.professionSkills',
+////            'skills',
+////            'skills.professions',
+//            'stuff.slot'
+//        ])->where('is_active', true)->first()->toArray();
+
+
+        $character = Character::whereHas('user', function ($query) use ($email) {
+            $query->where('email', $email);
+        })->with([
+            'user',
             'profession.professionSkills',
-//            'skills',
-//            'skills.professions',
             'stuff.slot'
         ])->where('is_active', true)->first()->toArray();
 
 
-//        $character['level'] = Formulas::calculateLevel($character['profession_id'], $character['experience']);
+//        \DB::enableQueryLog();
+//        dd(\DB::getQueryLog(Character::with([
+//            'user' => function ($query) use ($email) {
+//                $query->where('email', '=', $email);
+//            }
+//        ])->where('is_active', true)->first()));
 
         $character['state'] = Constants::STATE_MENU;
 
@@ -82,20 +96,23 @@ class CharacterService
         $character['to_next_level'] = Formulas::toNextLevel($character['profession_id'], $character['experience'], $character['level']);
 
         //не нравится
-        foreach ($character['stuff'] as $item) {
+//        foreach ($character['stuff'] as $item) {
+//            if ($item['slot_id'] == $item['pivot']['slot_id'] && $item['slot_id'] == Slot::IN_BOTH_HANDS) {
+//                $character['first_damage_min'] = $item['damage_min'];
+//                $character['first_damage_max'] = $item['damage_max'];
+//            } else if ($item['slot_id'] == $item['pivot']['slot_id'] && $item['slot_id'] == Slot::IN_RIGHT_HAND) {
+//                $character['first_damage_min'] = $item['damage_min'];
+//                $character['first_damage_max'] = $item['damage_max'];
+//            } else if ($item['slot_id'] == $item['pivot']['slot_id'] && $item['slot_id'] == Slot::IN_LEFT_HAND) {
+//                $character['second_damage_min'] = $item['damage_min'];
+//                $character['second_damage_max'] = $item['damage_max'];
+//            }
+//        }
 
-            if ($item['slot_id'] == $item['pivot']['slot_id'] && $item['slot_id'] == Slot::IN_BOTH_HANDS) {
-                $character['first_damage_min'] = $item['damage_min'];
-                $character['first_damage_max'] = $item['damage_max'];
-            } else if ($item['slot_id'] == $item['pivot']['slot_id'] && $item['slot_id'] == Slot::IN_RIGHT_HAND) {
-                $character['first_damage_min'] = $item['damage_min'];
-                $character['first_damage_max'] = $item['damage_max'];
-            } else if ($item['slot_id'] == $item['pivot']['slot_id'] && $item['slot_id'] == Slot::IN_LEFT_HAND) {
-                $character['second_damage_min'] = $item['damage_min'];
-                $character['second_damage_max'] = $item['damage_max'];
-            }
-
-        }
+        /**/
+        $this->setDamageRange($character);
+//        dd($fh);
+        /**/
 
         return $character;
     }
@@ -116,7 +133,6 @@ class CharacterService
 
         $character->save();
     }
-
 
     public function addingExperience(&$character, $experienceReward)
     {
@@ -189,14 +205,51 @@ class CharacterService
 
         $character->load('profession', 'user', 'skills', 'stuff');
 
+        $character = $character->toArray();
+
+        $this->setDamageRange($character);
+
         return $character;
     }
 
     public function getInventoryItems($character)
     {
-        return array_filter($character['stuff'], function($v) {
+        return array_filter($character['stuff'], function ($v) {
             return $v['pivot']['slot_id'] == Slot::IN_INVENTORY;
         });
+    }
+
+    public function setDamageRange(&$character)
+    {
+        $bothHandsWeapon = array_filter($character['stuff'], function ($v) {
+            return $v['pivot']['slot_id'] == Slot::IN_BOTH_HANDS;
+        });
+        $bothHandsWeapon = array_shift($bothHandsWeapon);
+
+        $rightHandWeapon = array_filter($character['stuff'], function ($v) {
+            return $v['pivot']['slot_id'] == Slot::IN_RIGHT_HAND;
+        });
+        $rightHandWeapon = array_shift($rightHandWeapon);
+
+        $leftHandWeapon = array_filter($character['stuff'], function ($v) {
+            return $v['pivot']['slot_id'] == Slot::IN_LEFT_HAND;
+        });
+        $leftHandWeapon = array_shift($leftHandWeapon);
+
+        if (!empty($bothHandsWeapon)) {
+            $character['first_damage_min'] = $bothHandsWeapon['damage_min'];
+            $character['first_damage_max'] = $bothHandsWeapon['damage_max'];
+        } elseif (!empty($rightHandWeapon)) {
+            $character['first_damage_min'] = $rightHandWeapon['damage_min'];
+            $character['first_damage_max'] = $rightHandWeapon['damage_max'];
+        } else {
+            $character['first_damage_min'] = 1;
+            $character['first_damage_max'] = 1;
+        }
+        if (!empty($leftHandWeapon)) {
+            $character['second_damage_min'] = $leftHandWeapon['damage_min'];
+            $character['second_damage_max'] = $leftHandWeapon['damage_max'];
+        }
     }
 
 }

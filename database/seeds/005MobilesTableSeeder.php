@@ -276,7 +276,7 @@ STR
 STR
             ,
             'title_inside_of_room' => 'Крохотная мушка сидит на листке',
-            'description'          => 'Вы едва заметили эту крохотную мушку. Можно попробловать на ней свои силы',
+            'description'          => 'Вы едва заметили эту крохотную мушку. Можно попробовать на ней свои силы',
             'profession_id'        => 1,
             'level'                => 1,
             'strength'             => '1',
@@ -292,6 +292,36 @@ STR
             'attacks_number'       => 1,
             'coins'                => 0,
             'exp_reward'           => 20000,
+        ]);
+
+        \DB::table('mobiles')->insert([
+            'room_id'              => $this->getRoomIdByRoomInnerId('2_140'),
+            'mobile_inner_id'      => '2_140_001',
+            'name'                 => 'Бабочка-капустница',
+            'pseudonyms'           => <<<STR
+{
+    "0": "бабочка",
+    "1": "капустница"
+}
+STR
+            ,
+            'title_inside_of_room' => 'Бабочка-капустница пархает тут. Наверное, что-то замышляет.',
+            'description'          => 'Похоже, что это обычная бабочка-капустница.',
+            'profession_id'        => 1,
+            'level'                => 1,
+            'strength'             => '1',
+            'dexterity'            => '1',
+            'constitution'         => '1',
+            'intellect'            => '1',
+            'wisdom'               => '1',
+            'size'                 => 1,
+            'HP'                   => 11,
+            'maxHP'                => 11,
+            'damage_min'           => 1,
+            'damage_max'           => 2,
+            'attacks_number'       => 1,
+            'coins'                => 0,
+            'exp_reward'           => 40000,
         ]);
 
         /* end Зона дерево*/

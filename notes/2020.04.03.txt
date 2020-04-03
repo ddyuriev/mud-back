@@ -1,0 +1,100 @@
+Так... с копированием с экрана и история инпута вроде наконец все!
+
+Дальше надо создание персонажа домучать
+
+Не корректно:
+
+        $character = Character::with([
+            'user' => function ($query) use ($email) {
+                $query->where('email', $email);
+            },
+            'profession.professionSkills',
+//            'skills',
+//            'skills.professions',
+            'stuff.slot'
+        ])->where('is_active', true)->first()->toArray();
+
+находит по другому емэйлу.
+
+
+//        \DB::enableQueryLog();
+//        dd(\DB::getQueryLog(Character::with([
+//            'user' => function ($query) use ($email) {
+//                $query->where('email', '=', $email);
+//            }
+//        ])->where('is_active', true)->first()));
+
+
+^ array:2 [
+  0 => array:3 [
+    "query" => "select * from `characters` where `is_active` = ? limit 1"
+    "bindings" => array:1 [
+      0 => true
+    ]
+    "time" => 0.36
+  ]
+  1 => array:3 [
+    "query" => "select * from `users` where `users`.`id` in (2) and `email` = ?"
+    "bindings" => array:1 [
+      0 => "therion@mail.ru"
+    ]
+    "time" => 0.24
+  ]
+]
+
+бля. надо к whereHas возвращаться?
+
+
+        $character = Character::whereHas('user', function ($query) use ($email) {
+            $query->where('email', $email);
+        })->with([
+            'user',
+            'profession.professionSkills',
+//            'skills',
+//            'skills.professions',
+            'stuff.slot'
+        ])->where('is_active', true)->first()->toArray();
+
+
+^ array:6 [
+  0 => array:3 [
+    "query" => "select * from `characters` where exists (select * from `users` where `characters`.`user_id` = `users`.`id` and `email` = ?) and `is_active` = ? limit 1"
+    "bindings" => array:2 [
+      0 => "therion@mail.ru"
+      1 => true
+    ]
+    "time" => 0.45
+  ]
+  1 => array:3 [
+    "query" => "select * from `users` where `users`.`id` in (1)"
+    "bindings" => []
+    "time" => 0.29
+  ]
+  2 => array:3 [
+    "query" => "select * from `professions` where `professions`.`id` in (?)"
+    "bindings" => array:1 [
+      0 => 1
+    ]
+    "time" => 0.44
+  ]
+  3 => array:3 [
+    "query" => "select `skills`.*, `profession_skill`.`profession_id` as `pivot_profession_id`, `profession_skill`.`skill_id` as `pivot_skill_id`, `profession_skill`.`learning_level` as `pivot_learning_level` from `skills` inner join `profession_skill` on `skills`.`id` = `profession_skill`.`skill_id` where `profession_skill`.`profession_id` in (1)"
+    "bindings" => []
+    "time" => 0.24
+  ]
+  4 => array:3 [
+    "query" => "select * from `character_skill` where `character_skill`.`skill_id` in (101, 104, 201)"
+    "bindings" => []
+    "time" => 0.21
+  ]
+  5 => array:3 [
+    "query" => "select `stuff`.*, `character_stuff`.`character_id` as `pivot_character_id`, `character_stuff`.`stuff_id` as `pivot_stuff_id`, `character_stuff`.`slot_id` as `pivot_slot_id` from `stuff` inner join `character_stuff` on `stuff`.`id` = `character_stuff`.`stuff_id` where `character_stuff`.`character_id` in (3)"
+    "bindings" => []
+    "time" => 0.24
+  ]
+]
+
+Да, так норм
+
+
+------------------------------------------------------------------------------------------
