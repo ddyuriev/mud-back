@@ -23,6 +23,17 @@ class Constants
     const USER_INPUT_CREATE_PROFESSION_WARRIOR = 1;
 
 
+    const STRENGTH = 1;
+    const DEXTERITY = 2;
+    const CONSTITUTION = 3;
+    const INTELLECT = 4;
+    const WISDOM = 5;
+    const RESISTANCE = 6;
+
+
+
+
+
 
     /**
      * @param $schemeId
@@ -31,7 +42,7 @@ class Constants
      */
     public static function getConditionEstimateCssClass($schemeId, $colorLevel)
     {
-        $class = '';
+        $class = "";
         switch (true) {
             case $schemeId == self::COLOR_SCHEME_BLACK && $colorLevel == 0:
                 $class = "contrast-color";
@@ -47,5 +58,31 @@ class Constants
                 break;
         }
         return $class;
+    }
+
+    public static function getCharacteristicNameByConstant($constantValue){
+
+        $characteristic = "";
+        switch ($constantValue) {
+            case self::STRENGTH:
+                $characteristic = "strength";
+                break;
+            case self::DEXTERITY:
+                $characteristic = "dexterity";
+                break;
+            case self::CONSTITUTION:
+                $characteristic = "constitution";
+                break;
+            case self::INTELLECT:
+                $characteristic = "intellect";
+                break;
+            case self::WISDOM:
+                $characteristic = "wisdom";
+                break;
+            case self::RESISTANCE:
+                $characteristic = "resistance";
+                break;
+        }
+        return $characteristic;
     }
 }

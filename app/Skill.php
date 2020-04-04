@@ -50,10 +50,15 @@ class Skill extends Model
 
     /**/
 
+//    public function characterSkill()
+//    {
+//        return $this->hasOne('App\CharacterSkill');
+//    }
+
     public function characterSkill()
     {
         return $this->hasOne('App\CharacterSkill');
     }
-
     /**/
 }
+

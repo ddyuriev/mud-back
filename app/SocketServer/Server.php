@@ -42,6 +42,7 @@ class Server
 
     /**/
     private $strToLower;
+
     /**/
 
 
@@ -217,9 +218,7 @@ class Server
                     $character['state'] = Constants::STATE_IN_GAME;
                     $character['room_inner_id'] = Room::START_ROOM_INNER_ID;
                     $stateString = $this->renderStateString($character, $rooms[Room::START_ROOM_INNER_ID]['exits']);
-//                    $roomName = "<span class='room-name'>" . $rooms[Room::START_ROOM_INNER_ID]['name'] . "</span>";
                     $roomName = "<span class='room-name'>" . $rooms[Room::START_ROOM_INNER_ID]['name'] . "</span><br>";
-//                    $connection->send(json_encode(['for_client' => $stateString . $roomName . $helloMessage]));
                     $connection->send(json_encode(['for_client' => $helloMessage . $roomName . $stateString]));
 
                     /**/
@@ -248,7 +247,6 @@ class Server
                     }
 
                     /**/
-
                     break;
 
                 /*---в игре, но не в бою---*/
@@ -260,6 +258,19 @@ class Server
                         Constants::STATE_IN_BATTLE
                     ]) && preg_match("/^north$/", $data->message):
                     $connection->send(json_encode(['for_client' => $this->renderRequestOnMove($character, $rooms, $stateString, 'n')]));
+
+                    /**/
+
+                    /**/
+                    Debugger::PrintToFile('-----------$this-connections ', $this->connections);
+                    /**/
+
+                    foreach ($this->connections as $value) {
+                        $service = json_encode(['service' => "Пользователь  присоединился."]);
+                        $value->send($service);
+                    }
+                    /**/
+
                     break;
                 case  in_array($character['state'], [
                         Constants::STATE_IN_GAME,
@@ -311,8 +322,10 @@ class Server
                     $message = <<<STR
 <span class='basic-color'>Вы </span><span style='color:goldenrod'>{$character['name']}</span><span class='basic-color'>, {$character['profession']['name']} {$character['level']} уровня.</span><br>
 <span class='basic-color'>Ваш E-mail: {$character['user']['email']}</span><br>
+<span class='basic-color'>Слава: {$character['glory']}</span><br>
 <span class='basic-color'>Вы имеете <span class='{$conditionClass}'>{$currentHP}</span>(<span class='health-good'>{$maxHP}</span>) единиц здоровья.</span><br>
 <span class='basic-color'>Вы набрали {$character['experience']} опыта и имеете </span><span style='color:gold'>{$character['coins']}</span><span class='basic-color'> монет.</span><br>
+<span class='basic-color'>У вас есть {$character['trainings_count']} тренировок.</span><br>
 STR;
                     $connection->send(json_encode(['for_client' => '<span>' . "{$message}{$stateString}" . '</span>']));
                     break;
@@ -357,14 +370,14 @@ STR;
                         Constants::STATE_IN_BATTLE
                     ]) && preg_match("/^ум(е)?(н)?(и)?(я)?$/", $data->message):
                     $tableRows = '';
-                    if (!empty($character['profession']['profession_skills'])) {
-                        foreach ($character['profession']['profession_skills'] as $skill) {
-                            if ($character['level'] >= $skill['pivot']['learning_level']) {
+                    if (!empty($character['skills'])) {
+                        foreach ($character['skills'] as $skill) {
+                            if ($character['level'] >= $skill['learning_level']) {
                                 $tableRows .= <<<STR
 <tr>
   <th></th>
   <td width="30%">{$skill['name']}</td>
-  <td>{$skill['character_skill']['value']}</td>
+  <td>{$skill['value']}</td>
   <td></td>
 </tr>
 STR;
@@ -388,7 +401,6 @@ STR;
   </tbody>
 </table>
 STR;
-//                    $connection->send(json_encode(['for_client' => $stateString . $skillsTable]));
                     $connection->send(json_encode(['for_client' => $skillsTable . $stateString]));
                     break;
 
@@ -429,7 +441,6 @@ STR;
   </tbody>
 </table>
 STR;
-//                    $connection->send(json_encode(['for_client' => $stateString . $equipmentTable]));
                     $connection->send(json_encode(['for_client' => $equipmentTable . $stateString]));
                     break;
 
@@ -454,6 +465,27 @@ STR;
 //                    $connection->send(json_encode(['for_client' => $this->renderStateString($character, $rooms[$character['room_inner_id']]['exits']) . $message]));
                     $connection->send(json_encode(['for_client' => $message . $this->renderStateString($character, $rooms[$character['room_inner_id']]['exits'])]));
                     break;
+
+                /**/
+                //трен
+                case ($character['state'] == Constants::STATE_IN_GAME) && preg_match("/^(тр|тре|трен|трени|тренир|трениро|трениров|тренирова|тренироват|тренировать)\s.*/", $data->message):
+
+
+                    if (!$this->isItPossibleToTrain($character, $rooms)) {
+                        $message = "<span class='basic-color'>Вы можете сделать это только в своей гильдии или у странствующего учителя</span><br>";
+                        $connection->send(json_encode(['for_client' => $message . $stateString]));
+                    } else {
+                        $dataMessage = $data->message;
+                        $argument = mb_strtolower(trim(substr($dataMessage, strpos($dataMessage, ' '))));
+
+                        $message = "<span class='basic-color'>Вы потренировали силу за 1 тренировку.</span><br>";
+                        $connection->send(json_encode(['for_client' => $message . $stateString]));
+                    }
+
+//                    $connection->send(json_encode(['for_client' => $this->renderRequestOnMove($character, $rooms, $stateString, 'n')]));
+                    break;
+
+                /**/
 
 
                 //ударить
@@ -557,8 +589,7 @@ STR;
                                 $addingExperience = $this->characterService->addingExperience($character, $character['opponent']['exp_reward']);
                                 if (!empty($addingExperience['got_new_level'])) {
                                     $newLevelMessage = "<span class='contrast-color'>Вы поднялись на уровень!</span><br>";
-                                    $character['maxHP'] = Formulas::getMaxHP($character);
-
+                                    $this->characterService->setLevelUpCharacteristic($character);
                                 } else {
                                     $newLevelMessage = "";
                                 }
@@ -577,6 +608,9 @@ STR;
 
 //                                $connection->send(json_encode(['for_client' => $this->renderStateString($character, $rooms[$character['room_inner_id']]['exits']) . $actorMessage]));
                                 $connection->send(json_encode(['for_client' => $actorMessage . $this->renderStateString($character, $rooms[$character['room_inner_id']]['exits'])]));
+                                /**/
+                                Debugger::PrintToFile('--Бой-SaveCharacterJob', $character);
+                                /**/
                                 dispatch(new SaveCharacterJob($character));
                             }
 
@@ -588,7 +622,8 @@ STR;
                         $addingExperience = $this->characterService->addingExperience($character, $character['opponent']['exp_reward']);
                         if (!empty($addingExperience['got_new_level'])) {
                             $newLevelMessage = "<span class='contrast-color'>Вы поднялись на уровень!</span><br>";
-                            $character['maxHP'] = Formulas::getMaxHP($character);
+//                            $character['maxHP'] = Formulas::getMaxHP($character);
+                            $this->characterService->setLevelUpCharacteristic($character);
 
                         } else {
                             $newLevelMessage = "";
@@ -608,6 +643,11 @@ STR;
                         }
 //                        $connection->send(json_encode(['for_client' => $this->renderStateString($character, $rooms[$character['room_inner_id']]['exits']) . $actorMessage]));
                         $connection->send(json_encode(['for_client' => $actorMessage . $this->renderStateString($character, $rooms[$character['room_inner_id']]['exits'])]));
+
+                        /**/
+                        Debugger::PrintToFile('--Бой-SaveCharacterJob-1удар', $character);
+                        /**/
+
                         dispatch(new SaveCharacterJob($character));
                     }
 
@@ -848,18 +888,19 @@ STR;
 
         $mobileTitle = '';
         if (!empty($room['mobiles'])) {
-//            foreach ($room['mobiles'] as $mobiles) {
-//                $mobileTitle .= "<span class='mobile-title'>" . $mobiles['title_inside_of_room'] . "</span>";
-//            }
-            //чтобы отображение на клетке соответствовало порядку в массиве
-            foreach (array_reverse($room['mobiles']) as $mobile) {
+            foreach ($room['mobiles'] as $mobile) {
                 if (!empty($mobile)) {
                     $mobileTitle .= "<span class='mobile-title'>" . $mobile['title_inside_of_room'] . "</span><br>";
                 }
             }
+            //чтобы отображение на клетке соответствовало порядку в массиве
+//            foreach (array_reverse($room['mobiles']) as $mobile) {
+//                if (!empty($mobile)) {
+//                    $mobileTitle .= "<span class='mobile-title'>" . $mobile['title_inside_of_room'] . "</span><br>";
+//                }
+//            }
         }
 
-//        return $stateString . $mobileTitle . $roomDescription . $roomName;
         return $roomName . $roomDescription . $mobileTitle . $stateString;
     }
 
@@ -923,4 +964,32 @@ STR;
 STR;
 
     }
+
+
+    public function isItPossibleToTrain($character, $rooms)
+    {
+        $room = $rooms[$character['room_inner_id']];
+
+        /**/
+        Debugger::PrintToFile('--isItPossibleToTrain--$room', $room);
+        /**/
+
+//        $stateString = $this->renderStateString($character, $room['exits']);
+//        $roomName = "<span class='room-name'>" . $room['name'] . "</span><br>";
+//        $roomDescription = "<span class='basic-color'>" . $room['description'] . "</span><br>";
+
+        $isItPossibleToTrain = 0;
+        if (!empty($room['mobiles'])) {
+            foreach ($room['mobiles'] as $mobile) {
+                if (!empty($mobile) && !empty($mobile['teacher_level']) && $character['profession_id'] === $mobile['profession_id']) {
+                    $isItPossibleToTrain = 1;
+                }
+                continue;
+            }
+        }
+
+        return $isItPossibleToTrain;
+    }
+
+
 }

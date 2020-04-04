@@ -1,0 +1,18 @@
+что запустить на виртуалке, пришлось
+#WEBSOCKET_HOST=127.0.0.1
+WEBSOCKET_HOST=192.168.0.104
+
+    //2020.04.04
+    // if (user.at_home) {
+    //     websocket = new WebSocket("ws://127.0.0.1:8000/?user=" + user.email + "&color=" + user.color_scheme);
+    // } else {
+    //     websocket = new WebSocket("ws://192.168.215.37:8000/?user=" + user.email + "&color=" + user.color_scheme);
+    // }
+
+    websocket = new WebSocket("ws://192.168.0.104:8000/?user=" + user.email + "&color=" + user.color_scheme);
+
+
+в hosts
+
+192.168.0.104       mud-back
+192.168.0.104       mud-client

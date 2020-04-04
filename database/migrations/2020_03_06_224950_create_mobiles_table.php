@@ -37,6 +37,8 @@ class CreateMobilesTable extends Migration
             $table->smallInteger('attacks_number');
             $table->integer('coins')->default(0);
             $table->integer('exp_reward')->default(0);
+            //уровень моба как учителя. 0 - не учитель
+            $table->smallInteger('teacher_level')->default(0);
             $table->tinyInteger('is_travel')->default(0);
         });
     }

@@ -21,3 +21,4 @@ class Profession extends Model
             ;
     }
 }
+
