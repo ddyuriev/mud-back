@@ -36,11 +36,15 @@ class UserController extends Controller
 //        Debugger::PrintToFile('--UserController', $user);
         /**/
 
-        $localIp = $request->ip();
+//        $localIp = $request->ip();
 
-        if ($localIp == env("HOME_IP")) {
-            $user->at_home = true;
-        }
+
+
+//        if ($localIp == env("HOME_IP")) {
+//            $user->at_home = true;
+//        }
+
+        $user->websocket_host = env("WEBSOCKET_HOST");
 
 
 //        return response()->json(['user' => Auth::user()], 200);

@@ -55,7 +55,6 @@ class Server
     )
     {
         $this->ws_worker = new Worker("websocket://$config[host]:$config[port]");
-//        $this->ws_worker = new Worker("websocket://192.168.215.29:$config[port]");
 
         $this->logger = $logger;
         $this->ws_worker->count = $config['countWorkers'];
@@ -138,6 +137,10 @@ class Server
                 $userEmailFromClient = $_GET['user'];
                 $activeCharacter = $this->characterService->getActiveCharacterByUserEmail($userEmailFromClient);
 
+                /**/
+                $activeCharacter['connection_id'] = $connection->id;
+                /**/
+
                 $characters[$activeCharacter['user']['uuid']] = $activeCharacter;
 
                 /**/
@@ -167,7 +170,7 @@ class Server
 //                }
 //
                 foreach ($this->connections as $value) {
-                    $service = json_encode(['service' => "Пользователь $userEmailFromClient присоединился."]);
+                    $service = json_encode(['service' => "<span class='contrast-color'>Пользователь $userEmailFromClient присоединился.</span><br>"]);
                     $value->send($service);
                 }
 
@@ -265,11 +268,10 @@ class Server
                     Debugger::PrintToFile('-----------$this-connections ', $this->connections);
                     /**/
 
-                    foreach ($this->connections as $value) {
-                        $service = json_encode(['service' => "Пользователь  присоединился."]);
-                        $value->send($service);
-                    }
                     /**/
+                    Debugger::PrintToFile('-----------$this-$characters', $characters);
+                    /**/
+
 
                     break;
                 case  in_array($character['state'], [
@@ -282,7 +284,52 @@ class Server
                         Constants::STATE_IN_GAME,
                         Constants::STATE_IN_BATTLE
                     ]) && preg_match("/^south$/", $data->message):
-                    $connection->send(json_encode(['for_client' => $this->renderRequestOnMove($character, $rooms, $stateString, 's')]));
+
+//                    $connection->send(json_encode(['for_client' => $this->renderRequestOnMove($character, $rooms, $stateString, 's')]));
+
+                    $message = json_encode(['for_client' => $this->renderRequestOnMove($character, $rooms, $stateString, 's')]);
+
+                    /**/
+                    //TEST todo убрать
+                    if (!empty($rooms[$character['room_inner_id']]['characters'])) {
+                        /**/
+                        Debugger::PrintToFile('--на-юг-есть ли кто', 'есть');
+                        /**/
+                        /**/
+                        Debugger::PrintToFile('--на-юг-есть ли кто2' . $character['name'], $rooms[$character['room_inner_id']]['characters']);
+                        /**/
+
+                        /**/
+                        Debugger::PrintToFile('--на-юг-есть ли кто-$character', $character);
+                        /**/
+
+
+                        foreach ($rooms[$character['room_inner_id']]['characters'] as $characterUuid) {
+                            if ($characterUuid != $character['user']['uuid']) {
+
+                                /**/
+                                Debugger::PrintToFile('--на-юг-есть ли кто3', $characterUuid);
+                                /**/
+
+                                $customMessage = "<span class='basic-color'>{$characters[$character['user']['uuid']]['name']} пришел с севера.</span><br>";
+//                                $customStateString = $this->renderStateString($characters[$character['user']['uuid']], $rooms[$character['room_inner_id']]['exits']);
+                                $customStateString = $this->renderStateString($characters[$characterUuid], $rooms[$characters[$characterUuid]['room_inner_id']]['exits']);
+                                $this->connections[$characters[$characterUuid]['id']]->send(json_encode(['service' => $customMessage . $customStateString]));
+                            }
+                        }
+
+
+                    }
+
+                    /**/
+
+                    /**/
+                    Debugger::PrintToFile('--на-юг-$message', $message);
+                    /**/
+
+                    $connection->send($message);
+
+
                     break;
                 case  in_array($character['state'], [
                         Constants::STATE_IN_GAME,
@@ -335,6 +382,11 @@ STR;
                         Constants::STATE_IN_GAME,
                         Constants::STATE_IN_BATTLE
                     ]) && preg_match("/^см(о)?(т)?$/", $data->message):
+
+                    /**/
+                    Debugger::PrintToFile('------++++++++смотреть---------$rooms', $rooms);
+                    /**/
+
                     $connection->send(json_encode(['for_client' => $this->renderRequestOnLook($character, $rooms)]));
                     break;
 
@@ -904,7 +956,7 @@ STR;
         return $roomName . $roomDescription . $mobileTitle . $stateString;
     }
 
-    public function renderRequestOnMove(&$character, $rooms, $stateString, $direction)
+    public function renderRequestOnMove(&$character, &$rooms, $stateString, $direction)
     {
         /**/
         if (!empty($character['opponent'])) {
@@ -934,6 +986,17 @@ STR;
                     }
                 }
             }
+
+            /**/
+            //todo временно
+            if (empty($rooms[$character['room_inner_id']]['characters'])) {
+                $rooms[$character['room_inner_id']]['characters'] = [];
+            }
+            if (!in_array($character['user']['uuid'], $rooms[$character['room_inner_id']]['characters'])) {
+                $rooms[$character['room_inner_id']]['characters'][] = $character['user']['uuid'];
+            }
+
+            /**/
 
 //            return $stateString . $mobileTitle . $roomName;
             return $roomName . $mobileTitle . $stateString;

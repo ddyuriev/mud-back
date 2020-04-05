@@ -2,6 +2,7 @@
 
 namespace App\Http\Middleware;
 
+use App\Helpers\Debugger;
 use Closure;
 
 class Cors {
@@ -15,7 +16,7 @@ class Cors {
     public function handle($request, Closure $next) {
 
         /**/
-//        Debugger::PrintToFile('Cors', $request->all()');
+        Debugger::PrintToFile('Cors', $request->all());
         /**/
 
         return $next($request)

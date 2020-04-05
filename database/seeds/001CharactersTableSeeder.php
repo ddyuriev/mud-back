@@ -35,6 +35,26 @@ class CharactersTableSeeder extends Seeder
 
         \DB::table('characters')->insert([
             'user_id' => 2,
+            'name' => 'Хармус',
+            'profession_id' => 1,
+            'experience' => 1,
+            'strength' => '11',
+            'dexterity' => '8',
+            'constitution' => '9',
+            'intellect' => '8',
+            'wisdom' => '8',
+            'resistance' => '8',
+            'HP' => 20,
+            'VP' => 70,
+            'coins' => 0,
+            'delevels_count' => 0,
+            'is_active' => 1,
+            'created_at' => \Carbon\Carbon::now(),
+            'updated_at' => \Carbon\Carbon::now(),
+        ]);
+
+        \DB::table('characters')->insert([
+            'user_id' => 3,
             'name' => 'Маг Таша',
             'profession_id' => 2,
             'experience' => 1,

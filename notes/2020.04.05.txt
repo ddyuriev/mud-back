@@ -1,0 +1,85 @@
+\App\Http\Controllers\UserController::profile
+
+...
+        $localIp = $request->ip();
+
+        if ($localIp == env("HOME_IP")) {
+            $user->at_home = true;
+        }
+
+определил адрес клиента:
+192.168.0.102
+
+Тут проще просто из .env брать значение до/работа.
+
+$user->websocket_host = env("WEBSOCKET_HOST");
+
+клиент:
+websocket = new WebSocket(`ws://${user.websocket_host}:8000/?user=${user.email}&color=${user.color_scheme}`);
+OK.
+
+
+---------------------------------------
+Так... cors чтото снова мне мозг поебал.
+Не хотел по ip адресу работать.
+
+В настройках openserver добавил алиас
+192.168.0.104
+=>
+mud-back
+
+OK!
+
+
+----------------------------------------------------
+
+добавил конфиг с js
+
+let appConfig={
+    'mudBack' : '192.168.0.104',
+};
+
+let url = `http://${appConfig.mudBack}/api/profile?token=`;
+
+соот-но создал файлы
+config.js
+config-example.js
+
+на манер .ENV laravel
+
+----------------------------------------------------
+
+Такс... по ip адресу подключаться не получиться пока, потому оба ресурса на одном ip и алиас
+192.168.0.104
+=>
+mud-back
+подумать о разделении портов..
+
+--------------------------------------------------------------------------------------------------------
+
+todo
+
+сейчас самое важное работа $this->connections
+
+
+                    foreach ($this->connections as $value) {
+                        $service = json_encode(['service' => "Пользователь  присоединился."]);
+                        $value->send($service);
+                    }
+
+ТАААААААААК
+у $connection есть id:
+$connection->id
+Так... Думаю, надо при заходе на клетку надо записывать в $rooms id персонажей
+
+
+!!!!!!!!!!!!!!!!!!!!!!!!
+Так.. реализовано пробное оповещение о пришедшем на клетку
+!!!!!!!!!!!!!!!!!!!!!!!!
+
+
+Так...
+$this->connections
+тут и $rooms и $characters
+попробую их убрать.
+
