@@ -1,0 +1,16 @@
+Так... по перемещению:
+Захожу Тэрионом стою.
+Захожу Хармусом, хожу . Тэриону нет сообщений.
+
+вот еп.. добавить чтоли prev_room_id
+
+TODO!!!!!!!!!!!!!
+разобраться с unset в ранее написаном удалении элементов ИБО это работает:
+
+$keyToRemove = array_search($character['user']['uuid'], $rooms[$character['prev_room_inner_id']]['characters']);
+if (isset($keyToRemove)){
+    unset($rooms[$character['prev_room_inner_id']]['characters'][$keyToRemove]);
+}
+
+
+Так... Ну вроде получилось перемещение прикрутить и синхронизовать.

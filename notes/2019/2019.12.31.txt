@@ -1,4 +1,4 @@
-Закрытые вкладки:
+Р—Р°РєСЂС‹С‚С‹Рµ РІРєР»Р°РґРєРё:
 
 -----
 
@@ -7,7 +7,7 @@ https://www.php.net/manual/ru/function.fwrite.php
 fwrite
 (PHP 4, PHP 5, PHP 7)
 
-fwrite — Бинарно-безопасная запись в файл
+fwrite вЂ” Р‘РёРЅР°СЂРЅРѕ-Р±РµР·РѕРїР°СЃРЅР°СЏ Р·Р°РїРёСЃСЊ РІ С„Р°Р№Р»
 
 
 -----
@@ -17,7 +17,7 @@ https://www.php.net/manual/ru/function.stream-socket-client.php
 stream_socket_client
 (PHP 5, PHP 7)
 
-stream_socket_client — Открыть соединение с интернет-сокетом или с доменным сокетом Unix
+stream_socket_client вЂ” РћС‚РєСЂС‹С‚СЊ СЃРѕРµРґРёРЅРµРЅРёРµ СЃ РёРЅС‚РµСЂРЅРµС‚-СЃРѕРєРµС‚РѕРј РёР»Рё СЃ РґРѕРјРµРЅРЅС‹Рј СЃРѕРєРµС‚РѕРј Unix
 
 -----
 
@@ -28,13 +28,13 @@ php worker
 
 https://habr.com/ru/post/300952/
 
-Многопоточные вычисления в PHP: pthreads
+РњРЅРѕРіРѕРїРѕС‚РѕС‡РЅС‹Рµ РІС‹С‡РёСЃР»РµРЅРёСЏ РІ PHP: pthreads
 
 -----
 
 https://www.php.net/manual/ru/class.worker.php
 
-Класс Worker
+РљР»Р°СЃСЃ Worker
 
 -----
 
@@ -72,7 +72,7 @@ https://stackoverflow.com/questions/9760548/php-sockets-vs-streams/30940074
 
 
 google:
-сокеты
+СЃРѕРєРµС‚С‹
 
 -----
 

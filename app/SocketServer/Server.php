@@ -222,6 +222,11 @@ class Server
                     $character['room_inner_id'] = Room::START_ROOM_INNER_ID;
                     $stateString = $this->renderStateString($character, $rooms[Room::START_ROOM_INNER_ID]['exits']);
                     $roomName = "<span class='room-name'>" . $rooms[Room::START_ROOM_INNER_ID]['name'] . "</span><br>";
+
+                    //todo тут потом внимательнее
+//                    if (!in_array($character['user']['uuid'], $rooms[Room::START_ROOM_INNER_ID]['characters'])) {
+                    $rooms[$character['room_inner_id']]['characters'][] = $character['user']['uuid'];
+//                    }
                     $connection->send(json_encode(['for_client' => $helloMessage . $roomName . $stateString]));
 
                     /**/
@@ -265,13 +270,14 @@ class Server
                     /**/
 
                     /**/
-                    Debugger::PrintToFile('-----------$this-connections ', $this->connections);
+//                    Debugger::PrintToFile('-----------$this-connections ', $this->connections);
+//                    Debugger::PrintToFile('-----------$this-$characters', $characters);
+//                    $this->sendMoveNotification('n', $character, $characters, $rooms);
                     /**/
 
                     /**/
-                    Debugger::PrintToFile('-----------$this-$characters', $characters);
+                    $this->sendMoveNotification('n', $character, $characters, $rooms);
                     /**/
-
 
                     break;
                 case  in_array($character['state'], [
@@ -279,6 +285,9 @@ class Server
                         Constants::STATE_IN_BATTLE
                     ]) && preg_match("/^east$/", $data->message):
                     $connection->send(json_encode(['for_client' => $this->renderRequestOnMove($character, $rooms, $stateString, 'e')]));
+                    /**/
+                    $this->sendMoveNotification('e', $character, $characters, $rooms);
+                    /**/
                     break;
                 case  in_array($character['state'], [
                         Constants::STATE_IN_GAME,
@@ -288,46 +297,25 @@ class Server
 //                    $connection->send(json_encode(['for_client' => $this->renderRequestOnMove($character, $rooms, $stateString, 's')]));
 
                     $message = json_encode(['for_client' => $this->renderRequestOnMove($character, $rooms, $stateString, 's')]);
-
-                    /**/
-                    //TEST todo убрать
-                    if (!empty($rooms[$character['room_inner_id']]['characters'])) {
-                        /**/
-                        Debugger::PrintToFile('--на-юг-есть ли кто', 'есть');
-                        /**/
-                        /**/
-                        Debugger::PrintToFile('--на-юг-есть ли кто2' . $character['name'], $rooms[$character['room_inner_id']]['characters']);
-                        /**/
-
-                        /**/
-                        Debugger::PrintToFile('--на-юг-есть ли кто-$character', $character);
-                        /**/
-
-
-                        foreach ($rooms[$character['room_inner_id']]['characters'] as $characterUuid) {
-                            if ($characterUuid != $character['user']['uuid']) {
-
-                                /**/
-                                Debugger::PrintToFile('--на-юг-есть ли кто3', $characterUuid);
-                                /**/
-
-                                $customMessage = "<span class='basic-color'>{$characters[$character['user']['uuid']]['name']} пришел с севера.</span><br>";
-//                                $customStateString = $this->renderStateString($characters[$character['user']['uuid']], $rooms[$character['room_inner_id']]['exits']);
-                                $customStateString = $this->renderStateString($characters[$characterUuid], $rooms[$characters[$characterUuid]['room_inner_id']]['exits']);
-                                $this->connections[$characters[$characterUuid]['id']]->send(json_encode(['service' => $customMessage . $customStateString]));
-                            }
-                        }
-
-
-                    }
-
-                    /**/
-
                     /**/
                     Debugger::PrintToFile('--на-юг-$message', $message);
                     /**/
-
                     $connection->send($message);
+
+                    /**/
+                    //TEST todo убрать
+//                    if (!empty($rooms[$character['room_inner_id']]['characters'])) {
+//                        foreach ($rooms[$character['room_inner_id']]['characters'] as $characterUuid) {
+//                            if ($characterUuid != $character['user']['uuid']) {
+//                                $customMessage = "<span class='basic-color'>{$characters[$character['user']['uuid']]['name']} пришел с севера.</span><br>";
+//                                $customStateString = $this->renderStateString($characters[$characterUuid], $rooms[$characters[$characterUuid]['room_inner_id']]['exits']);
+//                                $this->connections[$characters[$characterUuid]['id']]->send(json_encode(['service' => $customMessage . $customStateString]));
+//                            }
+//                        }
+//                    }
+
+                    $this->sendMoveNotification('s', $character, $characters, $rooms);
+                    /**/
 
 
                     break;
@@ -336,6 +324,9 @@ class Server
                         Constants::STATE_IN_BATTLE
                     ]) && preg_match("/^west$/", $data->message):
                     $connection->send(json_encode(['for_client' => $this->renderRequestOnMove($character, $rooms, $stateString, 'w')]));
+                    /**/
+                    $this->sendMoveNotification('w', $character, $characters, $rooms);
+                    /**/
                     break;
 
                 case  in_array($character['state'], [
@@ -343,6 +334,9 @@ class Server
                         Constants::STATE_IN_BATTLE
                     ]) && preg_match("/^up$/", $data->message):
                     $connection->send(json_encode(['for_client' => $this->renderRequestOnMove($character, $rooms, $stateString, 'u')]));
+                    /**/
+                    $this->sendMoveNotification('u', $character, $characters, $rooms);
+                    /**/
                     break;
 
                 case  in_array($character['state'], [
@@ -350,6 +344,9 @@ class Server
                         Constants::STATE_IN_BATTLE
                     ]) && preg_match("/^down$/", $data->message):
                     $connection->send(json_encode(['for_client' => $this->renderRequestOnMove($character, $rooms, $stateString, 'd')]));
+                    /**/
+                    $this->sendMoveNotification('d', $character, $characters, $rooms);
+                    /**/
                     break;
 
                 //счет
@@ -958,16 +955,16 @@ STR;
 
     public function renderRequestOnMove(&$character, &$rooms, $stateString, $direction)
     {
-        /**/
         if (!empty($character['opponent'])) {
-//            return $stateString . "<span class='basic-color'>Не получится! Вы сражаетесь за свою жизнь!</span><br>";
             return "<span class='basic-color'>Не получится! Вы сражаетесь за свою жизнь!</span><br>" . $stateString;
         }
-        /**/
 
         $nextRoomInnerId = !empty($rooms[$character['room_inner_id']]['exits'][$direction]) ? $rooms[$character['room_inner_id']]['exits'][$direction] : null;
         if ($nextRoomInnerId) {
 
+            /**/
+            $character['prev_room_inner_id'] = $character['room_inner_id'];
+            /**/
             $character['room_inner_id'] = $nextRoomInnerId;
             $room = $rooms[$character['room_inner_id']];
             $stateString = $this->renderStateString($character, $rooms[$nextRoomInnerId]['exits']);
@@ -980,7 +977,6 @@ STR;
 //                }
                 //чтобы отображение на клетке соответствовало порядку в массиве
                 foreach (array_reverse($room['mobiles']) as $mobile) {
-//                    $mobileTitle .= "<span class='mobile-title'>" . $mobiles['title_inside_of_room'] . "</span>";
                     if (!empty($mobile)) {
                         $mobileTitle .= "<span class='mobile-title'>" . $mobile['title_inside_of_room'] . "</span><br>";
                     }
@@ -995,13 +991,39 @@ STR;
             if (!in_array($character['user']['uuid'], $rooms[$character['room_inner_id']]['characters'])) {
                 $rooms[$character['room_inner_id']]['characters'][] = $character['user']['uuid'];
             }
+            //не пашет же..
+//            unset($rooms[$character['prev_room_inner_id']]['characters'][$character['user']['uuid']]);
+//            $characterAuxArray = $rooms[$character['prev_room_inner_id']]['characters'];
+//
+//            /**/
+//            Debugger::PrintToFile('-----------$characterAuxArray1', $characterAuxArray);
+//            Debugger::PrintToFile('-----------$characterAuxArray1', $character['user']['uuid']);
+//            /**/
+//
+//            $keyToRemove = array_search($character['user']['uuid'], $characterAuxArray);
+//            if (isset($keyToRemove)){
+//                unset($characterAuxArray[$keyToRemove]);
+//            }
+//            /**/
+//            Debugger::PrintToFile('-----------$characterAuxArray1', $characterAuxArray);
+//            /**/
+//            $rooms[$character['prev_room_inner_id']]['characters'] = $characterAuxArray;
+//            /**/
 
             /**/
+            $keyToRemove = array_search($character['user']['uuid'], $rooms[$character['prev_room_inner_id']]['characters']);
+            if (isset($keyToRemove)){
+                unset($rooms[$character['prev_room_inner_id']]['characters'][$keyToRemove]);
+            }
+            /**/
 
-//            return $stateString . $mobileTitle . $roomName;
+
             return $roomName . $mobileTitle . $stateString;
         } else {
-//            return $stateString . "<span class='basic-color'>Вы не можете идти в этом направлении...</span>";
+            //???
+            /**/
+            $character['prev_room_inner_id'] = $character['room_inner_id'];
+            /**/
             return "<span class='basic-color'>Вы не можете идти в этом направлении...</span><br>" . $stateString;
         }
     }
@@ -1052,6 +1074,95 @@ STR;
         }
 
         return $isItPossibleToTrain;
+    }
+
+
+    public function sendMoveNotification($direction, $character, $characters, $rooms)
+    {
+
+        /**/
+        Debugger::PrintToFile('sendMoveNotification-$character', $character);
+        /**/
+
+        if (strcasecmp($character['room_inner_id'], $character['prev_room_inner_id']) != 0) {
+
+            if (!empty($rooms[$character['room_inner_id']]['characters'])) {
+
+                switch (true) {
+                    case strcasecmp($direction, 'n') == 0:
+                        $notificationDirection = 'c юга';
+                        break;
+                    case strcasecmp($direction, 'e') == 0:
+                        $notificationDirection = 'c запада';
+                        break;
+                    case strcasecmp($direction, 's') == 0:
+                        $notificationDirection = 'c севера';
+                        break;
+                    case strcasecmp($direction, 'w') == 0:
+                        $notificationDirection = 'c востока';
+                        break;
+                    case strcasecmp($direction, 'u') == 0:
+                        $notificationDirection = 'снизу';
+                        break;
+                    case strcasecmp($direction, 'd') == 0:
+                        $notificationDirection = 'сверху';
+                        break;
+
+                }
+
+                /**/
+//            Debugger::PrintToFile('--на-юг-есть ли кто2' . $character['name'], $rooms[$character['room_inner_id']]['characters']);
+//            Debugger::PrintToFile('--на-юг-есть ли кто-$character', $character);
+                Debugger::PrintToFile('sendMoveNotification-$notificationDirection', $notificationDirection);
+                /**/
+                foreach ($rooms[$character['room_inner_id']]['characters'] as $characterUuid) {
+                    if ($characterUuid != $character['user']['uuid']) {
+                        /**/
+                        Debugger::PrintToFile('--на-юг-есть ли кто3', $characterUuid);
+                        /**/
+                        $customMessage = "<span class='basic-color'>{$characters[$character['user']['uuid']]['name']} пришел {$notificationDirection}.</span><br>";
+                        $customStateString = $this->renderStateString($characters[$characterUuid], $rooms[$characters[$characterUuid]['room_inner_id']]['exits']);
+                        $this->connections[$characters[$characterUuid]['id']]->send(json_encode(['service' => $customMessage . $customStateString]));
+                    }
+                }
+
+            }
+
+            if (!empty($rooms[$character['prev_room_inner_id']]['characters'])/* && $rooms[$character['prev_room_inner_id']] == */) {
+
+                switch (true) {
+                    case strcasecmp($direction, 'n') == 0:
+                        $notificationDirection = 'на север';
+                        break;
+                    case strcasecmp($direction, 'e') == 0:
+                        $notificationDirection = 'на восток';
+                        break;
+                    case strcasecmp($direction, 's') == 0:
+                        $notificationDirection = 'на юг';
+                        break;
+                    case strcasecmp($direction, 'w') == 0:
+                        $notificationDirection = 'на запад';
+                        break;
+                    case strcasecmp($direction, 'u') == 0:
+                        $notificationDirection = 'вверх';
+                        break;
+                    case strcasecmp($direction, 'd') == 0:
+                        $notificationDirection = 'вниз';
+                        break;
+
+                }
+                foreach ($rooms[$character['prev_room_inner_id']]['characters'] as $characterUuid) {
+                    if ($characterUuid != $character['user']['uuid']) {
+                        $customMessage = "<span class='basic-color'>{$characters[$character['user']['uuid']]['name']} ушел {$notificationDirection}.</span><br>";
+                        $customStateString = $this->renderStateString($characters[$characterUuid], $rooms[$characters[$characterUuid]['room_inner_id']]['exits']);
+                        $this->connections[$characters[$characterUuid]['id']]->send(json_encode(['service' => $customMessage . $customStateString]));
+                    }
+                }
+
+            }
+        }
+
+
     }
 
 
