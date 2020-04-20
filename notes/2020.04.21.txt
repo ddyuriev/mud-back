@@ -1,0 +1,14 @@
+none                 websocket://192.168.0.104:8000      4         [ok]
+ErrorException: Undefined index: room_inner_id in C:\projects\mud-back-02\app\SocketServer\Server.php:1161
+Stack trace:
+
+
+ога... воспроизвел багу с
+Глюк с отображением перемещения персонажа самому персу
+Беру второго перса
+сажаю на 1цу(не захожу в игру)
+и нажимаю на стрелочки вперед-назад и тд
+
+
+Предположительно, косяк в  connections id
+$this->connections[$characters[$characterUuid]['id']]->send(json_encode(['service' => $customMessage . $customStateString]));

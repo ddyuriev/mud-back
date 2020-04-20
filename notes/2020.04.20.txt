@@ -1,0 +1,5 @@
+todo
+думаю спрятать 'created_at', 'updated_at':
+https://stackoverflow.com/questions/59341772/how-to-disable-or-remove-updated-at-and-created-at-when-returning-data
+
+Глюк с отображением перемещения персрнажа самому персу таки есть.
