@@ -138,17 +138,25 @@ class Server
                 $activeCharacter = $this->characterService->getActiveCharacterByUserEmail($userEmailFromClient);
 
                 /**/
-                $activeCharacter['connection_id'] = $connection->id;
+                //???? убрать или нет
+//                $activeCharacter['connection_id'] = $connection->id;
                 /**/
 
-                $characters[$activeCharacter['user']['uuid']] = $activeCharacter;
+                //если перелогин то не обновляем массив
+                if (empty($characters[$activeCharacter['user_uuid']])) {
+                    $characters[$activeCharacter['user_uuid']] = $activeCharacter;
+                }
+                //но connection_id обновляем
+                $characters[$activeCharacter['user_uuid']]['connection_id'] = $connection->id;
+                //статус на 1-це
+                $characters[$activeCharacter['user_uuid']]['state'] = Constants::STATE_MENU;
 
                 /**/
                 Debugger::PrintToFile('--------------++++$character', $activeCharacter);
 //                Debugger::PrintToFile('--------------++++onConnect-$users', $users);
 
-//                Debugger::PrintToFile('000000000000------onConnect++++$connection', $connection);
-//                Debugger::PrintToFile('000000000000------onConnect++++$connection_id', $connection->id);
+                Debugger::PrintToFile('000000000000------onConnect++++$connection', $connection);
+                Debugger::PrintToFile('000000000000------onConnect++++$connection_id', $connection->id);
                 /**/
 
 
@@ -162,7 +170,9 @@ class Server
 
 
                 /**/
-                $this->connections[$connection->id] = $connection;
+                //todo заменить на uuid ибо плодятся мертвые конекшны так
+//                $this->connections[$connection->id] = $connection;
+                $this->connections[$activeCharacter['user_uuid']] = $connection;
 //
 //                if (!is_array($result)) {
 //                    $this->logger->save(date("H:i:s"), 'Service', $result); // если пришел не массив - ошибка при запросе
@@ -171,9 +181,10 @@ class Server
 //                    $this->users[$connection->id]->send($result);
 //                }
 //
-                foreach ($this->connections as $value) {
-                    $service = json_encode(['service' => "<span class='contrast-color'>Пользователь $userEmailFromClient присоединился.</span><br>"]);
-                    $value->send($service);
+                foreach ($this->connections as $conn) {
+//                    $service = json_encode(['service' => "<span class='contrast-color'>Пользователь $userEmailFromClient присоединился.</span><br>"]);
+                    $service = json_encode(['for_client' => "<span class='contrast-color'>Пользователь $userEmailFromClient присоединился.</span><br>"]);
+                    $conn->send($service);
                 }
 
             };
@@ -226,8 +237,8 @@ class Server
                     $roomName = "<span class='room-name'>" . $rooms[Room::START_ROOM_INNER_ID]['name'] . "</span><br>";
 
                     //todo тут потом внимательнее
-                    if (empty($rooms[Room::START_ROOM_INNER_ID]['characters']) || !in_array($character['user']['uuid'], $rooms[Room::START_ROOM_INNER_ID]['characters'])) {
-                        $rooms[Room::START_ROOM_INNER_ID]['characters'][] = $character['user']['uuid'];
+                    if (empty($rooms[Room::START_ROOM_INNER_ID]['characters']) || !in_array($character['user_uuid'], $rooms[Room::START_ROOM_INNER_ID]['characters'])) {
+                        $rooms[Room::START_ROOM_INNER_ID]['characters'][] = $character['user_uuid'];
                     }
                     $connection->send(json_encode(['for_client' => $helloMessage . $roomName . $stateString]));
 
@@ -308,8 +319,8 @@ class Server
                     //TEST todo убрать
 //                    if (!empty($rooms[$character['room_inner_id']]['characters'])) {
 //                        foreach ($rooms[$character['room_inner_id']]['characters'] as $characterUuid) {
-//                            if ($characterUuid != $character['user']['uuid']) {
-//                                $customMessage = "<span class='basic-color'>{$characters[$character['user']['uuid']]['name']} пришел с севера.</span><br>";
+//                            if ($characterUuid != $character['user_uuid']) {
+//                                $customMessage = "<span class='basic-color'>{$characters[$character['user_uuid']]['name']} пришел с севера.</span><br>";
 //                                $customStateString = $this->renderStateString($characters[$characterUuid], $rooms[$characters[$characterUuid]['room_inner_id']]['exits']);
 //                                $this->connections[$characters[$characterUuid]['id']]->send(json_encode(['service' => $customMessage . $customStateString]));
 //                            }
@@ -367,7 +378,7 @@ class Server
                     /**/
                     $message = <<<STR
 <span class='basic-color'>Вы </span><span style='color:goldenrod'>{$character['name']}</span><span class='basic-color'>, {$character['profession']['name']} {$character['level']} уровня.</span><br>
-<span class='basic-color'>Ваш E-mail: {$character['user']['email']}</span><br>
+<span class='basic-color'>Ваш E-mail: {$character['user_email']}</span><br>
 <span class='basic-color'>Слава: {$character['glory']}</span><br>
 <span class='basic-color'>Вы имеете <span class='{$conditionClass}'>{$currentHP}</span>(<span class='health-good'>{$maxHP}</span>) единиц здоровья.</span><br>
 <span class='basic-color'>Вы набрали {$character['experience']} опыта и имеете </span><span style='color:gold'>{$character['coins']}</span><span class='basic-color'> монет.</span><br>
@@ -391,7 +402,11 @@ STR;
                     /**/
 
                     /**/
-                    Debugger::PrintToFile('-----------смотреть-$characters', $characters);
+                    Debugger::PrintToFile('-----------смотреть-$this-connections', $this->connections);
+                    /**/
+
+                    /**/
+                    Debugger::PrintToFile('-----------смотреть-count-connections', count($this->connections));
                     /**/
 
 
@@ -616,6 +631,14 @@ STR;
                         $timerId = Timer::add($this->roundOfBattle, function () use ($connection, &$rooms, &$character, $characters, $faker) {
                             $actorDamage = $faker->numberBetween($character['first_damage_min'], $character['first_damage_max']);
 
+                            /**/
+                            Debugger::PrintToFile('--Бой-$actorDamage', $actorDamage);
+                            /**/
+
+                            /**/
+//                            Debugger::PrintToFile('--Бой-this-connections-character-connection_id', $this->connections[$character['connection_id']]->id);
+                            /**/
+
                             if ($actorDamage < $character['opponent']['HP']) {
                                 $damageMessage = Formulas::damageMessage($actorDamage);
                                 $actorMessage = "<span class='actor-attack'>Вы $damageMessage рубанули {$character['opponent']['name']}. ($actorDamage)</span><br>";
@@ -643,19 +666,33 @@ STR;
                                 Debugger::PrintToFile('--Бой-$opponentMessage', $opponentMessage);
                                 /**/
 
-                                $connection->send(json_encode(['for_client' => $actorMessage . $opponentMessage . $this->renderStateString($character, $rooms[$character['room_inner_id']]['exits'])]));
+//                                $connection->send(json_encode(['for_client' => $actorMessage . $opponentMessage . $this->renderStateString($character, $rooms[$character['room_inner_id']]['exits'])]));
+//                                $this->connections[$character['connection_id']]->send(json_encode(['for_client' => $actorMessage . $opponentMessage . $this->renderStateString($character, $rooms[$character['room_inner_id']]['exits'])]));
+//                                $this->connections[$character['user_uuid']]->send(json_encode(['for_client' => $actorMessage . $opponentMessage . $this->renderStateString($character, $rooms[$character['room_inner_id']]['exits'])]));
+                                if ($this->state23($character['state'])) {
+                                    $this->connections[$character['user_uuid']]->send(json_encode(['for_client' => $actorMessage . $opponentMessage . $this->renderStateString($character, $rooms[$character['room_inner_id']]['exits'])]));
+                                }
 
                                 //для остальных на клетке, если есть кто-то еще
                                 if (count($rooms[$character['room_inner_id']]['characters']) > 1) {
                                     $actorMessageToOthers = "<span class='basic-color'> {$character['name']} $damageMessage рубанул {$character['opponent']['name']}.</span><br>";
 
                                     foreach ($rooms[$character['room_inner_id']]['characters'] as $characterUuid) {
-                                        if ($characterUuid != $character['user']['uuid']) {
+                                        if ($characterUuid != $character['user_uuid']) {
                                             //fail!!
 //                                            $this->connections[$characters[$characterUuid]['id']]->send(json_encode(['service' => $actorMessageToOthers . $opponentMessageToOthers . $this->renderStateString($characters[$characterUuid], $rooms[$character['room_inner_id']]['exits'])]));
-                                            $this->connections[$characters[$characterUuid]['connection_id']]->send(json_encode(['service' => $actorMessageToOthers . $opponentMessageToOthers . $this->renderStateString($characters[$characterUuid], $rooms[$character['room_inner_id']]['exits'])]));
+                                            $this->connections[$characterUuid]->send(json_encode(['service' => $actorMessageToOthers . $opponentMessageToOthers . $this->renderStateString($characters[$characterUuid], $rooms[$character['room_inner_id']]['exits'])]));
                                         }
                                     }
+
+                                    /**///todo - УБРАТЬ
+//                                    $this->connections[1]->send(json_encode(['service' => 'пидорас']));
+//                                    $this->connections[2]->send(json_encode(['service' => 'пидорас']));
+//                                    foreach ($this->connections as $conn) {
+//                                        $conn->send(json_encode(['service' => "<span class='contrast-color'>{$conn->id}</span><br>"]));
+//                                    }
+                                    /**/
+
                                 }
 
                             } else {
@@ -684,7 +721,9 @@ STR;
                                 $character['opponent'] = null;
 
 //                                $connection->send(json_encode(['for_client' => $this->renderStateString($character, $rooms[$character['room_inner_id']]['exits']) . $actorMessage]));
-                                $connection->send(json_encode(['for_client' => $actorMessage . $this->renderStateString($character, $rooms[$character['room_inner_id']]['exits'])]));
+//                                $connection->send(json_encode(['for_client' => $actorMessage . $this->renderStateString($character, $rooms[$character['room_inner_id']]['exits'])]));
+//                                $this->connections[$character['connection_id']]->send(json_encode(['for_client' => $actorMessage . $this->renderStateString($character, $rooms[$character['room_inner_id']]['exits'])]));
+                                $this->connections[$character['user_uuid']]->send(json_encode(['for_client' => $actorMessage . $this->renderStateString($character, $rooms[$character['room_inner_id']]['exits'])]));
                                 /**/
                                 Debugger::PrintToFile('--Бой-SaveCharacterJob', $character);
                                 /**/
@@ -719,7 +758,9 @@ STR;
                             $character['fight_timer'] = null;
                         }
 //                        $connection->send(json_encode(['for_client' => $this->renderStateString($character, $rooms[$character['room_inner_id']]['exits']) . $actorMessage]));
-                        $connection->send(json_encode(['for_client' => $actorMessage . $this->renderStateString($character, $rooms[$character['room_inner_id']]['exits'])]));
+//                        $connection->send(json_encode(['for_client' => $actorMessage . $this->renderStateString($character, $rooms[$character['room_inner_id']]['exits'])]));
+//                        $this->connections[$character['connection_id']]->send(json_encode(['for_client' => $actorMessage . $this->renderStateString($character, $rooms[$character['room_inner_id']]['exits'])]));
+                        $this->connections[$character['user_uuid']]->send(json_encode(['for_client' => $actorMessage . $this->renderStateString($character, $rooms[$character['room_inner_id']]['exits'])]));
 
                         /**/
                         Debugger::PrintToFile('--Бой-SaveCharacterJob-1удар', $character);
@@ -784,8 +825,8 @@ STR;
 //                    Debugger::PrintToFile('--USER_INPUT_CREATE_NEW_CHARACTER-', $characters);
                     /**/
 //                    unset($character);
-//                    unset($characters[$character['user']['uuid']]);
-                    $characters[$character['user']['uuid']] = null;
+//                    unset($characters[$character['user_uuid']]);
+                    $characters[$character['user_uuid']] = null;
 //                    $character = [];
 //                    unset($character);
                     /**/
@@ -984,7 +1025,7 @@ STR;
             //тут $char - uuid
             foreach ($room['characters'] as $char) {
                 //себя не показывааем
-                if ($char != $character['user']['uuid']) {
+                if ($char != $character['user_uuid']) {
                     $chars .= "<span class='mobile-title'>" . $characters[$char]['name'] . " стоит тут." . "</span><br>";
                 }
             }
@@ -1029,19 +1070,19 @@ STR;
             if (empty($rooms[$character['room_inner_id']]['characters'])) {
                 $rooms[$character['room_inner_id']]['characters'] = [];
             }
-            if (!in_array($character['user']['uuid'], $rooms[$character['room_inner_id']]['characters'])) {
-                $rooms[$character['room_inner_id']]['characters'][] = $character['user']['uuid'];
+            if (!in_array($character['user_uuid'], $rooms[$character['room_inner_id']]['characters'])) {
+                $rooms[$character['room_inner_id']]['characters'][] = $character['user_uuid'];
             }
             //не пашет же..
-//            unset($rooms[$character['prev_room_inner_id']]['characters'][$character['user']['uuid']]);
+//            unset($rooms[$character['prev_room_inner_id']]['characters'][$character['user_uuid']]);
 //            $characterAuxArray = $rooms[$character['prev_room_inner_id']]['characters'];
 //
 //            /**/
 //            Debugger::PrintToFile('-----------$characterAuxArray1', $characterAuxArray);
-//            Debugger::PrintToFile('-----------$characterAuxArray1', $character['user']['uuid']);
+//            Debugger::PrintToFile('-----------$characterAuxArray1', $character['user_uuid']);
 //            /**/
 //
-//            $keyToRemove = array_search($character['user']['uuid'], $characterAuxArray);
+//            $keyToRemove = array_search($character['user_uuid'], $characterAuxArray);
 //            if (isset($keyToRemove)){
 //                unset($characterAuxArray[$keyToRemove]);
 //            }
@@ -1052,7 +1093,7 @@ STR;
 //            /**/
 
             /**/
-            $keyToRemove = array_search($character['user']['uuid'], $rooms[$character['prev_room_inner_id']]['characters']);
+            $keyToRemove = array_search($character['user_uuid'], $rooms[$character['prev_room_inner_id']]['characters']);
             if (isset($keyToRemove)) {
                 unset($rooms[$character['prev_room_inner_id']]['characters'][$keyToRemove]);
             }
@@ -1165,14 +1206,15 @@ STR;
                 Debugger::PrintToFile('sendMoveNotification-$notificationDirection', $notificationDirection);
                 /**/
                 foreach ($rooms[$character['room_inner_id']]['characters'] as $characterUuid) {
-                    if ($characterUuid != $character['user']['uuid']) {
+                    if ($characterUuid != $character['user_uuid']) {
                         /**/
                         Debugger::PrintToFile('--на-юг-есть ли кто3', $characterUuid);
                         /**/
-                        $customMessage = "<span class='basic-color'>{$characters[$character['user']['uuid']]['name']} пришел {$notificationDirection}.</span><br>";
+                        $customMessage = "<span class='basic-color'>{$characters[$character['user_uuid']]['name']} пришел {$notificationDirection}.</span><br>";
                         $customStateString = $this->renderStateString($characters[$characterUuid], $rooms[$characters[$characterUuid]['room_inner_id']]['exits']);
 //                        $this->connections[$characters[$characterUuid]['id']]->send(json_encode(['service' => $customMessage . $customStateString]));
-                        $this->connections[$characters[$characterUuid]['connection_id']]->send(json_encode(['service' => $customMessage . $customStateString]));
+//                        $this->connections[$characters[$characterUuid]['connection_id']]->send(json_encode(['service' => $customMessage . $customStateString]));
+                        $this->connections[$characterUuid]->send(json_encode(['service' => $customMessage . $customStateString]));
                     }
                 }
 
@@ -1202,18 +1244,26 @@ STR;
 
                 }
                 foreach ($rooms[$character['prev_room_inner_id']]['characters'] as $characterUuid) {
-                    if ($characterUuid != $character['user']['uuid']) {
-                        $customMessage = "<span class='basic-color'>{$characters[$character['user']['uuid']]['name']} ушел {$notificationDirection}.</span><br>";
+                    if ($characterUuid != $character['user_uuid']) {
+                        $customMessage = "<span class='basic-color'>{$characters[$character['user_uuid']]['name']} ушел {$notificationDirection}.</span><br>";
                         $customStateString = $this->renderStateString($characters[$characterUuid], $rooms[$characters[$characterUuid]['room_inner_id']]['exits']);
 //                        $this->connections[$characters[$characterUuid]['id']]->send(json_encode(['service' => $customMessage . $customStateString]));
-                        $this->connections[$characters[$characterUuid]['connection_id']]->send(json_encode(['service' => $customMessage . $customStateString]));
+//                        $this->connections[$characters[$characterUuid]['connection_id']]->send(json_encode(['service' => $customMessage . $customStateString]));
+                        $this->connections[$characterUuid]->send(json_encode(['service' => $customMessage . $customStateString]));
                     }
                 }
 
             }
         }
 
+    }
 
+    private function state23($state)
+    {
+        return in_array($state, [
+            Constants::STATE_IN_GAME,
+            Constants::STATE_IN_BATTLE
+        ]);
     }
 
 

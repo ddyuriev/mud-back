@@ -1,0 +1,37 @@
+
+todo
+In Server.php line 619:
+
+  Undefined index: opponent
+
+
+Это когда в бою перезагружаю страницу.
+
+
+\App\SocketServer\ 144
+                $characters[$activeCharacter['user']['uuid']] = $activeCharacter;
+
+так... нужно
+ $connection->send
+ заменить на $connections[id]
+
+
+$this->connections[$connection->id] = $connection;
+
+
+
+$connection->id
+в $character:
+    [connection_id] => 1
+
+Бля... походу старому коннекшн уже ничего не прислать
+
+
+
+какой собственно вопрос... у меня есть конекшн
+я по таймеру ему шлю данные
+вот я перелогинился.
+как продолжить получать данные
+
+какойто кип алайф
+https://github.com/walkor/Workerman/issues/67

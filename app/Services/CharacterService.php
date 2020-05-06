@@ -153,6 +153,11 @@ class CharacterService
 
         $character['to_next_level'] = Formulas::toNextLevel($character['profession_id'], $character['experience'], $character['level']);
 
+
+        $character['user_uuid'] = $character['user']['uuid'];
+        $character['user_email'] = $character['user']['email'];
+        unset($character['user']);
+
         //не нравится
 //        foreach ($character['stuff'] as $item) {
 //            if ($item['slot_id'] == $item['pivot']['slot_id'] && $item['slot_id'] == Slot::IN_BOTH_HANDS) {
