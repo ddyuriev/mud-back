@@ -170,8 +170,6 @@ class Server
 
 
                 /**/
-                //todo заменить на uuid ибо плодятся мертвые конекшны так
-//                $this->connections[$connection->id] = $connection;
                 $this->connections[$activeCharacter['user_uuid']] = $connection;
 //
 //                if (!is_array($result)) {
@@ -219,7 +217,7 @@ class Server
             //начало
             $character = &$characters[$userUuidFromClient];
 
-            if (in_array($character['state'], [Constants::STATE_IN_GAME, Constants::STATE_IN_BATTLE])) {
+            if ($this->state23($character['state'])) {
                 $stateString = $this->renderStateString($character, $rooms[$character['room_inner_id']]['exits']);
             }
 
@@ -257,7 +255,7 @@ class Server
 //                        Debugger::PrintToFile('---на зашел в игру---maxHP', $character['maxHP']);
 //                            Debugger::PrintToFile('---на зашел в игру---' . time(), $character);
                             /**/
-                            if (in_array($character['state'], [Constants::STATE_IN_GAME, Constants::STATE_IN_BATTLE])) {
+                            if ($this->state23($character['state'])) {
                                 if ($character['HP'] < $character['maxHP']) {
                                     $character['HP']++;
                                 }
@@ -274,10 +272,7 @@ class Server
                 //???
 
                 /*---и в игре, и в бою---*/
-                case in_array($character['state'], [
-                        Constants::STATE_IN_GAME,
-                        Constants::STATE_IN_BATTLE
-                    ]) && preg_match("/^north$/", $data->message):
+                case $this->state23($character['state']) && preg_match("/^north$/", $data->message):
                     $connection->send(json_encode(['for_client' => $this->renderRequestOnMove($character, $characters, $rooms, $stateString, 'n')]));
 
                     /**/
@@ -293,19 +288,13 @@ class Server
                     /**/
 
                     break;
-                case  in_array($character['state'], [
-                        Constants::STATE_IN_GAME,
-                        Constants::STATE_IN_BATTLE
-                    ]) && preg_match("/^east$/", $data->message):
+                case $this->state23($character['state']) && preg_match("/^east$/", $data->message):
                     $connection->send(json_encode(['for_client' => $this->renderRequestOnMove($character, $characters, $rooms, $stateString, 'e')]));
                     /**/
                     $this->sendMoveNotification('e', $character, $characters, $rooms);
                     /**/
                     break;
-                case  in_array($character['state'], [
-                        Constants::STATE_IN_GAME,
-                        Constants::STATE_IN_BATTLE
-                    ]) && preg_match("/^south$/", $data->message):
+                case $this->state23($character['state']) && preg_match("/^south$/", $data->message):
 
 //                    $connection->send(json_encode(['for_client' => $this->renderRequestOnMove($character, $rooms, $stateString, 's')]));
 
@@ -315,62 +304,30 @@ class Server
                     /**/
                     $connection->send($message);
 
-                    /**/
-                    //TEST todo убрать
-//                    if (!empty($rooms[$character['room_inner_id']]['characters'])) {
-//                        foreach ($rooms[$character['room_inner_id']]['characters'] as $characterUuid) {
-//                            if ($characterUuid != $character['user_uuid']) {
-//                                $customMessage = "<span class='basic-color'>{$characters[$character['user_uuid']]['name']} пришел с севера.</span><br>";
-//                                $customStateString = $this->renderStateString($characters[$characterUuid], $rooms[$characters[$characterUuid]['room_inner_id']]['exits']);
-//                                $this->connections[$characters[$characterUuid]['id']]->send(json_encode(['service' => $customMessage . $customStateString]));
-//                            }
-//                        }
-//                    }
-
                     $this->sendMoveNotification('s', $character, $characters, $rooms);
                     /**/
 
 
                     break;
-                case  in_array($character['state'], [
-                        Constants::STATE_IN_GAME,
-                        Constants::STATE_IN_BATTLE
-                    ]) && preg_match("/^west$/", $data->message):
+                case $this->state23($character['state']) && preg_match("/^west$/", $data->message):
                     $connection->send(json_encode(['for_client' => $this->renderRequestOnMove($character, $characters, $rooms, $stateString, 'w')]));
-                    /**/
                     $this->sendMoveNotification('w', $character, $characters, $rooms);
-                    /**/
                     break;
 
-                case  in_array($character['state'], [
-                        Constants::STATE_IN_GAME,
-                        Constants::STATE_IN_BATTLE
-                    ]) && preg_match("/^up$/", $data->message):
+                case $this->state23($character['state']) && preg_match("/^up$/", $data->message):
                     $connection->send(json_encode(['for_client' => $this->renderRequestOnMove($character, $characters, $rooms, $stateString, 'u')]));
-                    /**/
                     $this->sendMoveNotification('u', $character, $characters, $rooms);
-                    /**/
                     break;
 
-                case  in_array($character['state'], [
-                        Constants::STATE_IN_GAME,
-                        Constants::STATE_IN_BATTLE
-                    ]) && preg_match("/^down$/", $data->message):
+                case $this->state23($character['state']) && preg_match("/^down$/", $data->message):
                     $connection->send(json_encode(['for_client' => $this->renderRequestOnMove($character, $characters, $rooms, $stateString, 'd')]));
-                    /**/
                     $this->sendMoveNotification('d', $character, $characters, $rooms);
-                    /**/
                     break;
 
                 //счет
-                case in_array($character['state'], [
-                        Constants::STATE_IN_GAME,
-                        Constants::STATE_IN_BATTLE
-                    ]) && preg_match("/^сч(е)?(т)?$/", $data->message):
-
+                case $this->state23($character['state']) && preg_match("/^сч(е)?(т)?$/", $data->message):
                     $currentHP = $character['HP'];
                     $maxHP = Formulas::getMaxHP($character);
-
                     /**/
                     $conditionEstimateArray = Formulas::getConditionEstimate($character['HP'], $character['maxHP']);
                     //todo нормальный schemeId
@@ -388,10 +345,7 @@ STR;
                     break;
 
                 //смотреть
-                case in_array($character['state'], [
-                        Constants::STATE_IN_GAME,
-                        Constants::STATE_IN_BATTLE
-                    ]) && preg_match("/^см(о)?(т)?$/", $data->message):
+                case $this->state23($character['state']) && preg_match("/^см(о)?(т)?$/", $data->message):
 
                     /**/
                     Debugger::PrintToFile('------++++++++смотреть---------$rooms', $rooms);
@@ -415,10 +369,7 @@ STR;
 
                 //осмотреть
                 //todo не работает
-                case in_array($character['state'], [
-                        Constants::STATE_IN_GAME,
-                        Constants::STATE_IN_BATTLE
-                    ]) && preg_match("/^осм(о)?(т)?(р)?(е)?(т)?(ь)?.*/", $data->message):
+                case $this->state23($character['state']) && preg_match("/^осм(о)?(т)?(р)?(е)?(т)?(ь)?.*/", $data->message):
                     $dataMessage = $data->message;
                     $argument = mb_strtolower(trim(mb_substr($dataMessage, strpos($dataMessage, ' '))));
                     $room = $rooms[$character['room_inner_id']];
@@ -440,10 +391,7 @@ STR;
                     break;
 
                 //умения
-                case in_array($character['state'], [
-                        Constants::STATE_IN_GAME,
-                        Constants::STATE_IN_BATTLE
-                    ]) && preg_match("/^ум(е)?(н)?(и)?(я)?$/", $data->message):
+                case $this->state23($character['state']) && preg_match("/^ум(е)?(н)?(и)?(я)?$/", $data->message):
                     $tableRows = '';
                     if (!empty($character['skills'])) {
                         foreach ($character['skills'] as $skill) {
@@ -481,19 +429,16 @@ STR;
 
                 //todo это очень криво
                 //экипировка
-                case in_array($character['state'], [
-                        Constants::STATE_IN_GAME,
-                        Constants::STATE_IN_BATTLE
-                    ]) && preg_match("/^э(к)?(и)?(п)?(и)?(р)?(о)?(в)?(к)?(а)?$/", $data->message):
+                case $this->state23($character['state']) && preg_match("/^э(к)?(и)?(п)?(и)?(р)?(о)?(в)?(к)?(а)?$/", $data->message):
 
                     $tableRows = '';
                     foreach ($character['stuff'] as $item) {
                         //если слот вещи соответствует слоту чара
-                        if ($item['slot_id'] == $item['pivot']['slot_id']) {
+                        if ($item['dest_slot_id'] == $item['pivot']['slot_id']) {
                             $itemName = mb_strtolower($item['name']);
                             $tableRows .= <<<STR
 <tr>
-  <td width="30%">{$item['slot']['name']}</td>
+  <td width="30%">{$item['dest_slot']['name']}</td>
   <td>{$itemName}</td>
   <td></td>
 </tr>
@@ -520,10 +465,7 @@ STR;
                     break;
 
                 //инвентарь
-                case in_array($character['state'], [
-                        Constants::STATE_IN_GAME,
-                        Constants::STATE_IN_BATTLE
-                    ]) && preg_match("/^и(н)?(в)?(е)?(н)?(т)?(а)?(р)?(ь)?$/", $data->message):
+                case $this->state23($character['state']) && preg_match("/^и(н)?(в)?(е)?(н)?(т)?(а)?(р)?(ь)?$/", $data->message):
 
                     $inventoryItems = $this->characterService->getInventoryItems($character);
 
@@ -537,14 +479,36 @@ STR;
     {$inventoryItemsStr}
 </span>
 STR;
-//                    $connection->send(json_encode(['for_client' => $this->renderStateString($character, $rooms[$character['room_inner_id']]['exits']) . $message]));
+                    $connection->send(json_encode(['for_client' => $message . $this->renderStateString($character, $rooms[$character['room_inner_id']]['exits'])]));
+                    break;
+
+                //вооружиться
+                case $this->state23($character['state']) && preg_match("/^(воо|воор|воору|вооруж|вооружи|вооружит|вооружить|вооружитьс|вооружиться)\s.*/", $data->message):
+
+                    $argument = $this->getArgument($data->message);
+                    if (empty($argument)) {
+                        break;
+                    }
+                    $message = "<span class='basic-color'>{$this->characterService->armWithItem($character, $argument)}</span><br>";
+
+                    $connection->send(json_encode(['for_client' => $message . $this->renderStateString($character, $rooms[$character['room_inner_id']]['exits'])]));
+                    break;
+
+                //снять
+                case $this->state23($character['state']) && preg_match("/^(сн|сня|снят|снять)\s.*/", $data->message):
+
+                    $argument = mb_strtolower(trim(substr($data->message, strpos($data->message, ' '))));
+                    if (empty($argument)) {
+                        break;
+                    }
+                    $message = "<span class='basic-color'>{$this->characterService->takeOffItem($character, $argument)}</span><br>";
+
                     $connection->send(json_encode(['for_client' => $message . $this->renderStateString($character, $rooms[$character['room_inner_id']]['exits'])]));
                     break;
 
                 /**/
                 //трен
                 case ($character['state'] == Constants::STATE_IN_GAME) && preg_match("/^(тр|тре|трен|трени|тренир|трениро|трениров|тренирова|тренироват|тренировать)\s.*/", $data->message):
-
 
                     if (!$this->isItPossibleToTrain($character, $rooms)) {
                         $message = "<span class='basic-color'>Вы можете сделать это только в своей гильдии или у странствующего учителя</span><br>";
@@ -563,10 +527,7 @@ STR;
 
 
                 //ударить
-                case in_array($character['state'], [
-                        Constants::STATE_IN_GAME,
-                        Constants::STATE_IN_BATTLE
-                    ])
+                case $this->state23($character['state'])
 //                    && preg_match("/^у(д)?(а)?(р)?(и)?(т)?(ь)?.*/", $data->message)
                     && preg_match("/^(у|уд|уда|удар|удари|ударит|ударить)\s.*/", $data->message):
 
@@ -581,10 +542,14 @@ STR;
 
                     $dataMessage = $data->message;
                     $argument = mb_strtolower(trim(substr($dataMessage, strpos($dataMessage, ' '))));
+                    if (empty($argument)) {
+                        break;
+                    }
                     $room = $rooms[$character['room_inner_id']];
 
                     /**/
                     Debugger::PrintToFile('--Бой-$argument', $argument);
+                    Debugger::PrintToFile('--Бой-$argument-mb_strlen', mb_strlen($argument));
                     /**/
 
                     /**/
@@ -685,14 +650,6 @@ STR;
                                         }
                                     }
 
-                                    /**///todo - УБРАТЬ
-//                                    $this->connections[1]->send(json_encode(['service' => 'пидорас']));
-//                                    $this->connections[2]->send(json_encode(['service' => 'пидорас']));
-//                                    foreach ($this->connections as $conn) {
-//                                        $conn->send(json_encode(['service' => "<span class='contrast-color'>{$conn->id}</span><br>"]));
-//                                    }
-                                    /**/
-
                                 }
 
                             } else {
@@ -777,10 +734,7 @@ STR;
                     break;
 
                 //просто ENTER
-                case in_array($character['state'], [
-                        Constants::STATE_IN_GAME,
-                        Constants::STATE_IN_BATTLE
-                    ]) && $data->message == 'empty_string':
+                case $this->state23($character['state']) && $data->message == 'empty_string':
                     $connection->send(json_encode(['for_client' => $stateString]));
 
                     break;
@@ -792,7 +746,8 @@ STR;
                     $character['state'] = Constants::STATE_IN_GAME;
                     unset($character['opponent']);
 
-                    $connection->send(json_encode(['for_client' => $this->renderStateString($character, $rooms[$character['room_inner_id']]['exits']) . "<span class='contrast-color'>Вы решили остановить кровопролитие...</span>"]));
+//                    $connection->send(json_encode(['for_client' => $this->renderStateString($character, $rooms[$character['room_inner_id']]['exits']) . "<span class='contrast-color'>Вы решили остановить кровопролитие...</span>"]));
+                    $connection->send(json_encode(['for_client' => "<span class='contrast-color'>Вы решили остановить кровопролитие...</span><br>" . $this->renderStateString($character, $rooms[$character['room_inner_id']]['exits'])]));
 
                     break;
 
@@ -1264,6 +1219,11 @@ STR;
             Constants::STATE_IN_GAME,
             Constants::STATE_IN_BATTLE
         ]);
+    }
+
+    private function getArgument($dataMessage)
+    {
+        return mb_strtolower(trim(substr($dataMessage, strpos($dataMessage, ' '))));
     }
 
 

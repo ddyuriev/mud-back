@@ -9,6 +9,7 @@ use App\Jobs\ExampleJob;
 use App\Jobs\SaveCharacterJob;
 use App\Room;
 use App\Services\CharacterService;
+use App\Slot;
 use App\Stuff;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Queue;
@@ -39,6 +40,29 @@ class CharacterController extends Controller
 
     public function userInput(Request $request)
     {
+        $character = $this->characterService->getActiveCharacterByUserEmail('therion@mail.ru');
+//        $character = $this->characterService->getActiveCharacterByUserEmail('dimas@mail.ru');
+
+//        return array_filter($character['stuff'], function ($v) {
+//            return $v['pivot']['slot_id'] != Slot::IN_INVENTORY;
+//        });
+
+        return array_column(array_column($character['stuff'], 'pivot'), 'slot_id');
+
+
+        /*-----------------------------------*/
+
+        $stuff = Stuff::with('slot')->first();
+        return $stuff;
+
+        $slot = Slot::with('stuff')->first();
+        return $slot;
+
+        $character = Character::with('stuff.slot')->first();
+//        dd($character);
+
+        return $character;
+        /*-----------------------------------*/
 
         $character = $this->characterService->getActiveCharacterByUserEmail('therion@mail.ru');
         dd($character);

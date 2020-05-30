@@ -328,6 +328,40 @@ STR
         /* end Зона дерево*/
 
 
+        //start Зона небольшой поселок
+        \DB::table('mobiles')->insert([
+            'room_id' => $this->getRoomIdByRoomInnerId('3_021'),
+            'mobile_inner_id' => '3_021_001',
+            'name' => 'Хозяин таверны',
+            'pseudonyms' => <<<STR
+{
+    "0": "хозяин",
+    "1": "таверн"
+}
+STR
+            ,
+            'title_inside_of_room' => 'Хозяин таверны стоит за барной стойкой',
+            'description' => 'Хозяин таверны подозрительно смотрит на вас. Попробуйте с ним поговорить, возможно это будет полезно.',
+            'profession_id' => 1,
+            'level' => 14,
+            'strength' => 10,
+            'dexterity' => 10,
+            'constitution' => 10,
+            'intellect' => 10,
+            'wisdom' => 10,
+            'size' => 1,
+            'HP' => 90,
+            'maxHP' => 90,
+            'damage_min' => 5,
+            'damage_max' => 11,
+            'attacks_number' => 1,
+            'coins' => 0,
+            'exp_reward' => 400000,
+        ]);
+
+        //end Зона небольшой поселок
+
+
     }
 
     protected function getRoomIdByRoomInnerId($roomInnerId)

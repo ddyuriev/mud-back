@@ -18,7 +18,7 @@ class CreateStuffTable extends Migration
             $table->string('name');
             $table->smallInteger('value_level')->unsigned();
             $table->integer('stuff_type_id')->unsigned();
-            $table->smallInteger('slot_id')->unsigned();
+            $table->smallInteger('dest_slot_id')->unsigned();
             $table->smallInteger('material_id')->unsigned()->default(1);
             $table->smallInteger('damage_min')->unsigned()->default(0);
             $table->smallInteger('damage_max')->unsigned()->default(0);

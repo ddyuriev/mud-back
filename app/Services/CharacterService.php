@@ -94,7 +94,7 @@ class CharacterService
             'user',
             'profession',
             'skills.professions',
-            'stuff.slot'
+            'stuff.dest_slot'
         ])->where('is_active', true)->first()->toArray();
 
         //прическа скилов
@@ -334,6 +334,14 @@ class CharacterService
         });
     }
 
+    public function getClothedItems($character)
+    {
+        return array_filter($character['stuff'], function ($v) {
+            return $v['pivot']['slot_id'] != Slot::IN_INVENTORY;
+        });
+    }
+
+
     public function setDamageRange(&$character)
     {
         $bothHandsWeapon = array_filter($character['stuff'], function ($v) {
@@ -439,5 +447,68 @@ class CharacterService
         $character['maxHP'] = Formulas::getMaxHP($character);
     }
 
+    public function takeOffItem(&$character, $itemName)
+    {
+        foreach ($character['stuff'] as $key => $stuff) {
+
+            /**/
+//            Debugger::PrintToFile('--takeOffItem', mb_stripos($itemName, $stuff['name']));
+            /**/
+
+            if ($stuff['pivot']['slot_id'] != Slot::IN_INVENTORY && (mb_stripos($stuff['name'], $itemName) !== false)) {
+                if (count($this->getInventoryItems($character)) < 3) {
+//                    $stuff['slot_id'] = Slot::IN_INVENTORY;
+                    $character['stuff'][$key]['pivot']['slot_id'] = Slot::IN_INVENTORY;
+                    $this->setDamageRange($character);
+                    return "Вы прекратили использовать " . mb_strtolower($stuff['name']) . ".";
+                } else {
+                    return "Инвентарь полон.";
+                }
+            }
+        }
+        return "Вы не используете '" . mb_strtolower($itemName) . "'.";
+    }
+
+
+    public function armWithItem(&$character, $item)
+    {
+
+        /**/
+//            Debugger::PrintToFile('--takeOffItem', mb_stripos($itemName, $stuff['name']));
+        /**/
+
+        $inventoryItems = $this->getInventoryItems($character);
+        foreach ($inventoryItems as $key => $inventoryItem) {
+            if (mb_stripos($inventoryItem['name'], $item) !== false) {
+                $stuffKey = $key;
+                $stuff = $inventoryItem;
+                break;
+            }
+        }
+        if (empty($stuff)) {
+            return "У вас нет '" . $item . "'.";
+        }
+
+        //Получить массив занятых слотов
+        $occupiedSlotsIds = array_column(array_column($character['stuff'], 'pivot'), 'slot_id');
+
+        if (!in_array($stuff['dest_slot_id'], $occupiedSlotsIds)) {
+            $stuff['pivot']['character_id'] = $character['id'];
+            $stuff['pivot']['stuff_id'] = $stuff['id'];
+            $stuff['pivot']['slot_id'] = $stuff['dest_slot_id'];
+            $character['stuff'][$stuffKey] = $stuff;
+            //todo заменить на const
+            if ($stuff['stuff_type_id'] == 1) {
+                $this->setDamageRange($character);
+            }
+            return $stuff['name'] . " теперь у вас " . $stuff['dest_slot']['name'];
+
+            //todo заменить на const
+        } elseif ($stuff['stuff_type_id'] == 1) {
+            return "Вы уже вооружены чем-то.";
+        } else {
+            return "У вас уже что-то " . $stuff['dest_slot']['name'];
+        }
+    }
 
 }

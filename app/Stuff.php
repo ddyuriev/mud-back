@@ -10,9 +10,11 @@ class Stuff extends Model
     
     public $timestamps = false;
 
-    public function slot()
+    public function dest_slot()
     {
-        return $this->belongsTo('App\Slot');
+//        return $this->belongsTo('App\Slot');
+//        return $this->belongsTo('App\Slot', 'id', 'dest_slot_id');
+        return $this->belongsTo('App\Slot', 'dest_slot_id', 'id');
     }
 
 }

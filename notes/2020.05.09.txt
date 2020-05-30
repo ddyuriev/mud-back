@@ -1,0 +1,9 @@
+заменяю
+
+in_array($character['state'], [
+                        Constants::STATE_IN_GAME,
+                        Constants::STATE_IN_BATTLE
+                    ])
+
+на
+                $this->state23($character['state']);

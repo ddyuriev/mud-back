@@ -12,4 +12,12 @@ class Slot extends Model
     const IN_INVENTORY = 4;
 
     public $timestamps = false;
+
+    /*todo test*/
+//    public function stuff()
+//    {
+//        return $this->hasMany('App\Stuff', 'dest_slot_id', 'id');
+//    }
+
+    /**/
 }
