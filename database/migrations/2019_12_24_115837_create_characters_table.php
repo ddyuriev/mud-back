@@ -33,7 +33,7 @@ class CreateCharactersTable extends Migration
             $table->integer('coins')->default(0);
             $table->smallInteger('delevels_count')->default(0);
             $table->tinyInteger('is_active')->default(0);
-            $table->smallInteger('trainings_count')->default(1);
+            $table->smallInteger('trainings_count')->default(0);
             $table->smallInteger('training_level')->default(1);
             $table->integer('glory')->default(0);
             $table->timestamps();

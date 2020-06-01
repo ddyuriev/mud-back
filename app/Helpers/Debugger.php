@@ -20,7 +20,8 @@ class Debugger
         $debugFile = "$debugDir/$fileName.txt";
         file_exists($debugFile) ? $current = file_get_contents($debugFile) : $current = null;
         $results = print_r($variable, true);
-        !empty($current) ? $current .= "\r\n" . $results : $current .= "\n" . $results;
+//        !empty($current) ? $current .= "\r\n" . $results : $current .= "\n" . $results;
+        !empty($current) ? $current .= "\r\n" . $results : $current .= $results;
         file_put_contents($debugFile, $current);
     }
 }

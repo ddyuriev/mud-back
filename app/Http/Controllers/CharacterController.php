@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Character;
+use App\Helpers\Constants;
 use App\Helpers\Debugger;
 use App\Helpers\Formulas;
 use App\Jobs\ExampleJob;
@@ -40,6 +41,39 @@ class CharacterController extends Controller
 
     public function userInput(Request $request)
     {
+        $name = 'лов';
+        $parameter = 0;
+
+        switch (true) {
+            case mb_strpos('сила', $name) == 0:
+                $parameter = Constants::STRENGTH;
+                break;
+            case mb_strpos('ловкость', $name) == 0:
+                $parameter = Constants::DEXTERITY;
+                break;
+//            case $number > 200 && $number <= 300:
+//                $parameter = Constants::CONSTITUTION;
+//                break;
+//            case $number > 300 && $number <= 400:
+//                $parameter = Constants::INTELLECT;
+//                break;
+//            case $number > 400 && $number <= 500:
+//                $parameter = Constants::WISDOM;
+//                break;
+//            case $number > 500 && $number <= 600:
+//                $parameter = Constants::RESISTANCE;
+//                break;
+        }
+                dd($parameter);
+
+//        dd(mb_strlen('ло'));
+//        dd(strpos('сила', 'си'));
+//        dd(strpos('телос', 'ло'));
+//        dd(mb_strpos('телос', 'ло'));
+        dd(mb_strpos('ловкость', 'ло'));
+        /*-----------------------------------*/
+
+
         $character = $this->characterService->getActiveCharacterByUserEmail('therion@mail.ru');
 //        $character = $this->characterService->getActiveCharacterByUserEmail('dimas@mail.ru');
 

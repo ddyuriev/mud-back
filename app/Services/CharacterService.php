@@ -25,55 +25,6 @@ class CharacterService
      */
     public function getActiveCharacterByUserEmail($email)
     {
-//        return Character::with('user')->where('user.email', $email)->first();
-
-//        return Character::whereHas('user', function ($query) use ($email) {
-//            $query->where('email', $email);
-//        })->where('is_active', true)->first();
-
-//        return Character::with('user')->whereHas('user', function ($query) use ($email) {
-//            $query->where('email', $email);
-//        })->where('is_active', true)->first();
-
-
-//        $character = Character::with(['user' => function ($query) use ($email) {
-//            $query->where('email', $email);
-//        }, 'profession', 'skills'])->where('is_active', true)->first();
-
-        //OK
-//        $character = Character::with(['user' => function ($query) use ($email) {
-//            $query->where('email', $email);
-//        }, 'profession', 'skills.learning_level_check'])->where('is_active', true)->first();
-
-//        $character = Character::with(['user' => function ($query) use ($email) {
-//            $query->where('email', $email);
-//        }, 'profession', 'skills.learning_level_check', 'stuff'])->where('is_active', true)->first();
-
-        /*-----------OK - текущий...*/
-//        $character = Character::with(['user' => function ($query) use ($email) {
-//            $query->where('email', $email);
-//        }, 'profession', 'skills.learning_level_check', 'stuff.slot'])->where('is_active', true)->first()->toArray();
-
-//        $character = Character::with([
-//            'user' => function ($query) use ($email) {
-//                $query->where('email', $email);
-//            },
-//            'profession',
-//            'skills.professions',
-//            'stuff.slot'
-//        ])->where('is_active', true)->first()->toArray();
-
-//        $character = Character::with([
-//            'user' => function ($query) use ($email) {
-//                $query->where('email', '=', $email);
-//            },
-//            'profession.professionSkills',
-////            'skills',
-////            'skills.professions',
-//            'stuff.slot'
-//        ])->where('is_active', true)->first()->toArray();
-
-
         /*2020.04.02*/
 
         //professionSkills - косяк
@@ -272,11 +223,12 @@ class CharacterService
         $character->coins = 0;
         $character->delevels_count = 0;
         $character->is_active = 1;
+        $character->trainings_count = 25;
 
         switch ($character->profession_id) {
             case Profession::WARRIOR_ID:
-                $character->constitution = $character->constitution + 2;
-                $character->strength = $character->strength + 1;
+                $character->strength = $character->strength + 2;
+                $character->constitution = $character->constitution + 1;
                 break;
             case Profession::WIZARD_ID:
                 $character->intellect = $character->intellect + 2;
@@ -284,11 +236,12 @@ class CharacterService
                 break;
         }
 
-        $firstLevelUpCharacteristic = $this->getLevelUpCharacteristic($character->profession_id);
+//        $firstLevelUpCharacteristic = $this->getLevelUpCharacteristic($character->profession_id);
+        $firstLevelUpCharacteristic = Formulas::getLevelUpCharacteristic($character->profession_id);
 
         switch ($firstLevelUpCharacteristic) {
             case Constants::STRENGTH:
-                $character->strength = $character->strength + 1;
+                $character->strength++;
                 break;
             case Constants::DEXTERITY:
                 $character->dexterity++;
@@ -363,8 +316,8 @@ class CharacterService
             $character['first_damage_min'] = $bothHandsWeapon['damage_min'];
             $character['first_damage_max'] = $bothHandsWeapon['damage_max'];
         } elseif (!empty($rightHandWeapon)) {
-            $character['first_damage_min'] = $rightHandWeapon['damage_min'];
-            $character['first_damage_max'] = $rightHandWeapon['damage_max'];
+            $character['first_damage_min'] = $rightHandWeapon['damage_min'] + Formulas::strengthDamageBonus($character['strength']);
+            $character['first_damage_max'] = $rightHandWeapon['damage_max'] + Formulas::strengthDamageBonus($character['strength']);
         } else {
             $character['first_damage_min'] = 1;
             $character['first_damage_max'] = 1;
@@ -375,60 +328,6 @@ class CharacterService
         }
     }
 
-    public function getLevelUpCharacteristic($professionId)
-    {
-        $faker = Factory::create();
-        $number = $faker->numberBetween(1, 600);
-        $parameter = 0;
-
-        switch ($professionId) {
-            case Profession::WARRIOR_ID:
-                switch ($number) {
-                    case $number <= 110:
-                        $parameter = Constants::STRENGTH;
-                        break;
-                    case $number > 110 && $number <= 220:
-                        $parameter = Constants::DEXTERITY;
-                        break;
-                    case $number > 220 && $number <= 330:
-                        $parameter = Constants::CONSTITUTION;
-                        break;
-                    case $number > 330 && $number <= 415:
-                        $parameter = Constants::INTELLECT;
-                        break;
-                    case $number > 415 && $number <= 500:
-                        $parameter = Constants::WISDOM;
-                        break;
-                    case $number > 500 && $number <= 600:
-                        $parameter = Constants::RESISTANCE;
-                        break;
-                }
-                break;
-            case Profession::WIZARD_ID:
-                switch ($number) {
-                    case $number <= 100:
-                        $parameter = Constants::STRENGTH;
-                        break;
-                    case $number > 100 && $number <= 200:
-                        $parameter = Constants::DEXTERITY;
-                        break;
-                    case $number > 200 && $number <= 300:
-                        $parameter = Constants::CONSTITUTION;
-                        break;
-                    case $number > 300 && $number <= 400:
-                        $parameter = Constants::INTELLECT;
-                        break;
-                    case $number > 400 && $number <= 500:
-                        $parameter = Constants::WISDOM;
-                        break;
-                    case $number > 500 && $number <= 600:
-                        $parameter = Constants::RESISTANCE;
-                        break;
-                }
-                break;
-        }
-        return $parameter;
-    }
 
     public function setLevelUpCharacteristic(&$character)
     {
@@ -439,13 +338,66 @@ class CharacterService
 //            $character->$characteristicName++;
 //        }
         if ($character['level'] <= 25 && $character['level'] > $character['training_level']) {
-            $levelUpCharacteristic = $this->getLevelUpCharacteristic($character['profession_id']);
+            $levelUpCharacteristic = Formulas::getLevelUpCharacteristic($character['profession_id']);
             $characteristicName = Constants::getCharacteristicNameByConstant($levelUpCharacteristic);
             $character[$characteristicName]++;
             $character['training_level'] = $character['level'];
         }
         $character['maxHP'] = Formulas::getMaxHP($character);
     }
+
+    public function increaseCharacteristic(&$character, $characteristicName)
+    {
+        if (mb_strlen($characteristicName) < 3) {
+            return <<<STR
+Вы можете тренировать:
+ силу         : 0 из 5
+ интеллект    : 0 из 5
+ мудрость     : 0 из 5
+ телосложение : 0 из 5
+ ловкость     : 0 из 5
+ стойкость    : 0 из 5
+Цена поднятия характеристики на единицу - 1 тренировка
+У вас в наличие {$character['trainings_count']} тренировок
+STR;
+        }
+
+        $characteristicId = Formulas::getCharacteristicByName($characteristicName);
+        $characteristicFullName = Constants::getCharacteristicNameByConstant($characteristicId);
+
+        if ($character['trainings_count'] > 0 && $characteristicId > 0) {
+
+            switch (true) {
+                case $characteristicId == Constants::STRENGTH:
+                    $character['strength']++;
+                    $this->setDamageRange($character);
+                    break;
+                case $characteristicId == Constants::DEXTERITY:
+                    $character['dexterity']++;
+                    break;
+                case $characteristicId == Constants::CONSTITUTION:
+                    $character['constitution']++;
+                    $character['maxHP'] = Formulas::getMaxHP($character);
+                    break;
+                case $characteristicId == Constants::INTELLECT:
+                    $character['intellect']++;
+                    break;
+                case $characteristicId == Constants::WISDOM:
+                    $character['wisdom']++;
+                    break;
+                case $characteristicId == Constants::RESISTANCE:
+                    $character['response']++;
+                    break;
+            }
+
+            $character['trainings_count']--;
+            return "Вы потренировали {$characteristicFullName} за одну тренировку";
+        } elseif ($character['trainings_count'] == 0) {
+            return "Вам нужны тренировки, чтобы тренировать {$characteristicFullName}";
+        }
+
+    }
+
 
     public function takeOffItem(&$character, $itemName)
     {

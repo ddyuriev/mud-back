@@ -336,6 +336,28 @@ class Server
                     $message = <<<STR
 <span class='basic-color'>Вы </span><span style='color:goldenrod'>{$character['name']}</span><span class='basic-color'>, {$character['profession']['name']} {$character['level']} уровня.</span><br>
 <span class='basic-color'>Ваш E-mail: {$character['user_email']}</span><br>
+<table class="equipment">
+  <tbody>
+    <tr>
+      <td width="10%">Сила</td>
+      <td width="5%">:&nbsp;&nbsp;&nbsp;{$character['strength']}</td>
+      <td width="10%">Интеллект</td>
+      <td width="50%">:&nbsp;&nbsp;&nbsp;{$character['intellect']}</td>
+    </tr>
+    <tr>
+      <td width="10%">Телосложение</td>
+      <td width="5%">:&nbsp;&nbsp;&nbsp;{$character['constitution']}</td>
+      <td width="10%">Мудрость</td>
+      <td width="50%">:&nbsp;&nbsp;&nbsp;{$character['wisdom']}</td>
+    </tr>
+    <tr>
+      <td width="10%">Ловкость</td>
+      <td width="5%">:&nbsp;&nbsp;&nbsp;{$character['dexterity']}</td>
+      <td width="10%">Стойкость</td>
+      <td width="50%">:&nbsp;&nbsp;&nbsp;{$character['resistance']}</td>
+    </tr>
+  </tbody>
+</table>
 <span class='basic-color'>Слава: {$character['glory']}</span><br>
 <span class='basic-color'>Вы имеете <span class='{$conditionClass}'>{$currentHP}</span>(<span class='health-good'>{$maxHP}</span>) единиц здоровья.</span><br>
 <span class='basic-color'>Вы набрали {$character['experience']} опыта и имеете </span><span style='color:gold'>{$character['coins']}</span><span class='basic-color'> монет.</span><br>
@@ -517,7 +539,8 @@ STR;
                         $dataMessage = $data->message;
                         $argument = mb_strtolower(trim(substr($dataMessage, strpos($dataMessage, ' '))));
 
-                        $message = "<span class='basic-color'>Вы потренировали силу за 1 тренировку.</span><br>";
+                        $trainingMessage = $this->characterService->increaseCharacteristic($character, $argument);
+                        $message = "<span class='basic-color'>$trainingMessage</span><br>";
                         $connection->send(json_encode(['for_client' => $message . $stateString]));
                     }
 
@@ -527,9 +550,7 @@ STR;
 
 
                 //ударить
-                case $this->state23($character['state'])
-//                    && preg_match("/^у(д)?(а)?(р)?(и)?(т)?(ь)?.*/", $data->message)
-                    && preg_match("/^(у|уд|уда|удар|удари|ударит|ударить)\s.*/", $data->message):
+                case $this->state23($character['state']) && preg_match("/^(у|уд|уда|удар|удари|ударит|ударить)\s.*/", $data->message):
 
 
                     /**/

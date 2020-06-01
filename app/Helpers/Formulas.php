@@ -3,6 +3,7 @@
 namespace App\Helpers;
 
 use App\Profession;
+use Faker\Factory;
 
 /**
  * Class Debugger
@@ -344,45 +345,45 @@ class Formulas
         $relativeCondition = $HP / $maxHP;
 
         $conditionEstimate = '';
-        $colorLevel        = 0;
+        $colorLevel = 0;
         switch (true) {
             case $relativeCondition > 1:
                 $conditionEstimate = "Божественное";
-                $colorLevel        = 0;
+                $colorLevel = 0;
                 break;
             case $relativeCondition == 1:
                 $conditionEstimate = "Великолепное";
-                $colorLevel        = 1;
+                $colorLevel = 1;
                 break;
             case $relativeCondition >= 0.83 && $relativeCondition < 1 :
                 $conditionEstimate = "О.Хорошее";
-                $colorLevel        = 1;
+                $colorLevel = 1;
                 break;
             case $relativeCondition >= 0.64 && $relativeCondition < 0.83 :
                 $conditionEstimate = "Хорошее";
-                $colorLevel        = 1;
+                $colorLevel = 1;
                 break;
             case $relativeCondition >= 0.47 && $relativeCondition < 0.64 :
                 $conditionEstimate = "Среднее";
-                $colorLevel        = 2;
+                $colorLevel = 2;
                 break;
             case $relativeCondition >= 0.30 && $relativeCondition < 0.47 :
                 $conditionEstimate = "Плохое";
-                $colorLevel        = 2;
+                $colorLevel = 2;
                 break;
             case $relativeCondition >= 0.13 && $relativeCondition < 0.30 :
                 $conditionEstimate = "О.Плохое";
-                $colorLevel        = 3;
+                $colorLevel = 3;
                 break;
             case $relativeCondition < 0.13 :
                 $conditionEstimate = "Ужасное";
-                $colorLevel        = 3;
+                $colorLevel = 3;
                 break;
         }
 
         return [
             'condition_estimate' => $conditionEstimate,
-            'color_level'        => $colorLevel
+            'color_level' => $colorLevel
         ];
     }
 
@@ -419,5 +420,93 @@ class Formulas
 //
 //    }
 
+
+    public static function getLevelUpCharacteristic($professionId)
+    {
+        $faker = Factory::create();
+        $number = $faker->numberBetween(1, 600);
+        $parameter = 0;
+
+        switch ($professionId) {
+            case Profession::WARRIOR_ID:
+                switch ($number) {
+                    case $number <= 110:
+                        $parameter = Constants::STRENGTH;
+                        break;
+                    case $number > 110 && $number <= 220:
+                        $parameter = Constants::DEXTERITY;
+                        break;
+                    case $number > 220 && $number <= 330:
+                        $parameter = Constants::CONSTITUTION;
+                        break;
+                    case $number > 330 && $number <= 415:
+                        $parameter = Constants::INTELLECT;
+                        break;
+                    case $number > 415 && $number <= 500:
+                        $parameter = Constants::WISDOM;
+                        break;
+                    case $number > 500 && $number <= 600:
+                        $parameter = Constants::RESISTANCE;
+                        break;
+                }
+                break;
+            case Profession::WIZARD_ID:
+                switch ($number) {
+                    case $number <= 100:
+                        $parameter = Constants::STRENGTH;
+                        break;
+                    case $number > 100 && $number <= 200:
+                        $parameter = Constants::DEXTERITY;
+                        break;
+                    case $number > 200 && $number <= 300:
+                        $parameter = Constants::CONSTITUTION;
+                        break;
+                    case $number > 300 && $number <= 400:
+                        $parameter = Constants::INTELLECT;
+                        break;
+                    case $number > 400 && $number <= 500:
+                        $parameter = Constants::WISDOM;
+                        break;
+                    case $number > 500 && $number <= 600:
+                        $parameter = Constants::RESISTANCE;
+                        break;
+                }
+                break;
+        }
+        return $parameter;
+    }
+
+    public static function getCharacteristicByName($name)
+    {
+        /**/
+        Debugger::PrintToFile('---+++++++++++++++++++++++++++getCharacteristicByName', $name);
+        /**/
+
+        $parameter = 0;
+
+        switch (true) {
+            case mb_strpos('сила', $name) == 0:
+                $parameter = Constants::STRENGTH;
+                break;
+            case mb_strpos('ловкость', $name) == 0:
+                $parameter = Constants::DEXTERITY;
+                break;
+//            case $number > 200 && $number <= 300:
+//                $parameter = Constants::CONSTITUTION;
+//                break;
+//            case $number > 300 && $number <= 400:
+//                $parameter = Constants::INTELLECT;
+//                break;
+//            case $number > 400 && $number <= 500:
+//                $parameter = Constants::WISDOM;
+//                break;
+//            case $number > 500 && $number <= 600:
+//                $parameter = Constants::RESISTANCE;
+//                break;
+        }
+//        $parameter = Constants::STRENGTH;
+
+        return $parameter;
+    }
 
 }
