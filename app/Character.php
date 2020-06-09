@@ -9,6 +9,11 @@ class Character extends Model
 
     const LEVEL_1_WARRIOR = 0;
 
+    protected $casts = [
+//        'parameters_increase' => 'object',
+        'parameters_increase' => 'array'
+    ];
+
     public function user()
     {
         return $this->belongsTo('App\User');

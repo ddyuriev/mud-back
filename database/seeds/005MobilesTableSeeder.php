@@ -113,217 +113,169 @@ STR
 
         /* start Зона дерево*/
 
-        \DB::table('mobiles')->insert([
-            'room_id' => $this->getRoomIdByRoomInnerId('2_130'),
-            'mobile_inner_id' => '2_130_001',
-            'name' => 'Маленький комарик',
-            'pseudonyms' => <<<STR
+        foreach ($roomInnerIds = ['2_130', '2_132', '2_140', '2_150'] as $roomInnerId) {
+            \DB::table('mobiles')->insert([
+                'room_id' => $this->getRoomIdByRoomInnerId($roomInnerId),
+                'mobile_inner_id' => '2_130_001',
+                'name' => 'Маленький комарик',
+                'pseudonyms' => <<<STR
 {
     "0": "Маленький",
     "1": "комарик"
 }
 STR
-            ,
-            'title_inside_of_room' => 'Маленький комарик жужжит над ухом в ожидании мощного удара.',
-            'description' => 'Этот комар достойный соперник. ',
-            'profession_id' => 1,
-            'level' => 1,
-            'strength' => '1',
-            'dexterity' => '1',
-            'constitution' => '1',
-            'intellect' => '1',
-            'wisdom' => '1',
-            'size' => 1,
-            'HP' => 10,
-            'maxHP' => 10,
-            'damage_min' => 1,
-            'damage_max' => 1,
-            'attacks_number' => 1,
-            'coins' => 0,
-            'exp_reward' => 20000,
-        ]);
+                ,
+                'title_inside_of_room' => 'Маленький комарик жужжит над ухом в ожидании мощного удара.',
+                'description' => 'Этот комар достойный соперник.',
+                'profession_id' => 1,
+                'level' => 1,
+                'strength' => '1',
+                'dexterity' => '1',
+                'constitution' => '1',
+                'intellect' => '1',
+                'wisdom' => '1',
+                'size' => 1,
+                'HP' => 10,
+                'maxHP' => 10,
+                'damage_min' => 1,
+                'damage_max' => 1,
+                'attacks_number' => 1,
+                'coins' => 0,
+                'exp_reward' => 20000,
+            ]);
+        }
 
-        \DB::table('mobiles')->insert([
-            'room_id' => $this->getRoomIdByRoomInnerId('2_130'),
-            'mobile_inner_id' => '2_130_002',
-            'name' => 'Крохотная мушка',
-            'pseudonyms' => <<<STR
+
+        foreach ($roomInnerIds = ['2_130', '2_132'] as $roomInnerId) {
+            \DB::table('mobiles')->insert([
+                'room_id' => $this->getRoomIdByRoomInnerId($roomInnerId),
+                'mobile_inner_id' => '2_130_002',
+                'name' => 'Крохотная мушка',
+                'pseudonyms' => <<<STR
 {
     "0": "крохотная",
     "1": "мушка"
 }
 STR
-            ,
-            'title_inside_of_room' => 'Крохотная мушка сидит на листке',
-            'description' => 'Вы едва заметили эту крохотную мушку. Можно попробловать на ней свои силы',
-            'profession_id' => 1,
-            'level' => 1,
-            'strength' => '1',
-            'dexterity' => '1',
-            'constitution' => '1',
-            'intellect' => '1',
-            'wisdom' => '1',
-            'size' => 1,
-            'HP' => 10,
-            'maxHP' => 10,
-            'damage_min' => 1,
-            'damage_max' => 1,
-            'attacks_number' => 1,
-            'coins' => 0,
-            'exp_reward' => 20000,
-        ]);
+                ,
+                'title_inside_of_room' => 'Крохотная мушка сидит на листке',
+                'description' => 'Вы едва заметили эту крохотную мушку. Можно попробловать на ней свои силы',
+                'profession_id' => 1,
+                'level' => 1,
+                'strength' => '1',
+                'dexterity' => '1',
+                'constitution' => '1',
+                'intellect' => '1',
+                'wisdom' => '1',
+                'size' => 1,
+                'HP' => 10,
+                'maxHP' => 10,
+                'damage_min' => 1,
+                'damage_max' => 1,
+                'attacks_number' => 1,
+                'coins' => 0,
+                'exp_reward' => 20000,
+            ]);
+        }
 
 
-        \DB::table('mobiles')->insert([
-            'room_id' => $this->getRoomIdByRoomInnerId('2_131'),
-            'mobile_inner_id' => '2_130_003',
-            'name' => 'Небольшой паучок',
-            'pseudonyms' => <<<STR
+        foreach ($roomInnerIds = ['2_131', '2_140'] as $roomInnerId) {
+            \DB::table('mobiles')->insert([
+                'room_id' => $this->getRoomIdByRoomInnerId($roomInnerId),
+                'mobile_inner_id' => '2_130_003',
+                'name' => 'Небольшой паучок',
+                'pseudonyms' => <<<STR
 {
     "0": "небольшой",
     "1": "паучок"
 }
 STR
-            ,
-            'title_inside_of_room' => 'Небольшой паучок притаился меж веток',
-            'description' => 'Маленький паучок сплет маленькую паутину. Сегодня добычи у него небыло',
-            'profession_id' => 1,
-            'level' => 1,
-            'strength' => '1',
-            'dexterity' => '1',
-            'constitution' => '1',
-            'intellect' => '1',
-            'wisdom' => '1',
-            'size' => 1,
-            'HP' => 10,
-            'maxHP' => 10,
-            'damage_min' => 1,
-            'damage_max' => 1,
-            'attacks_number' => 1,
-            'coins' => 0,
-            'exp_reward' => 20000,
-        ]);
+                ,
+                'title_inside_of_room' => 'Небольшой паучок притаился меж веток',
+                'description' => 'Маленький паучок сплел паутинку. Сегодня добычи у него небыло',
+                'profession_id' => 1,
+                'level' => 1,
+                'strength' => '1',
+                'dexterity' => '1',
+                'constitution' => '1',
+                'intellect' => '1',
+                'wisdom' => '1',
+                'size' => 1,
+                'HP' => 10,
+                'maxHP' => 10,
+                'damage_min' => 1,
+                'damage_max' => 1,
+                'attacks_number' => 1,
+                'coins' => 0,
+                'exp_reward' => 20000,
+            ]);
+        }
 
-        \DB::table('mobiles')->insert([
-            'room_id' => $this->getRoomIdByRoomInnerId('2_131'),
-            'mobile_inner_id' => '2_130_004',
-            'name' => 'Небольшой жучок',
-            'pseudonyms' => <<<STR
+
+        foreach ($roomInnerIds = ['2_131', '2_150', '2_150'] as $roomInnerId) {
+            \DB::table('mobiles')->insert([
+                'room_id' => $this->getRoomIdByRoomInnerId($roomInnerId),
+                'mobile_inner_id' => '2_130_004',
+                'name' => 'Небольшой жучок',
+                'pseudonyms' => <<<STR
 {
     "0": "небольшой",
     "1": "жучок"
 }
 STR
-            ,
-            'title_inside_of_room' => 'Небольшой жучок ползет по ветке',
-            'description' => 'Крохотный жучок смотрит на вас с холодной яростью. Он готов атаковать. Или показалось?',
-            'profession_id' => 1,
-            'level' => 1,
-            'strength' => '1',
-            'dexterity' => '1',
-            'constitution' => '1',
-            'intellect' => '1',
-            'wisdom' => '1',
-            'size' => 1,
-            'HP' => 10,
-            'maxHP' => 10,
-            'damage_min' => 1,
-            'damage_max' => 1,
-            'attacks_number' => 1,
-            'coins' => 0,
-            'exp_reward' => 20000,
-        ]);
+                ,
+                'title_inside_of_room' => 'Небольшой жучок ползет по ветке',
+                'description' => 'Крохотный жучок смотрит на вас с холодной яростью. Он готов атаковать. Или показалось?',
+                'profession_id' => 1,
+                'level' => 1,
+                'strength' => '1',
+                'dexterity' => '1',
+                'constitution' => '1',
+                'intellect' => '1',
+                'wisdom' => '1',
+                'size' => 1,
+                'HP' => 10,
+                'maxHP' => 10,
+                'damage_min' => 1,
+                'damage_max' => 1,
+                'attacks_number' => 1,
+                'coins' => 0,
+                'exp_reward' => 20000,
+            ]);
+        }
 
 
-        \DB::table('mobiles')->insert([
-            'room_id' => $this->getRoomIdByRoomInnerId('2_132'),
-            'mobile_inner_id' => '2_130_001',
-            'name' => 'Маленький комарик',
-            'pseudonyms' => <<<STR
-{
-    "0": "Маленький",
-    "1": "комарик"
-}
-STR
-            ,
-            'title_inside_of_room' => 'Маленький комарик жужжит над ухом в ожидании мощного удара.',
-            'description' => 'Этот комар достойный соперник. ',
-            'profession_id' => 1,
-            'level' => 1,
-            'strength' => '1',
-            'dexterity' => '1',
-            'constitution' => '1',
-            'intellect' => '1',
-            'wisdom' => '1',
-            'size' => 1,
-            'HP' => 10,
-            'maxHP' => 10,
-            'damage_min' => 1,
-            'damage_max' => 1,
-            'attacks_number' => 1,
-            'coins' => 0,
-            'exp_reward' => 20000,
-        ]);
-
-        \DB::table('mobiles')->insert([
-            'room_id' => $this->getRoomIdByRoomInnerId('2_132'),
-            'mobile_inner_id' => '2_130_002',
-            'name' => 'Крохотная мушка',
-            'pseudonyms' => <<<STR
-{
-    "0": "крохотная",
-    "1": "мушка"
-}
-STR
-            ,
-            'title_inside_of_room' => 'Крохотная мушка сидит на листке',
-            'description' => 'Вы едва заметили эту крохотную мушку. Можно попробовать на ней свои силы',
-            'profession_id' => 1,
-            'level' => 1,
-            'strength' => '1',
-            'dexterity' => '1',
-            'constitution' => '1',
-            'intellect' => '1',
-            'wisdom' => '1',
-            'size' => 1,
-            'HP' => 10,
-            'maxHP' => 10,
-            'damage_min' => 1,
-            'damage_max' => 1,
-            'attacks_number' => 1,
-            'coins' => 0,
-            'exp_reward' => 20000,
-        ]);
-
-        \DB::table('mobiles')->insert([
-            'room_id' => $this->getRoomIdByRoomInnerId('2_140'),
-            'mobile_inner_id' => '2_140_001',
-            'name' => 'Бабочка-капустница',
-            'pseudonyms' => <<<STR
+        foreach ($roomInnerIds = ['2_140', '2_130', '2_132'] as $roomInnerId) {
+            \DB::table('mobiles')->insert([
+                'room_id' => $this->getRoomIdByRoomInnerId($roomInnerId),
+                'mobile_inner_id' => '2_140_001',
+                'name' => 'Бабочка-капустница',
+                'pseudonyms' => <<<STR
 {
     "0": "бабочка",
     "1": "капустница"
 }
 STR
-            ,
-            'title_inside_of_room' => 'Бабочка-капустница пархает тут. Наверное, что-то замышляет.',
-            'description' => 'Похоже, что это обычная бабочка-капустница.',
-            'profession_id' => 1,
-            'level' => 1,
-            'strength' => '1',
-            'dexterity' => '1',
-            'constitution' => '1',
-            'intellect' => '1',
-            'wisdom' => '1',
-            'size' => 1,
-            'HP' => 11,
-            'maxHP' => 11,
-            'damage_min' => 1,
-            'damage_max' => 2,
-            'attacks_number' => 1,
-            'coins' => 0,
-            'exp_reward' => 40000,
-        ]);
+                ,
+                'title_inside_of_room' => 'Бабочка-капустница пархает тут. Наверное, что-то замышляет.',
+                'description' => 'Похоже, что это обычная бабочка-капустница.',
+                'profession_id' => 1,
+                'level' => 1,
+                'strength' => '1',
+                'dexterity' => '1',
+                'constitution' => '1',
+                'intellect' => '1',
+                'wisdom' => '1',
+                'size' => 1,
+                'HP' => 11,
+                'maxHP' => 11,
+                'damage_min' => 1,
+                'damage_max' => 2,
+                'attacks_number' => 1,
+                'coins' => 0,
+                'exp_reward' => 40000,
+            ]);
+        }
 
         /* end Зона дерево*/
 

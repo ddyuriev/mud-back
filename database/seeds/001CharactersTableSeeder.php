@@ -83,20 +83,20 @@ class CharactersTableSeeder extends Seeder
 
 
         /*-------------------------------------------------------------------*/
-        \DB::table('character_skill')->insert([
-            'character_id' => 1,
-            'skill_id' => \App\Skill::LONG_SWORDS_ID,
-            'value' => 7,
-        ]);
-        \DB::table('character_skill')->insert([
-            'character_id' => 1,
-            'skill_id' => \App\Skill::SHORT_BLADES_ID,
-            'value' => 2,
-        ]);
-        \DB::table('character_skill')->insert([
-            'character_id' => 1,
-            'skill_id' => \App\Skill::KNOCK_DOWN_ID,
-            'value' => 1,
-        ]);
+//        \DB::table('character_skill')->insert([
+//            'character_id' => 1,
+//            'skill_id' => \App\Skill::LONG_SWORDS_ID,
+//            'value' => 7,
+//        ]);
+//        \DB::table('character_skill')->insert([
+//            'character_id' => 1,
+//            'skill_id' => \App\Skill::SHORT_BLADES_ID,
+//            'value' => 2,
+//        ]);
+//        \DB::table('character_skill')->insert([
+//            'character_id' => 1,
+//            'skill_id' => \App\Skill::KNOCK_DOWN_ID,
+//            'value' => 1,
+//        ]);
     }
 }

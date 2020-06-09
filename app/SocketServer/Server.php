@@ -530,7 +530,7 @@ STR;
 
                 /**/
                 //трен
-                case ($character['state'] == Constants::STATE_IN_GAME) && preg_match("/^(тр|тре|трен|трени|тренир|трениро|трениров|тренирова|тренироват|тренировать)\s.*/", $data->message):
+                case ($character['state'] == Constants::STATE_IN_GAME) && preg_match("/^(тр|тре|трен|трени|тренир|трениро|трениров|тренирова|тренироват|тренировать)\s?.*/", $data->message):
 
                     if (!$this->isItPossibleToTrain($character, $rooms)) {
                         $message = "<span class='basic-color'>Вы можете сделать это только в своей гильдии или у странствующего учителя</span><br>";
@@ -539,7 +539,30 @@ STR;
                         $dataMessage = $data->message;
                         $argument = mb_strtolower(trim(substr($dataMessage, strpos($dataMessage, ' '))));
 
+//                        echo '$argument';
+//                        echo $argument;
+
                         $trainingMessage = $this->characterService->increaseCharacteristic($character, $argument);
+                        $message = "<span class='basic-color'>$trainingMessage</span><br>";
+                        $connection->send(json_encode(['for_client' => $message . $stateString]));
+                    }
+
+                    break;
+
+                case ($character['state'] == Constants::STATE_IN_GAME) && preg_match("/^(уч|учи|учит|учить)\s?.*/", $data->message):
+
+                    /**/
+                    Debugger::PrintToFile('--УЧИТЬ', 'sdf');
+                    /**/
+
+                    if (!$this->isItPossibleToTrain($character, $rooms)) {
+                        $message = "<span class='basic-color'>Вы можете сделать это только в своей гильдии или у странствующего учителя</span><br>";
+                        $connection->send(json_encode(['for_client' => $message . $stateString]));
+                    } else {
+                        $dataMessage = $data->message;
+                        $argument = mb_strtolower(trim(substr($dataMessage, strpos($dataMessage, ' '))));
+
+                        $trainingMessage = $this->characterService->learnSkill($character, $argument);
                         $message = "<span class='basic-color'>$trainingMessage</span><br>";
                         $connection->send(json_encode(['for_client' => $message . $stateString]));
                     }
@@ -1026,15 +1049,20 @@ STR;
             $character['room_inner_id'] = $nextRoomInnerId;
             $room = $rooms[$character['room_inner_id']];
             $stateString = $this->renderStateString($character, $rooms[$nextRoomInnerId]['exits']);
-            $roomName = "<span class='room-name'>" . $rooms[$nextRoomInnerId]['name'] . "</span><br>";
+//            $roomName = "<span class='room-name'>" . $rooms[$nextRoomInnerId]['name'] . "</span><br>";
+            /**/
+            $roomName = "<span class='room-name'>" . $rooms[$nextRoomInnerId]['name'] . ' => ' .$rooms[$nextRoomInnerId]['inner_id'] . "</span><br>";
+            /**/
             $mobileTitle = '';
 
             if (!empty($room['mobiles'])) {
-//                foreach ($room['mobiles'] as $mobiles) {
-//                    $mobileTitle .= "<span class='mobile-title'>" . $mobiles['title_inside_of_room'] . "</span>";
+//                foreach (array_reverse($room['mobiles']) as $mobile) {
+//                    if (!empty($mobile)) {
+//                        $mobileTitle .= "<span class='mobile-title'>" . $mobile['title_inside_of_room'] . "</span><br>";
+//                    }
 //                }
                 //чтобы отображение на клетке соответствовало порядку в массиве
-                foreach (array_reverse($room['mobiles']) as $mobile) {
+                foreach ($room['mobiles'] as $mobile) {
                     if (!empty($mobile)) {
                         $mobileTitle .= "<span class='mobile-title'>" . $mobile['title_inside_of_room'] . "</span><br>";
                     }

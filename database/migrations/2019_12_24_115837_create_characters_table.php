@@ -35,6 +35,9 @@ class CreateCharactersTable extends Migration
             $table->tinyInteger('is_active')->default(0);
             $table->smallInteger('trainings_count')->default(0);
             $table->smallInteger('training_level')->default(1);
+            /**/
+            $table->json('parameters_increase')->nullable();
+            /**/
             $table->integer('glory')->default(0);
             $table->timestamps();
         });

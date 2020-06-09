@@ -7,6 +7,7 @@ use App\Character;
 use App\Helpers\Constants;
 use App\Helpers\Debugger;
 use App\Helpers\Formulas;
+use App\Jobs\SaveCharacterJob;
 use App\Profession;
 use App\Slot;
 use Faker\Factory;
@@ -161,6 +162,12 @@ class CharacterService
             $character->$key = $parameter;
         }
 
+        /**/
+        if (!empty($characterArray['parameters_increase'])) {
+//            $character['parameters_increase'] = json_encode($characterArray['parameters_increase']);
+            $character['parameters_increase'] = $characterArray['parameters_increase'];
+        }
+        /**/
         $character->save();
     }
 
@@ -348,16 +355,32 @@ class CharacterService
 
     public function increaseCharacteristic(&$character, $characteristicName)
     {
-        if (mb_strlen($characteristicName) < 3) {
+        echo $characteristicName . "\r\n";
+
+        echo mb_strlen($characteristicName) . "\r\n";
+
+//        dd(mb_strlen($characteristicName) < 3);
+
+        echo mb_strpos('тренировать', $characteristicName) . "\r\n";
+
+//        dd(mb_strpos('тренировать', $characteristicName) === 0);
+
+//        dd($character['parameters_increase']['strength']);
+
+        $increaseStrangePossibility = !empty($character['parameters_increase']['strength']) ? 5 - $character['parameters_increase']['strength'] : 5;
+
+
+        //если меньше трех символов аргумент или ввод без пробела
+        if (mb_strlen($characteristicName) < 3 || mb_strpos('тренировать', $characteristicName) === 0) {
             return <<<STR
-Вы можете тренировать:
- силу         : 0 из 5
- интеллект    : 0 из 5
- мудрость     : 0 из 5
- телосложение : 0 из 5
- ловкость     : 0 из 5
- стойкость    : 0 из 5
-Цена поднятия характеристики на единицу - 1 тренировка
+Вы можете тренировать:<br>
+ силу         : {$increaseStrangePossibility}<br>
+ интеллект    : 0 из 5<br>
+ мудрость     : 0 из 5<br>
+ телосложение : 0 из 5<br>
+ ловкость     : 0 из 5<br>
+ стойкость    : 0 из 5<br>
+Цена поднятия характеристики на единицу - 1 тренировка<br>
 У вас в наличие {$character['trainings_count']} тренировок
 STR;
         }
@@ -371,6 +394,12 @@ STR;
                 case $characteristicId == Constants::STRENGTH:
                     $character['strength']++;
                     $this->setDamageRange($character);
+//                    !empty($character['parameters_increase']['strength']) ? $character['parameters_increase']['strength']++ : $character['parameters_increase']['strength'] = 1;
+//                    !empty($character['parameters_increase']['strength']) ? $character['parameters_increase']['strength']++ : $c = 1;
+                    !empty($character['parameters_increase']['strength']) ? $character['parameters_increase']['strength']++ : $character['parameters_increase']['strength'] = 1;
+                    /**/
+//                    dispatch(new SaveCharacterJob($character));
+                    /**/
                     break;
                 case $characteristicId == Constants::DEXTERITY:
                     $character['dexterity']++;
@@ -391,6 +420,10 @@ STR;
             }
 
             $character['trainings_count']--;
+
+            /**/
+            dispatch(new SaveCharacterJob($character));
+            /**/
             return "Вы потренировали {$characteristicFullName} за одну тренировку";
         } elseif ($character['trainings_count'] == 0) {
             return "Вам нужны тренировки, чтобы тренировать {$characteristicFullName}";
@@ -461,6 +494,31 @@ STR;
         } else {
             return "У вас уже что-то " . $stuff['dest_slot']['name'];
         }
+    }
+
+    public function learnSkill(&$character, $argument)
+    {
+        $skillsAvailableToLearn = Profession::with('available_skills')->where('id', $character['profession_id'])->get()->toArray()[0]['available_skills'];
+
+        /**/
+        Debugger::PrintToFile('--$skillsAvailableToLearn', $skillsAvailableToLearn);
+        /**/
+
+        /**/
+        Debugger::PrintToFile('--skillsAvailableToLearn-argument', $argument);
+        /**/
+
+        if (empty($argument) || $argument == 'все') {
+            $skillsAvailableToLearnMessage = "Вы можете учить:";
+            foreach ($skillsAvailableToLearn as $skillAvailableToLearn) {
+                if ($skillAvailableToLearn['pivot']['learning_level'] <= $character['level']) {
+                    $skillsAvailableToLearnMessage .= '<br>' . $skillAvailableToLearn['name'];
+                }
+            }
+        }
+
+        return $skillsAvailableToLearnMessage;
+
     }
 
 }
