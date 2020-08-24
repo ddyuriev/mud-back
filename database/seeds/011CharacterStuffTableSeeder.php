@@ -34,5 +34,13 @@ class CharacterStuffTableSeeder extends Seeder
             'created_at' => \Carbon\Carbon::now(),
             'updated_at' => \Carbon\Carbon::now(),
         ]);
+
+        \DB::table('character_stuff')->insert([
+            'character_id' => 1,
+            'stuff_id' => '5',
+            'slot_id' => \App\Slot::IN_INVENTORY,
+            'created_at' => \Carbon\Carbon::now(),
+            'updated_at' => \Carbon\Carbon::now(),
+        ]);
     }
 }

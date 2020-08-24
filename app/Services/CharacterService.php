@@ -110,19 +110,10 @@ class CharacterService
         $character['user_email'] = $character['user']['email'];
         unset($character['user']);
 
-        //не нравится
-//        foreach ($character['stuff'] as $item) {
-//            if ($item['slot_id'] == $item['pivot']['slot_id'] && $item['slot_id'] == Slot::IN_BOTH_HANDS) {
-//                $character['first_damage_min'] = $item['damage_min'];
-//                $character['first_damage_max'] = $item['damage_max'];
-//            } else if ($item['slot_id'] == $item['pivot']['slot_id'] && $item['slot_id'] == Slot::IN_RIGHT_HAND) {
-//                $character['first_damage_min'] = $item['damage_min'];
-//                $character['first_damage_max'] = $item['damage_max'];
-//            } else if ($item['slot_id'] == $item['pivot']['slot_id'] && $item['slot_id'] == Slot::IN_LEFT_HAND) {
-//                $character['second_damage_min'] = $item['damage_min'];
-//                $character['second_damage_max'] = $item['damage_max'];
-//            }
-//        }
+
+        /**/
+        $this->setParametersWithAffects($character);
+        /**/
 
         /**/
         $this->setDamageRange($character);
@@ -230,7 +221,7 @@ class CharacterService
         $character->coins = 0;
         $character->delevels_count = 0;
         $character->is_active = 1;
-        $character->trainings_count = 25;
+        $character->trainings_count = 5;
 
         switch ($character->profession_id) {
             case Profession::WARRIOR_ID:
@@ -392,10 +383,14 @@ STR;
 
             switch (true) {
                 case $characteristicId == Constants::STRENGTH:
+                    if ($character['strength'] == 28) {
+
+                    }
                     $character['strength']++;
                     $this->setDamageRange($character);
 //                    !empty($character['parameters_increase']['strength']) ? $character['parameters_increase']['strength']++ : $character['parameters_increase']['strength'] = 1;
 //                    !empty($character['parameters_increase']['strength']) ? $character['parameters_increase']['strength']++ : $c = 1;
+
                     !empty($character['parameters_increase']['strength']) ? $character['parameters_increase']['strength']++ : $character['parameters_increase']['strength'] = 1;
                     /**/
 //                    dispatch(new SaveCharacterJob($character));
@@ -521,4 +516,13 @@ STR;
 
     }
 
+    public function setParametersWithAffects(&$character)
+    {
+        $character['strength_affected'] = $character['strength'];
+        $character['dexterity_affected']= $character['dexterity'];
+        $character['constitution_affected']= $character['constitution'];
+        $character['intellect_affected']= $character['intellect'];
+        $character['wisdom_affected']= $character['wisdom'];
+        $character['resistance_affected']= $character['resistance'];
+    }
 }

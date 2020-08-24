@@ -130,9 +130,9 @@ class Server
         * При новом подключении уведомляем пользователей, достаем старые сообщения, пишем в лог
         *
         */
-        $this->ws_worker->onConnect = function ($connection/*, $data/**/) use (&$users, &$characters) {
+        $this->ws_worker->onConnect = function ($connection/*, $data/**/) use (&$users, &$characters, &$rooms) {
 
-            $connection->onWebSocketConnect = function ($connection) use (&$users, &$characters) {
+            $connection->onWebSocketConnect = function ($connection) use (&$users, &$characters, &$rooms) {
 
                 $userEmailFromClient = $_GET['user'];
                 $activeCharacter = $this->characterService->getActiveCharacterByUserEmail($userEmailFromClient);
@@ -150,6 +150,24 @@ class Server
                 $characters[$activeCharacter['user_uuid']]['connection_id'] = $connection->id;
                 //статус на 1-це
                 $characters[$activeCharacter['user_uuid']]['state'] = Constants::STATE_MENU;
+                //возвращаем в комнату прибывания, если она была
+//                $roomsCharacters = array_column($rooms, 'characters');
+
+                /**/
+                Debugger::PrintToFile('&&--------------++++characters', $characters);
+
+                $roomsCharacters = array_column(array_values($rooms), 'characters', 'inner_id');
+                /**/
+                Debugger::PrintToFile('&&--------------++++$roomsCharacters', $roomsCharacters);
+
+                foreach ($roomsCharacters as $roomInnerId => $someCharacters) {
+                    if (in_array($activeCharacter['user_uuid'], $someCharacters)) {
+//                        $activeCharacter['room_inner_id'] = $roomInnerId;
+                        echo "есть";
+                        $characters[$activeCharacter['user_uuid']]['room_inner_id'] = $roomInnerId;
+                        break;
+                    }
+                }
 
                 /**/
                 Debugger::PrintToFile('--------------++++$character', $activeCharacter);
@@ -230,13 +248,19 @@ class Server
                 case $character['state'] == Constants::STATE_MENU && $data->message == 1:
                     $helloMessage = "<br><span class='contrast-color'>Приветствуем вас на бескрайних просторах мира чудес и приключений!</span><br>";
                     $character['state'] = Constants::STATE_IN_GAME;
-                    $character['room_inner_id'] = Room::START_ROOM_INNER_ID;
-                    $stateString = $this->renderStateString($character, $rooms[Room::START_ROOM_INNER_ID]['exits']);
-                    $roomName = "<span class='room-name'>" . $rooms[Room::START_ROOM_INNER_ID]['name'] . "</span><br>";
+//                    $character['room_inner_id'] = Room::START_ROOM_INNER_ID;
+                    $character['room_inner_id'] = !empty($character['room_inner_id']) ? $character['room_inner_id'] : Room::START_ROOM_INNER_ID;
+//                    $stateString = $this->renderStateString($character, $rooms[Room::START_ROOM_INNER_ID]['exits']);
+                    $stateString = $this->renderStateString($character, $rooms[$character['room_inner_id']]['exits']);
+//                    $roomName = "<span class='room-name'>" . $rooms[Room::START_ROOM_INNER_ID]['name'] . "</span><br>";
+                    $roomName = "<span class='room-name'>" . $rooms[$character['room_inner_id']]['name'] . "</span><br>";
 
                     //todo тут потом внимательнее
-                    if (empty($rooms[Room::START_ROOM_INNER_ID]['characters']) || !in_array($character['user_uuid'], $rooms[Room::START_ROOM_INNER_ID]['characters'])) {
-                        $rooms[Room::START_ROOM_INNER_ID]['characters'][] = $character['user_uuid'];
+//                    if (empty($rooms[Room::START_ROOM_INNER_ID]['characters']) || !in_array($character['user_uuid'], $rooms[Room::START_ROOM_INNER_ID]['characters'])) {
+//                        $rooms[Room::START_ROOM_INNER_ID]['characters'][] = $character['user_uuid'];
+//                    }
+                    if (empty($rooms[$character['room_inner_id']]['characters']) || !in_array($character['user_uuid'], $rooms[$character['room_inner_id']]['characters'])) {
+                        $rooms[$character['room_inner_id']]['characters'][] = $character['user_uuid'];
                     }
                     $connection->send(json_encode(['for_client' => $helloMessage . $roomName . $stateString]));
 
@@ -777,6 +801,13 @@ STR;
                     /**/
                     break;
 
+                //сбить
+                case $this->state23($character['state']) && preg_match("/^(сб|сби|сбит|сбить|)\s.*/", $data->message):
+                    $connection->send(json_encode(['for_client' => "Тут будут башить"]));
+                    $connection->send(json_encode(['for_client' => $stateString]));
+                    break;
+
+
                 //просто ENTER
                 case $this->state23($character['state']) && $data->message == 'empty_string':
                     $connection->send(json_encode(['for_client' => $stateString]));
@@ -1051,7 +1082,7 @@ STR;
             $stateString = $this->renderStateString($character, $rooms[$nextRoomInnerId]['exits']);
 //            $roomName = "<span class='room-name'>" . $rooms[$nextRoomInnerId]['name'] . "</span><br>";
             /**/
-            $roomName = "<span class='room-name'>" . $rooms[$nextRoomInnerId]['name'] . ' => ' .$rooms[$nextRoomInnerId]['inner_id'] . "</span><br>";
+            $roomName = "<span class='room-name'>" . $rooms[$nextRoomInnerId]['name'] . ' => ' . $rooms[$nextRoomInnerId]['inner_id'] . "</span><br>";
             /**/
             $mobileTitle = '';
 

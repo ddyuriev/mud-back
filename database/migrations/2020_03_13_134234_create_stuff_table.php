@@ -27,6 +27,13 @@ class CreateStuffTable extends Migration
             $table->smallInteger('armor')->unsigned()->default(0);
             $table->smallInteger('armor_class')->unsigned()->default(0);
             $table->smallInteger('weight')->unsigned()->default(1);
+
+            $table->smallInteger('strength_bonus')->unsigned()->default(0);
+            $table->smallInteger('dexterity_bonus')->unsigned()->default(0);
+            $table->smallInteger('constitution_bonus')->unsigned()->default(0);
+            $table->smallInteger('intellect_bonus')->unsigned()->default(0);
+            $table->smallInteger('wisdom_bonus')->unsigned()->default(0);
+            $table->smallInteger('resistance_bonus')->unsigned()->default(0);
 //            $table->timestamps();
         });
     }

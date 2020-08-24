@@ -25,6 +25,11 @@ class SlotsTableSeeder extends Seeder
         ]);
 
         \DB::table('slots')->insert([
+            'id'    => \App\Slot::RIGHT_WRIST,
+            'name'    => 'правое запястье',
+        ]);
+
+        \DB::table('slots')->insert([
             'id'    => \App\Slot::IN_INVENTORY,
             'name'    => 'инвентарь',
         ]);

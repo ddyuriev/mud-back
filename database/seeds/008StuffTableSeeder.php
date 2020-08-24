@@ -16,6 +16,7 @@ class StuffTableSeeder extends Seeder
         /**/
 
         \DB::table('stuff')->insert([
+            'id' => 1,
             'name' => 'Длинный меч',
             'value_level' => 1,
             'stuff_type_id' => 1,
@@ -31,6 +32,7 @@ class StuffTableSeeder extends Seeder
         ]);
 
         \DB::table('stuff')->insert([
+            'id' => 2,
             'name' => 'Короткий меч',
             'value_level' => 1,
             'stuff_type_id' => 1,
@@ -46,6 +48,7 @@ class StuffTableSeeder extends Seeder
         ]);
 
         \DB::table('stuff')->insert([
+            'id' => 3,
             'name' => 'Большой темный меч',
             'value_level' => 7,
             'stuff_type_id' => 1,
@@ -61,6 +64,7 @@ class StuffTableSeeder extends Seeder
         ]);
 
         \DB::table('stuff')->insert([
+            'id' => 4,
             'name' => 'Двуручный меч',
             'value_level' => 1,
             'stuff_type_id' => 1,
@@ -73,6 +77,26 @@ class StuffTableSeeder extends Seeder
             'armor' => 0,
             'armor_class' => 0,
             'weight' => 10,
+        ]);
+
+        \DB::table('stuff')->insert([
+            'id' => 5,
+            'name' => 'Золотой браслет',
+            'value_level' => 1,
+            'stuff_type_id' => 1,
+            'dest_slot_id' => \App\Slot::RIGHT_WRIST,
+            'material_id' => 1,
+            'damroll_bonus' => 2,
+            'hitroll_bonus' => 2,
+            'armor' => 0,
+            'armor_class' => 0,
+            'weight' => 10,
+            'strength_bonus' => 10,
+            'dexterity_bonus' => 10,
+            'constitution_bonus' => 10,
+            'intellect_bonus' => 10,
+            'wisdom_bonus' => 10,
+            'resistance_bonus' => 10,
         ]);
     }
 }
